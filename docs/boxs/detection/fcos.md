@@ -3,106 +3,104 @@ sidebar_position: 1
 ---
 # FCOS
 
-## 功能介绍
+## Introduction
 
-FCOS目标检测算法示例使用图片作为输入，利用BPU进行算法推理，发布包含目标类别和检测框的智能msg。
+The FCOS target detection algorithm example uses images as input and utilizes BPU for algorithm inference, resulting in the publication of intelligent messages containing target categories and detection boxes.
 
-FCOS是地平线开源的Onnx模型，使用[COCO数据集](http://cocodataset.org/)进行训练，支持的目标检测类型包括人、动物、水果、交通工具等共80种类型。
+FCOS is an open-source Onnx model developed by Horizon, trained using the [COCO dataset](http://cocodataset.org/). It supports various types of object detection, including humans, animals, fruits, and vehicles, totaling 80 types.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_dnn>
+Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
-应用场景：FCOS发布于2019年，是一款单阶段的目标检测算法，可实现行人检测、车辆检测等功能，主要应用于自动驾驶、智能家居等领域。
+Application scenarios: Released in 2019, FCOS is a one-stage object detection algorithm capable of pedestrian and vehicle detection. It is mainly used in autonomous driving and smart home fields.
 
-多光谱的目标检测案例：<https://github.com/hdjsjyl/Multispectral-FCOS>
+Multispectral object detection example: <https://github.com/hdjsjyl/Multispectral-FCOS>
 
-## 支持平台
+## Supported Platforms
 
-| 平台                  | 运行方式     | 示例功能                                                     |
-| --------------------- | ------------ | ------------------------------------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | · 启动MIPI/USB摄像头，并通过web展示推理渲染结果<br/>· 使用本地回灌，渲染结果保存在本地 |
-| X86                   | Ubuntu 20.04 | · 使用本地回灌，渲染结果保存在本地                           |
+| Platform          | Operating System | Example Functionality                                       |
+| ----------------- | ---------------- | ----------------------------------------------------------- |
+| RDK X3, RDK X3 Module | Ubuntu 20.04       | - Launch MIPI/USB camera and display inference rendering via web interface<br/>- Use local feedback to save rendering results locally |
+| X86               | Ubuntu 20.04       | - Use local feedback to save rendering results locally         |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. The Horizon RDK platform is flashed with the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK platform.
 
-3. 地平线RDK已安装MIPI或者USB摄像头，无摄像头的情况下通过回灌本地JPEG/PNG格式图片或者MP4、H.264和H.265的视频方式体验算法效果。
+3. A MIPI or USB camera has been installed on the Horizon RDK platform. If no camera is available, the algorithm effects can be experienced through local feedback using JPEG/PNG format images or MP4, H.264, and H.265 video.
 
-4. 确认PC机能够通过网络访问地平线RDK。
+4. Ensure that the PC can access the Horizon RDK platform via the network.
 
-### X86平台
+### X86 Platform
 
-1. X86环境已配置好Ubuntu 20.04系统镜像。
+1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
-2. X86环境系统已成功安装tros.b。
+2. The X86 environment has successfully installed tros.b.
 
-## 使用介绍
+## User Guide
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-#### 使用MIPI摄像头发布图片
+#### Publishing Images Using a MIPI Camera
 
-FCOS目标检测算法示例订阅sensor package发布的图片，经过推理后发布算法msg，通过websocket package实现在PC端浏览器上渲染显示发布的图片和对应的算法结果。
+The FCOS target detection algorithm example subscribes to images published by the sensor package, performs inference, and publishes algorithm messages. The WebSocket package is used to render and display the published images and their corresponding algorithm results on a PC web browser.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 配置MIPI摄像头
+# Configure MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### 使用USB摄像头发布图片
+#### Use USB camera to publish images
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 配置USB摄像头
+# Configure USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### 使用本地图片回灌
+#### Use local images for feedback
 
-FCOS目标检测算法示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在运行路径下。
+The FCOS object detection algorithm example uses local JPEG/PNG format images for feedback. The inferred images with algorithm results are stored in the running path.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image:=config/target.jpg
 ```
 
-### X86平台
+### X86 Platform
 
-#### 使用本地图片回灌
+#### Use local images for feedback
 
-FCOS目标检测算法示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The FCOS object detection algorithm example uses local JPEG/PNG format images for feedback. The inferred images with algorithm results are stored in the local running path.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image:=config/target.jpg
-```
+```## Result Analysis
 
-## 结果分析
+### Publishing Images Using a Camera
 
-### 使用摄像头发布图片
-
-在运行终端输出如下信息：
+The terminal output shows the following information:
 
 ```text
 [example-3] [WARN] [1655092908.847609539] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
@@ -122,15 +120,15 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 
 ```
 
-输出log显示，发布算法推理结果的topic为`hobot_dnn_detection`，订阅图片的topic为`/hbmem_img`，订阅到的图片和算法推理输出帧率约为30fps。
+The log output shows that the topic for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate of the subscribed images and algorithm inference output is approximately 30fps.
 
-在PC端的浏览器输入http://IP:8000 即可查看图像和算法渲染效果（IP为地平线RDK的IP地址）：
+To view the image and algorithm rendering effect on the PC browser, enter http://IP:8000 (where IP is the IP address of the Horizon RDK):
 
 ![](./image/box_basic/fcos_render_web.jpeg)
 
-### 使用本地图片回灌
+### Feedback Using Local Images
 
-在运行终端输出如下信息：
+The terminal output shows the following information:
 
 ```text
 [example-1] [INFO] [1654766336.839353395] [PostProcessBase]: out box size: 6
@@ -142,6 +140,6 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-1] [INFO] [1654766336.839823755] [PostProcessBase]: det rect: 165.691 339.25 237.475 366.896, det type: book, score:0.500648
 ```
 
-输出log显示，算法使用输入的图片推理出6个目标，并输出了目标检测框坐标（输出的坐标顺序分别是人体框的左上的x和y坐标，和右下的x和y坐标）和类别。存储的渲染图片文件名为render_feedback_0_0.jpeg，渲染图片效果：
+The log output shows that the algorithm infers 6 targets from the input image and outputs the coordinates of the detection boxes (the coordinates are in the order of the top left x and y coordinates of the bounding box, and the bottom right x and y coordinates) and their corresponding classes. The rendered image file is named render_feedback_0_0.jpeg, and the rendered image effect is as follows:
 
 ![](./image/box_basic/fcos_render_feedback.jpeg)

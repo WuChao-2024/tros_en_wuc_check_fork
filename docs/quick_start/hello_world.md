@@ -1,30 +1,30 @@
 ---
 sidebar_position: 4
 ---
+# 1.4 Running "Hello World"
 
-# 1.4 运行“Hello World”
+Prerequisite: TogetheROS.Bot has been successfully installed via deb package or source code.
 
-前提：已通过deb包或者源码安装的方式成功安装TogetheROS.Bot
+Open two terminals and ssh login to the horizon RDK or X86 platform device.
 
-启动两个终端，均ssh登陆至地平线RDK或X86平台设备
-
-第一个终端运行
+In the first terminal, run:
 
 ```shell
 source /opt/tros/setup.bash
 ros2 run examples_rclcpp_minimal_subscriber subscriber_member_function
 ```
 
-第二个终端运行
+In the second terminal, run:
 
 ```shell
 source /opt/tros/setup.bash
 ros2 run examples_rclcpp_minimal_publisher publisher_member_function
 ```
 
-运行效果如下图
+The running effect is shown in the following image:
 
 ![hello world](./image/hello_world/hello_world.png "hello world")
-可以看到左侧终端作为pub，在不断发送“'Hello, world! N”，右侧终端作为sub端不断收到“'Hello, world! N”
 
-OK tros.b目前已成功安装并验证！
+As you can see, the left terminal acts as the publisher, continuously sending "Hello, world! N", and the right terminal acts as the subscriber, continuously receiving "Hello, world! N".
+
+OK, tros.b has been successfully installed and verified!

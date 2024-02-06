@@ -1,56 +1,52 @@
 ---
 sidebar_position: 1
 ---
+# 5.1 Using "zero-copy"
 
-# 5.1 使用“zero-copy”
+## Background
 
-## 功能背景
+Communication is a fundamental function of the robot development engine. When using native ROS for large-scale data communication, there may be issues such as high latency and system load. TogetheROS.Bot implements the "zero-copy" feature based on the Horizon Systems software library hbmem, which enables zero-copy transmission of data across processes, greatly reducing transmission latency and system resource usage for large data blocks. This section explains how to use the tros.b hbmem interface to create a publisher and subscriber node for large-scale data transmission, and calculate transmission latency.
 
-通信是机器人开发引擎的基础功能，原生ROS进行大数据量通信时存在时延较大、系统负载较高等问题。TogetheROS.Bot基于地平线系统软件库hbmem实现了“zero-copy”功能，数据跨进程传输零拷贝，可大大减少大块数据传输延时和系统资源占用。本节介绍如何使用tros.b hbmem接口创建publisher和subscriber node进行大块数据传输，并计算传输延时。
+## Prerequisites
 
-## 前置条件
+1. tros.b has been successfully installed following the guide [Installation](../quick_start/install_tros.md).
+2. Familiarity with ROS2 nodes, topics, QoS, as well as creating packages and using custom messages. For detailed tutorials, please refer to the [official ROS2 documentation](https://docs.ros.org/en/foxy/Tutorials.html).
+3. The ROS2 package build system ament_cmake has been installed. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`.
+4. The ROS2 build tool colcon has been installed. Installation command: `pip3 install -U colcon-common-extensions`.
 
-已按照[安装](../quick_start/install_tros.md)成功安装tros.b，并已掌握ROS2 node，topic，qos等基础知识，以及如何创建package和使用自定义消息，具体教程可见[ROS2官方文档](https://docs.ros.org/en/foxy/Tutorials.html)。
+## Task Content
 
-已安装ROS2软件包构建系统ament_cmake。安装命令：`apt update; apt-get install python3-catkin-pkg; pip3 install empy`
+### 1. Create a package
 
-已安装ROS2编译工具colcon。安装命令：`pip3 install -U colcon-common-extensions`
-
-## 任务内容
-
-### 1. 创建package
-
-打开一个新的终端，source tros.b setup脚本，确保`ros2`命令可以运行。
+Open a new terminal and source the tros.b setup script to ensure that the `ros2` command can be run.
 
 ```shell
 source /opt/tros/setup.bash
 ```
 
-使用以下命令创建一个workspace，详细介绍可见ROS2 官方教程[Creating a workspace](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html)。
+Create a workspace using the following command. For detailed instructions, refer to the ROS2 official tutorial [Creating a workspace](https://docs.ros.org/en/foxy/Tutorials/Workspace/Creating-A-Workspace.html).
 
 ```shell
 mkdir -p ~/dev_ws/src
 cd ~/dev_ws/src
 ```
 
-运行以下命令创建一个package
+Run the following command to create a package.
 
 ```shell
 ros2 pkg create --build-type ament_cmake hbmem_pubsub
 ```
 
-### 2. 创建自定义消息
+### 2. Create a custom message
 
-#### 2.1 新建消息文件
+#### 2.1 Create a message file
 
-运行以下命令，创建`msg`目录用来存放自定义消息文件
+Run the following command to create a `msg` directory to store the custom message file.
 
 ```shell
 cd ~/dev_ws/src/hbmem_pubsub
 mkdir msg
-```
-
-在`msg`目录下新建`SampleMessage.msg`文件，具体内容如下:
+```In the `msg` directory, create a new file named `SampleMessage.msg` with the following content:
 
 ```idl
 int32 index
@@ -60,9 +56,9 @@ uint8[4194304] data
 uint32 MAX_SIZE=4194304
 ```
 
-#### 2.2 编译依赖
+#### 2.2 Dependency Compilation
 
-返回到`~/dev_ws/src/hbmem_pubsub`目录，修改`package.xml`，在`<buildtool_depend>ament_cmake</buildtool_depend>`下面添加以下内容：
+Return to the `~/dev_ws/src/hbmem_pubsub` directory and modify `package.xml`. Add the following content under `<buildtool_depend>ament_cmake</buildtool_depend>`:
 
 ```xml
   <build_depend>rosidl_default_generators</build_depend>
@@ -70,9 +66,9 @@ uint32 MAX_SIZE=4194304
   <member_of_group>rosidl_interface_packages</member_of_group>
 ```
 
-#### 2.3 编译脚本
+#### 2.3 Compilation Script
 
-修改`CMakeLists.txt`，在`# find_package(<dependency> REQUIRED)`下面添加以下内容，进行msg编译:
+Modify `CMakeLists.txt` and add the following content under `# find_package(<dependency> REQUIRED)` to compile the msg:
 
 ```cmake
 find_package(rosidl_default_generators REQUIRED)
@@ -81,11 +77,11 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 ```
 
-### 3. 创建消息发布节点
+### 3. Create Message Publishing Node
 
-#### 3.1 新建消息发布节点文件
+#### 3.1 Create a New Message Publishing Node File
 
-在`~/dev_ws/src/hbmem_pubsub/src`目录下新建` publisher_hbmem.cpp`文件，用来创建publisher node，具体代码和解释如下：
+In the `~/dev_ws/src/hbmem_pubsub/src` directory, create a new file named `publisher_hbmem.cpp`. This file is used to create the publisher node. The code and explanation are as follows:
 
 ```c++
 #include <chrono>
@@ -98,57 +94,55 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 
 using namespace std::chrono_literals;
 
-
-class MinimalHbmemPublisher  : public rclcpp::Node {
+class MinimalHbmemPublisher : public rclcpp::Node {
  public:
-  MinimalHbmemPublisher () : Node("minimal_hbmem_publisher"), count_(0) {
-    // 创建publisher_hbmem，topic为"topic"，QOS为KEEPLAST(10)，以及默认的可靠传输
+  MinimalHbmemPublisher() : Node("minimal_hbmem_publisher"), count_(0) {
+    // Create publisher_hbmem, topic is "topic", QoS is KEEPLAST(10), and default reliability
     publisher_ = this->create_publisher_hbmem<hbmem_pubsub::msg::SampleMessage>(
         "topic", 10);
 
-    // 定时器，每隔40毫秒调用一次timer_callback进行消息发送
+    // Timer, calls timer_callback every 40 milliseconds for message publishing
     timer_ = this->create_wall_timer(
-        40ms, std::bind(&MinimalHbmemPublisher ::timer_callback, this));
+        40ms, std::bind(&MinimalHbmemPublisher::timer_callback, this));
   }
 
  private:
-  // 定时器回调函数
+  // Timer callback function
   void timer_callback() {
-    // 获取要发送的消息
+    // Get the message to send
     auto loanedMsg = publisher_->borrow_loaned_message();
-    // 判断消息是否可用，可能出现获取消息失败导致消息不可用的情况
+    // Check if the message is valid, it may become invalid if borrowing the message fails
     if (loanedMsg.is_valid()) {
-      // 引用方式获取实际的消息
+      // Get the actual message by reference
       auto& msg = loanedMsg.get();
       
-      // 获取当前时间，单位为us
+      // Get the current time in microseconds
       auto time_now =
           std::chrono::duration_cast<std::chrono::microseconds>(
               std::chrono::steady_clock::now().time_since_epoch()).count();
       
-      // 对消息的index和time_stamp进行赋值
+      // Assign values to the index and time_stamp of the message
       msg.index = count_;
       msg.time_stamp = time_now;
       
-      // 打印发送消息
+      // Print the message to be sent
       RCLCPP_INFO(this->get_logger(), "message: %d", msg.index);
       publisher_->publish(std::move(loanedMsg));
-      // 注意，发送后，loanedMsg已不可用
-      // 计数器加一
+      // Note that loanedMsg is no longer valid after publishing
+      // Increment the counter
       count_++;
     } else {
-      // 获取消息失败，丢弃该消息
+      // Failed to get the message, discard it
       RCLCPP_INFO(this->get_logger(), "Failed to get LoanMessage!");
     }
   }
   
-  // 定时器
+  // Timer
   rclcpp::TimerBase::SharedPtr timer_;
 
-  // hbmem publisher
+  // Hbmem publisher
   rclcpp::PublisherHbmem<hbmem_pubsub::msg::SampleMessage>::SharedPtr publisher_;
-  
-  // 计数器
+
   size_t count_;
 };
 
@@ -162,17 +156,18 @@ int main(int argc, char * argv[])
 
 ```
 
-#### 3.2 编译依赖
 
-返回到`~/dev_ws/src/hbmem_pubsub`目录，修改`package.xml`，在`<member_of_group>rosidl_interface_packages</member_of_group>`  下面增加`rclcpp`依赖：
+#### 3.2 Compilation Dependencies
+
+Go back to the `~/dev_ws/src/hbmem_pubsub` directory, modify the `package.xml`, and add the `rclcpp` dependency under `<member_of_group>rosidl_interface_packages</member_of_group>`:
+
 
 ```xml
   <depend>rclcpp</depend>
 ```
+#### 3.3 Compilation Script
 
-#### 3.3 编译脚本
-
-修改`CMakeLists.txt`，在`rosidl_generate_interfaces`语句下面添加以下内容，完成publisher编译：
+Modify `CMakeLists.txt`, add the following content below the `rosidl_generate_interfaces` statement to complete the publisher compilation:
 
 ```cmake
 find_package(rclcpp REQUIRED)
@@ -187,11 +182,11 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 ```
 
-### 4. 创建消息接收节点
+### 4. Create Message Reception Node
 
-#### 4.1 新建消息接收节点文件
+#### 4.1 Create a New Message Reception Node File
 
-在`~/dev_ws/src/hbmem_pubsub/src`目录下新建`  subscriber_hbmem.cpp`文件，用来创建subscriber node，具体代码和解释如下：
+Create a new file `subscriber_hbmem.cpp` in the `~/dev_ws/src/hbmem_pubsub/src` directory to establish a subscriber node. The specific code and explanation are as follows:
 
 ```c++
 #include <memory>
@@ -203,8 +198,8 @@ install(TARGETS
 class MinimalHbmemSubscriber  : public rclcpp::Node {
  public:
   MinimalHbmemSubscriber () : Node("minimal_hbmem_subscriber") {
-    // 创建subscription_hbmem，topic为"sample"，QOS为KEEPLAST(10)，以及默认的可靠传输
-    // 消息回调函数为topic_callback
+    // Create subscription_hbmem with topic "sample", QoS as KEEPLAST(10), and default reliability
+    // Message callback function is topic_callback
     subscription_ =
         this->create_subscription_hbmem<hbmem_pubsub::msg::SampleMessage>(
             "topic", 10,
@@ -213,16 +208,16 @@ class MinimalHbmemSubscriber  : public rclcpp::Node {
   }
 
  private:
-  // 消息回调函数
+  // Message callback function
   void topic_callback(
       const hbmem_pubsub::msg::SampleMessage::SharedPtr msg) const {
-    // 注意，msg只能在回调函数中使用，回调函数返回后，该消息就会被释放
-    // 获取当前时间
+    // Note that msg can only be used within the callback function, the message will be released after the callback function returns
+    // Get current time
     auto time_now =
         std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::steady_clock::now().time_since_epoch())
             .count();
-    // 计算延时并打印出来
+    // Calculate delay and print it out
     RCLCPP_INFO(this->get_logger(), "msg %d, time cost %dus", msg->index,
                 time_now - msg->time_stamp);
   }
@@ -243,11 +238,11 @@ int main(int argc, char * argv[])
 
 ```
 
-#### 4.2 编译脚本
+#### 4.2 Build script
 
-返回到`~/dev_ws/src/hbmem_pubsub`目录，之前已经在`package.xml`中增加`rclcpp`依赖，故不需要需改`package.xml`。
+Go back to the `~/dev_ws/src/hbmem_pubsub` directory, as we have added the `rclcpp` dependency in the `package.xml`, there is no need to modify it.
 
-修改`CMakeLists.txt`，在`install`语句下面添加以下内容，完成subscriber编译：
+Modify the `CMakeLists.txt` file, add the following content below the `install` statement, to complete the build of the subscriber:
 
 ```cmake
 add_executable(listener src/subscriber_hbmem.cpp)
@@ -260,9 +255,10 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 ```
 
-### 5. 编译和运行
 
-整个workspace目录结构如下：
+### 5. Build and Run
+
+The directory structure of the entire workspace is as follows:
 
 ```shell
 dev_ws/
@@ -270,16 +266,16 @@ dev_ws/
     └── hbmem_pubsub
         ├── CMakeLists.txt
         ├── include
-        │   └── hbmem_pubsub
+        │   └── hbmem_pubsub
         ├── msg
-        │   └── SampleMessage.msg
+        │   └── SampleMessage.msg
         ├── package.xml
         └── src
             ├── publisher_hbmem.cpp
             └── subscriber_hbmem.cpp
 ```
 
-完整的`package.xml`内容如下：
+entire `package.xml`as follows:
 
 ```xml
 <?xml version="1.0"?>
@@ -309,8 +305,7 @@ dev_ws/
 
 ```
 
-完整的`CMakeLists.txt`内容如下：
-
+The complete `CMakeLists.txt` content is as follows:
 ```cmake
 cmake_minimum_required(VERSION 3.5)
 project(hbmem_pubsub)
@@ -375,19 +370,20 @@ ament_package()
 
 ```
 
-在workspace根目录`~/dev_ws`，编译package:
+
+In the workspace root directory `~/dev_ws`, build the package:
 
 ```shell
 colcon build --packages-select hbmem_pubsub
 ```
 
-若提示`colcon`命令未安装，使用以下命令安装即可：
+If the `colcon` command is not installed, use the following command to install it:
 
 ```shell
 pip3 install -U colcon-common-extensions
 ```
 
-打开一个新的终端，`cd`到`dev_ws`目录，source tros.b和当前workspace setup文件：
+Open a new terminal, cd to the dev_ws directory, source tros.b and the current workspace setup file:
 
 ```shell
 source /opt/tros/setup.bash
@@ -401,7 +397,7 @@ cd ~/dev_ws
 ros2 run hbmem_pubsub talker
 ```
 
-终端上会出现如下打印：
+On the terminal, the following prints will appear:
 
 ```text
 [INFO] [1649227473.431381673] [minimal_hbmem_publisher]: message: 0
@@ -412,7 +408,7 @@ ros2 run hbmem_pubsub talker
 [INFO] [1649227473.630857041] [minimal_hbmem_publisher]: message: 5
 ```
 
-再打开一个新的终端，同样`cd`到`dev_ws`目录，然后souce setup文件，之后运行listener node:
+Open another terminal and `cd` to the `dev_ws` directory, then source the setup file and run the listener node:
 
 ```bash
 source /opt/tros/setup.bash
@@ -422,7 +418,7 @@ cd ~/dev_ws
 ros2 run hbmem_pubsub listener
 ```
 
-终端上会有如下打印，表明subscriber已成功接收到publisher发送的消息：
+On the terminal, the following prints will appear, indicating that the subscriber has successfully received the messages sent by the publisher:
 
 ```text
 [INFO] [1649227450.387089523] [minimal_hbmem_subscriber]: msg 10, time cost 1663us
@@ -433,31 +429,29 @@ ros2 run hbmem_pubsub listener
 [INFO] [1649227450.587002681] [minimal_hbmem_subscriber]: msg 15, time cost 1768us
 ```
 
-使用`Ctrl+C`可结束每个Node的运行。
+You can use `Ctrl+C` to end the execution of each node.
 
-## 本节总结
+Summary of this section:
 
-如果你已经掌握ROS2的publisher和subscriber使用方式，那么很容易切换到hbmem的publisher和subscriber，使用时只需要做以下改动：
+If you have learned how to use ROS2 publishers and subscribers, it is easy to switch to using hbmem publishers and subscribers. You just need to make the following changes:
 
-- **rclcpp::Publisher** 改为 **rclcpp::PublisherHbmem**
-- **create_publisher** 改为 **create_publisher_hbmem**
-- **rclcpp::Subscription** 改为 **rclcpp::SubscriptionHbmem**
-- **create_subscription** 改为 **create_subscription_hbmem**
-- **publisher**发送消息前要先调用**borrow_loaned_message**获取消息，然后**确认消息是否可用**，若可用，再进行赋值，发送
-- **subscription**在回调函数中处理接收到的消息，且**接收到的消息只能在回调函数中使用**，回调函数执行完，该消息就会释放
+- **rclcpp::Publisher** to **rclcpp::PublisherHbmem**
+- **create_publisher** to **create_publisher_hbmem**
+- **rclcpp::Subscription** to **rclcpp::SubscriptionHbmem**
+- **create_subscription** to **create_subscription_hbmem**
+- In the publisher, call **borrow_loaned_message** to get the message, then **check if the message is available**, and if it is, assign the value and send it.
+- In the subscriber, process the received message in the callback function, and **the received message can only be used in the callback function**. Once the callback function is executed, the message will be released.
 
-注意：
+Note:- Using zero-copy based on hbmem will occupy ion memory. If multiple large messages publishers are created, there may be insufficient ion memory, resulting in creation failure issues.
 
-- 使用基于hbmem的零拷贝会占用ion内存，若创建多个较大消息的publisher，可能出现ion内存不够用，导致创建失败问题。
+- When creating a publisher, ion memory that is three times the size of KEEPLAST multiplied by the number of messages will be requested at one time (up to 256MB maximum), which is used for message transmission and will not be dynamically allocated afterwards. If there is an error in message handling on the subscriber side or if it is not processed in a timely manner, the message buffer may be fully occupied, causing the publisher to continuously fail to obtain available messages.
 
-- 创建publisher时会一次性申请KEEPLAST的三倍个消息大小的ion内存（最大为256MB），用于消息的传输，之后不会再动态申请。若subscriber端消息处理出错或者未及时处理，则会出现消息buffer都被占用，publisher一直获取不到可用消息的情况。
+## Usage Limitations
 
-## 使用限制
+Compared to the publisher/subscriber data transmission method in ROS2, using zero-copy transmission based on hbmem has the following limitations:
 
-和ROS2的publisher/subscriber数据传输方式相比，使用基于hbmem的零拷贝传输存在以下限制：
-
-- QOS History只支持KEEPLAST，不支持KEEPALL，且KEEPLAST不能设置太大，有内存限制，目前设置为最大占用256M内存
-- 传输的消息大小是固定的，即消息的`sizeof`值是不变的，不能包含可变长度类型数据，例如：string，动态数组
-- 只能用于同一设备进程间通信，不可跨设备传输
-- publisher消息要先获取再赋值发送，且要判断是否获取成功
-- subscriber收到的消息有效期仅限回调函数中，不能在回调函数之外使用
+- QOS History only supports KEEPLAST and does not support KEEPALL. Additionally, KEEPLAST cannot be set too large due to memory limitations. Currently, it is set to a maximum of 256MB memory usage.
+- The size of the transmitted message is fixed, meaning the `sizeof` value of the message remains unchanged and cannot include variable-length data types such as strings or dynamic arrays.
+- It can only be used for inter-process communication on the same device and cannot be transmitted across devices.
+- Publisher messages need to be obtained first and then assigned for sending, and it needs to be checked if the acquisition is successful.
+- The validity period of received messages on the subscriber side is limited to the callback function and cannot be used outside of the callback function.

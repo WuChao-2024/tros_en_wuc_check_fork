@@ -3,107 +3,104 @@ sidebar_position: 1
 ---
 # mobilenetv2
 
-## 功能介绍
+## Introduction
 
-mobilenetv2图片分类算法示例使用图片作为输入，利用BPU进行算法推理，发布包含物体类别的算法msg。
+The mobilenetv2 image classification algorithm example uses images as input and utilizes the BPU for algorithm inference. It publishes algorithm messages containing object categories.
 
-mobilenetv2是使用[ImageNet data](http://www.image-net.org/)数据集训练出来的caffe模型，模型来源：<https://github.com/shicai/MobileNet-Caffe>。
-支持的目标类型包括人、动物、水果、交通工具等共1000种类型。具体支持的类别详见地平线RDK板端文件/opt/tros/lib/dnn_node_example/config/imagenet.list（已安装TogatherROS.Bot）。
+mobilenetv2 is a caffe model trained on the [ImageNet data](http://www.image-net.org/) dataset. The model source can be found at: <https://github.com/shicai/MobileNet-Caffe>. Supported target types include people, animals, fruits, vehicles, and other 1000 categories. For specific supported categories, please refer to the file /opt/tros/lib/dnn_node_example/config/imagenet.list on the Horizon RDK board (TogatherROS.Bot installed).
 
-代码仓库：<https://github.com/HorizonRDK/hobot_dnn>
+Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
-应用场景：mobilenetv2能够预测给定图片的类别，可实现数字识别、物体识别等功能，主要应用于文字识别、图像检索等领域。
+Applications: mobilenetv2 is capable of predicting the category of a given image, and can be used for tasks such as digit recognition and object recognition. It is mainly applied in fields such as text recognition and image retrieval.
 
-食品类型识别案例：<https://github.com/frotms/Chinese-and-Western-Food-Classification>
+Food type recognition case: <https://github.com/frotms/Chinese-and-Western-Food-Classification>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | · 启动MIPI/USB摄像头，并通过web展示推理渲染结果<br/>· 使用本地回灌，渲染结果保存在本地 |
-| X86     | Ubuntu 20.04 | · 使用本地回灌，渲染结果保存在本地 |
+| Platform   | Execution Method | Example Functionality                   |
+| ---------- | ---------------- | --------------------------------------- |
+| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | · Start MIPI/USB camera and display inference rendering results on the web<br/>· Use local backfilling to save rendering results locally |
+| X86        | Ubuntu 20.04 | · Use local backfilling to save rendering results locally |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. Horizon RDK has been flashed with the provided Ubuntu 20.04 system image.
 
-2. 地平线RDK已成功安装tros.b。
+2. Tros.b has been successfully installed on Horizon RDK.
 
-3. 地平线RDK已安装MIPI或者USB摄像头，无摄像头的情况下通过回灌本地JPEG/PNG格式图片或者MP4、H.264和H.265的视频方式体验算法效果。
+3. MIPI or USB camera has been installed on Horizon RDK. In the absence of a camera, algorithm effects can be experienced by backfilling local JPEG/PNG format images or MP4, H.264, and H.265 videos.
 
-4. 确认PC机能够通过网络访问地平线RDK。
+4. Ensure the PC can access Horizon RDK through the network.
 
-### X86平台
+### X86 Platform
 
-1. X86环境已配置好Ubuntu 20.04系统镜像。
+1. The X86 environment has been configured with Ubuntu 20.04 system image.
 
-2. X86环境系统已成功安装tros.b。
+2. Tros.b has been successfully installed on the X86 environment system.
 
-## 使用介绍
+## Usage Introduction
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-mobilenetv2图片分类订阅sensor package发布的图片，经过推理后发布算法msg，通过websocket package实现在PC端浏览器上渲染显示发布的图片和对应的算法结果。
+Subscribe to the images published by the sensor package for mobilenetv2 image classification. After inference, the algorithm message will be published, and the rendered image and corresponding algorithm result will be displayed on the PC browser through the websocket package.
 
-#### 使用MIPI摄像头发布图片
+#### Publish Images using MIPI Camera
 
 ```shell
-# 配置TogetheROS环境
+# Configure TogetheROS environment
 source /opt/tros/setup.bash
 
-# 配置MIPI摄像头
+# Configure MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
-```
 
-#### 使用USB摄像头发布图片
+```
+#### Publish Images using USB Camera
 
 ```shell
-# 配置TogetheROS环境
+# Configure TogetheROS environment
 source /opt/tros/setup.bash
 
-# 配置USB摄像头
+# Configure USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### 使用本地图片回灌
+#### Feedback with Local Images
 
-mobilenetv2图片分类算法示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The mobilenetv2 image classification algorithm example feeds back with local JPEG/PNG format images. After inference, the algorithm renders the resulting image and saves it in the local runtime path.
 
 ```shell
-# 配置TogetheROS环境
+# Configure TogetheROS environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image:=config/target_class.jpg
 ```
 
-### X86平台
+### X86 Platform
 
-#### 使用本地图片回灌
+#### Feedback with Local Images
 
-mobilenetv2图片分类算法示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The mobilenetv2 image classification algorithm example feeds back with local JPEG/PNG format images. After inference, the algorithm renders the resulting image and saves it in the local runtime path.
 
 ```shell
-# 配置TogetheROS环境
+# Configure TogetheROS environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image:=config/target_class.jpg
-```
+```## Result Analysis
 
-## 结果分析
+### Publishing Images Using a Camera
 
-### 使用摄像头发布图片
-
-在运行终端输出如下信息：
+The following information is outputted in the terminal:
 
 ```shell
 [example-3] [WARN] [1655095481.707875587] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
@@ -116,15 +113,15 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-3] [WARN] [1655095486.057854228] [example]: Smart fps 30.07
 ```
 
-输出log显示，发布算法推理结果的topic为`hobot_dnn_detection`，订阅图片的topic为`/hbmem_img`，订阅到的图片和算法推理输出帧率约为30fps。
+The output log shows that the topic for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate for the subscribed images and algorithm inference outputs is approximately 30fps.
 
-在PC端的浏览器输入http://IP:8000 即可查看图像和算法渲染效果（IP为地平线RDK的IP地址）：
+On the PC side, enter http://IP:8000 in the browser to view the image and the rendering effect of the algorithm (where IP is the IP address of the Horizon RDK):
 
 ![render_web](./image/mobilenetv2/mobilenetv2_render_web.jpeg)
 
-### 使用本地图片回灌
+### Feedback with Local Images
 
-在运行终端输出如下信息：
+The following information is outputted in the terminal:
 
 ```shell
 [example-1] [INFO] [1654767648.897132079] [example]: The model input width is 224 and height is 224
@@ -140,6 +137,6 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-1] [WARN] [1654767648.947563731] [ImageUtils]: Draw result to file: render_feedback_0_0.jpeg
 ```
 
-输出log显示，算法使用输入的图片config/target_class.jpg推理出的图片分类结果是window-shade，置信度为0.776356（算法只输出置信度最高的分类结果）。存储的渲染图片文件名为render_feedback_0_0.jpeg，渲染图片效果：
+The output log shows that the algorithm infers that the image `config/target_class.jpg` is classified as a window-shade with a confidence score of 0.776356 (the algorithm only outputs the highest confidence classification result). The rendered image is stored with the file name `render_feedback_0_0.jpeg`, and the rendered image looks like this:
 
 ![render_feedback](./image/mobilenetv2/mobilenetv2_render_feedback.jpeg)

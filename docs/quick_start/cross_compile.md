@@ -1,55 +1,50 @@
 ---
 sidebar_position: 3
 ---
+# 1.3 Source Code Installation
 
-# 1.3 源码安装
+This section explains how to install TogetheROS.Bot on the Horizon RDK and X86 platforms using source code.
 
-本章节介绍地平线RDK和X86平台如何通过源码安装TogetheROS.Bot。
+## Horizon RDK Platform
 
-## 地平线RDK平台
+Prerequisites:
 
-前提：
+- The development machine can access the Horizon Robotics organization on [GitHub](https://github.com/HorizonRDK).
+- Docker is installed on the development machine.
 
-- 开发机能够正常访问地平线[Horizon Robotics](https://github.com/HorizonRDK)组织
-- 开发机已安装docker
+### Compile tros.b
 
-### 编译tros.b
-
-#### 1 使用docker文件
-
-该部分操作均在开发机的docker内完成。
+All the following operations are performed within the Docker environment on the development machine.
 
 ```shell
-## 创建目录
-cd  /mnt/data/kairui.wang/test
+## Create a directory
+cd /mnt/data/kairui.wang/test
 mkdir -p cc_ws/tros_ws/src
-## 获取交叉编译用docker
+## Obtain the Docker for cross-compilation
 wget http://sunrise.horizon.cc/TogetheROS/cross_compile_docker/pc_tros_v1.0.5.tar.gz
-## 加载docker镜像
-sudo docker load --input pc_tros_v1.0.5.tar.gz 
-## 查看pc_tros对应的image ID
+## Load the Docker image
+sudo docker load --input pc_tros_v1.0.5.tar.gz
+## Check the corresponding image ID for pc_tros
 sudo docker images
-## 启动docker挂载目录
-sudo docker run -it --entrypoint="/bin/bash" -v PC本地目录:docker目录 imageID，这里以 sudo docker run -it --entrypoint="/bin/bash" -v /mnt/data/kairui.wang/test:/mnt/test 9c2ca340973e 为例
+## Launch Docker and mount the directory
+sudo docker run -it --entrypoint="/bin/bash" -v PC local directory: Docker directory imageID, here is an example using sudo docker run -it --entrypoint="/bin/bash" -v /mnt/data/kairui.wang/test:/mnt/test 9c2ca340973e
 ```
 
-#### 2 获取tros.b源码
+### Obtain the tros.b Source Code
 
-该部分操作均在开发机的docker内完成。
+All the following operations are performed within the Docker environment on the development machine.
 
-这里以docker中/mnt/test目录为例。
+Here, we take the /mnt/test directory in Docker as an example.
 
 ```shell
 cd /mnt/test/cc_ws/tros_ws
-## 获取配置文件
-git clone https://github.com/HorizonRDK/robot_dev_config.git -b develop 
-## 执行cd robot_dev_config，使用 git tag --list 命令查看可用的发布版本
-## 使用 git reset --hard [tag号] 命令指定发布版本。详细说明参考本页面 编译指定版本tros.b 内容
-## 拉取代码
-vcs-import src < ./robot_dev_config/ros2_release.repos 
-```
-
-整个工程目录结构如下
+## Obtain the configuration file
+git clone https://github.com/HorizonRDK/robot_dev_config.git -b develop
+## Execute cd robot_dev_config and use the "git tag --list" command to view the available release versions
+## Use the "git reset --hard [tag number]" command to specify the release version. For detailed instructions, refer to the "Compile Specific Version tros.b" section on this page
+## Pull the source code
+vcs-import src < ./robot_dev_config/ros2_release.repos
+```The directory structure of the entire project is as follows:
 
 ```text
 ├── cc_ws
@@ -63,58 +58,58 @@ vcs-import src < ./robot_dev_config/ros2_release.repos
 │       └── src
 ```
 
-其中`tros_ws/robot_dev_config`路径包含代码拉取、编译、打包等功能所需要的配置、脚本文件；`tros_ws/src`路径存放拉取的代码；`sysroot_docker`路径包含交叉编译依赖的头文件和库，和地平线RDK的`/`目录对应。例如媒体库在`sysroot_docker`中的路径为`sysroot_docker/usr/lib/hbmedia/`，在地平线RDK中的路径为`/usr/lib/hbmedia/`。
+The `tros_ws/robot_dev_config` path contains the configuration and script files needed for code fetching, compilation, and packaging. The `tros_ws/src` path stores the fetched code. The `sysroot_docker` path contains the header files and libraries required for cross-compilation, corresponding to the `root` directory of the Horizon RDK. For example, the path for the media library in `sysroot_docker` is `sysroot_docker/usr/lib/hbmedia/`, while the path in the Horizon RDK is `/usr/lib/hbmedia/`.
 
-编译时，在`robot_dev_config/aarch64_toolchainfile.cmake`编译脚本中通过`CMAKE_SYSROOT`宏指定`sysroot_docker`的安装路径。
+During compilation, the installation path of `sysroot_docker` is specified through the `CMAKE_SYSROOT` macro in the `robot_dev_config/aarch64_toolchainfile.cmake` compilation script.
 
-#### 3 交叉编译
+#### 3 Cross-Compilation
 
-该部分操作均在开发机的docker内完成。
+All of these operations are performed inside a docker on the development machine.
 
 ```shell
-## 使用build.sh编译X3版本tros.b
+## Compile tros.b version X3 using build.sh
 bash ./robot_dev_config/build.sh -p X3
 
-## 使用build.sh编译RDK Ultra版本tros.b
+## Compile tros.b version RDK Ultra using build.sh
 bash ./robot_dev_config/build.sh -p Rdkultra
 ```
 
-编译成功后会提示总计N packages编译通过。
+After successful compilation, a message will prompt: N packages compiled and passed.
 
-若使用minimal_build.sh进行最小化编译，还可通过执行./minimal_deploy.sh -d “install_path”，进一步压缩部署包大小。
+If using minimal_build.sh for minimal compilation, you can further compress the deployment package size by executing `./minimal_deploy.sh -d "install_path"`.
 
-### 安装tros.b
+### Install tros.b
 
-将编译生成的install目录拷贝至地平线RDK中并重命名为tros，这里我们将部署包放在/opt/tros目录下与deb安装目录保持一致
+Copy the compiled install directory to the Horizon RDK and rename it as tros. Here, we place the deployment package in the /opt/tros directory to be consistent with the deb installation directory.
 
-### 编译指定版本tros.b
+### Compile a specific version of tros.b
 
-在本章节**编译tros.b**小节第2步**获取tros.b源码**中，默认是获取的最新版本tros.b源码。如果需要获取某个指定发布版本源码，该步骤需要做如下修改
+In the section **Compile tros.b**, in the step 2 **Get tros.b source code**, the default is to fetch the latest version of tros.b source code. If you need to get a specific release version of the source code, you need to make the following modifications:
 
 ```bash
-## 获取配置文件
+## Get the configuration file
 git clone https://github.com/HorizonRDK/robot_dev_config.git -b develop 
 cd robot_dev_config
-## 查看可用的发布版本
+## View available release versions
 git tag --list
-## 切换至指定版本号，这里以tros.b 2.0.0为例
-git reset --hard tros_2.0.0
+## Switch to the specified version number, here we take tros.b 2.0.0 as an example
+```git reset --hard tros_2.0.0
 cd ..
-## 拉取代码
+## Pull code
 vcs-import src < ./robot_dev_config/ros2_release.repos
 ```
 
-## X86平台
+## X86 Platform
 
-### 系统要求
+### System Requirements
 
-必须为Ubuntu 20.04 64位系统，也可使用X3平台交叉编译docker镜像，但编译和运行必须都在docker中进行
+Required: Ubuntu 20.04 64-bit system. Alternatively, you can use X3 platform cross-compiling Docker images, but both compilation and execution must be performed within Docker.
 
-### 系统设置
+### System Configuration
 
-#### 设置local
+#### Set local
 
-确保语言环境支持 UTF-8
+Ensure that the language environment supports UTF-8.
 
 ```shell
 locale  # check for UTF-8
@@ -127,35 +122,33 @@ export LANG=en_US.UTF-8
 locale  # verify settings
 ```
 
-#### 添加apt源
+#### Add apt sources
 
 ```shell
-# 首先确保已启用 Ubuntu Universe
+# First, make sure Ubuntu Universe is enabled
 sudo apt install software-properties-common
 sudo add-apt-repository universe
 
 sudo apt update && sudo apt install curl
 
-# 添加ROS2官方源
+# Add ROS2 official source
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
-# 添加tros.b官方源
+# Add tros.b official source
 sudo curl -sSL http://sunrise.horizon.cc/keys/sunrise.gpg -o /usr/share/keyrings/sunrise.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sunrise.gpg] http://sunrise.horizon.cc/ubuntu-rdk-sim focal main" | sudo    tee /etc/apt/sources.list.d/sunrise.list > /dev/null
 ```
 
-#### 安装ROS工具包
+#### Install ROS tool packages
 
-```shell
-sudo apt update && sudo apt install -y \
+```shellsudo apt update && sudo apt install -y \
   libbullet-dev \
   python3-pip \
   python3-pytest-cov \
   ros-dev-tools
-```
 
-### 获取tros.b源码
+### Obtain tros.b Source Code
 
 ```shell
 git config --global credential.helper store
@@ -167,9 +160,9 @@ git clone https://github.com/HorizonRDK/robot_dev_config.git -b develop
 vcs-import src < ./robot_dev_config/ros2_release.repos
 ```
 
-### 安装依赖项
+### Install Dependencies
 
-安装源码编译依赖的包
+Install the necessary packages for source code compilation
 
 ```shell
 # install some pip packages needed for testing
@@ -197,8 +190,7 @@ sudo apt install --no-install-recommends -y \
   libcunit1-dev
 
 # install tros.b basic models
-sudo apt install --no-install-recommends -y \
-  hobot-models-basic
+sudo apt install --no-install-recommends -y \hobot-models-basic
 
 # install other packages dependencies
 sudo apt install --no-install-recommends -y \
@@ -247,8 +239,7 @@ sudo apt install --no-install-recommends -y \
   python3-mypy \
   default-jdk \
   libcunit1-dev \
-  libopencv-dev \
-  python3-ifcfg \
+  libopencv-dev \python3-ifcfg \
   python3-matplotlib \
   graphviz \
   uncrustify \
@@ -269,29 +260,28 @@ sudo apt install --no-install-recommends -y \
   libboost-python-dev \
   python3-opencv \
   libboost-python1.71.0
-```
 
-### 编译
+### Compilation
 
 ```shell
-# 使用build.sh编译
+# Compile using build.sh
 bash ./robot_dev_config/build.sh -p X86
 ```
 
-编译成功后会提示总计N packages编译通过。
+After successful compilation, there will be an output showing N packages compiled.
 
-### 安装tros.b
+### Install tros.b
 
-将编译生成的install目录拷贝至/opt目录下并重命名为tros，与deb安装目录保持一致
+Copy the install directory generated during compilation to /opt directory and rename it as tros, in accordance with the deb installation directory.
 
-## 常见问题
+## Frequently Asked Questions
 
-Q1： 如何判断VCS是否成功拉取代码
+Q1: How to determine if VCS successfully pulled the code?
 
-A1：如下图所示，vcs import过程中打印.表示成功拉取repo，如果打印E表示该repo拉取失败可以通过执行后的log看到具体失败的repo，碰到这种情况可以尝试删除src里面的内容重新vcs import或者手动拉取失败的repo.
+A1: As shown in the image below, during the vcs import process, a "." indicates a successful repo pull, and an "E" indicates a failed repo pull. Specific failed repos can be seen in the log after execution. If this happens, you can try deleting the contents in the src directory and re-run vcs import or manually pull the failed repos.
 
 ![vcs_import](./image/cross_compile/vcs_import_error.png "vcs_import")
 
-Q2：条件受限无法从github拉取代码
+Q2: Limited conditions prevent code retrieval from GitHub
 
-A2：可以直接在[TogetheROS文件服务器](http://sunrise.horizon.cc/TogetheROS/source_code/)中选择下载需要的版本代码。例如`tros_2.0.0_source_code.tar.gz`文件对应于tros.b 2.0.0版本。
+A2: You can directly download the desired version of the code from the [TogetheROS File Server](http://sunrise.horizon.cc/TogetheROS/source_code/). For example, the `tros_2.0.0_source_code.tar.gz` file corresponds to version 2.0.0 of tros.b.

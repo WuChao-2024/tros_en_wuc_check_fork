@@ -4,28 +4,27 @@ sidebar_position: 2
 
 # 4.2 Navigation2
 
-## 功能介绍
+## Introduction
 
-Nav2（Navigation2）是ROS2中自带的导航框架，旨在寻找一种安全的方式让移动机器人从A点移动到B点。Nav2也可以应用于其他机器人导航应用，例如动态点跟踪，在这个过程中需要完成动态路径规划、计算电机速度、避免障碍等。
+Nav2 (Navigation2) is a built-in navigation framework in ROS2, aimed at finding a safe way for a mobile robot to move from point A to point B. Nav2 can also be applied to other robot navigation applications, such as dynamic point tracking, which requires dynamic path planning, motor speed calculation, and obstacle avoidance.
 
-[SLAM建图](./slam)介绍了如何运行SLAM算法进行建图，本章节介绍如何基于建立的地图使用Nav2进行导航。同样使用Gazebo在PC端创建虚拟环境和小车，使用Rviz2设置导航目的地，地平线RDK运行Nav2程序导航。
+[SLAM Mapping](./slam) explains how to run SLAM algorithms for mapping. This section introduces how to use Nav2 for navigation based on the created map. Similarly, use Gazebo on the PC to create a virtual environment and a car, use Rviz2 to set the navigation destination, and run the Nav2 program for navigation using the Horizon RDK.
 
+## Supported Platforms
 
-## 支持平台
+| Platform                | Execution      | Example Functionality             |
+| ----------------------- | -------------- | --------------------------------- |
+| RDK X3, RDK X3 Module    | Ubuntu 20.04   | Start the simulation environment on the PC and start the navigation function on the Horizon RDK, and finally display the navigation effect through Rviz2 |
 
-| 平台    | 运行方式     | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | PC端启动仿真环境，并在地平线RDK启动导航功能，最后通过Rviz2展示导航效果 |
+## Prerequisites
 
-## 准备工作
+### Horizon RDK Platform
 
-### 地平线RDK平台
+1. The Horizon RDK has been burned with the Ubuntu 20.04 image provided by Horizon.
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04镜像。
+2. The Horizon RDK has successfully installed tros.b.
 
-2. 地平线RDK已成功安装tros.b。
-
-3. tros.b成功安装后，安装Nav2。
+3. After tros.b is successfully installed, install Nav2.
 
    ```shell
    sudo apt update 
@@ -33,28 +32,25 @@ Nav2（Navigation2）是ROS2中自带的导航框架，旨在寻找一种安全�
    sudo apt install ros-foxy-nav2-bringup
    ```
 
-4. 和地平线RDK在同一网段的PC，PC已安装Ubuntu 20.04系统、ROS2 Foxy桌面版和仿真环境Gazebo，
-   数据可视化工具Rviz2。
+4. The PC on the same network segment as the Horizon RDK has installed Ubuntu 20.04 system, ROS2 Foxy desktop version, simulation environment Gazebo, and data visualization tool Rviz2.
 
-    ROS2 Foxy安装参考：https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
+   Reference for ROS2 Foxy installation: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
-    PC的ROS2安装成功后安装Gazebo和Turtlebot3相关的功能包以及navigation2，安装方法为：
+   After successful installation of ROS2 Foxy on the PC, install the Gazebo and Turtlebot3 related packages as well as navigation2, using the following commands:
 
-    ```shell
+   ```shell
    sudo apt install ros-foxy-gazebo-*
    sudo apt install ros-foxy-turtlebot3*
    
    sudo apt install ros-foxy-navigation2
    sudo apt install ros-foxy-nav2-bringup
-    ```
+   ```## User Guide
 
-## 使用介绍
+### Horizon RDK Platform
 
-### 地平线RDK平台
+This section describes how to set up a simulation environment on the PC side, how to set the navigation destination, and how to run the navigation function with Horizon RDK and view the navigation result.
 
-本章节介绍如何在PC端搭建仿真环境，以及进行导航目的地设置，地平线RDK运行导航功能，并查看导航效果。
-
-1. **PC端**启动gazebo仿真环境
+1. Start the gazebo simulation environment on the **PC side**.
 
    ```shell
    source /opt/ros/foxy/setup.bash
@@ -62,11 +58,11 @@ Nav2（Navigation2）是ROS2中自带的导航框架，旨在寻找一种安全�
    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
    ```
 
-   仿真环境如下图所示：
+   The simulation environment is shown in the following image:
 
    ![](./image/nav2/gazebo.png)
 
-2. **地平线RDK**启动导航功能
+2. Start the navigation function on the **Horizon RDK**.
 
    ```shell
    source /opt/tros/setup.bash
@@ -74,37 +70,37 @@ Nav2（Navigation2）是ROS2中自带的导航框架，旨在寻找一种安全�
    ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True map:=/opt/ros/foxy/share/nav2_bringup/maps/turtlebot3_world.yaml
    ```
 
-3. **PC端**启动Rviz2工具
+3. Start the Rviz2 tool on the **PC side**.
 
    ```shell
    source /opt/ros/foxy/setup.bash
    ros2 launch nav2_bringup rviz_launch.py
    ```
 
-   Rviz2效果如下图：
+   The Rviz2 interface is shown in the following image:
 
    ![](./image/nav2/rviz.png)
 
-4. 在Rviz2上设置机器人起始位置和方向
+4. Set the initial position and orientation of the robot in Rviz2.
 
-   Rviz2启动后，机器人最初不知道它在哪里。默认情况下，Nav2会等待用户给机器人一个大致的起始位置。查看机器人在Gazebo中的位置，并在地图上找到该位置。通过点击Rviz2中的"2D Pose Estimate" 按钮，然后通过在地图上机器人预估的位置处点击来设置机器人初始位置 。可以通过向前拖动刚才单击的位置来设置机器人起始的移动方向。如下图所示：
+   After Rviz2 is launched, the robot does not know where it is initially. By default, Nav2 waits for the user to provide an approximate initial position for the robot. Refer to the robot's position in Gazebo and find that position on the map. Set the initial position of the robot by clicking the "2D Pose Estimate" button in Rviz2 and then clicking on the estimated position of the robot on the map. The initial movement direction of the robot can be set by dragging the clicked position forward. The process is shown in the following image:
 
    ![](./image/nav2/rviz_init.png)
 
-   一旦设置好了机器人的初始位置，就会完成坐标变换树，同时Nav2将会完全激活并准备就绪。这时就可以看到机器人和点云了。
+   Once the initial position of the robot is set, the coordinate transformation tree will be established and Nav2 will be fully activated and ready. The robot and point cloud can be seen at this time.
 
    ![](./image/nav2/rviz_start.png)
 
-5. Rviz2设置目的地
+5. Set the destination in Rviz2.
 
-   点击 "Navigaton2 Goal" 按钮并选择一个目的地。
+   Click the "Navigation2 Goal" button and select a destination.Here is the translation of the Chinese parts in the content, while preserving the original format and content:
 
    ![](./image/nav2/rviz_goal.png)
 
-   现在就可以看到机器人在移动了。
+   Now you can see the robot is moving.
 
-## 结果分析
+## Result Analysis
 
-导航效果如下图所示：
+The navigation effect is shown in the figure below:
 
 ![](./image/nav2/rviz_nav2.gif)

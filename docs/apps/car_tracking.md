@@ -2,39 +2,39 @@
 sidebar_position: 4
 ---
 
-# 4.4 小车人体跟随
+# 4.4 Car Body Tracking
 
-## 功能介绍
+## Introduction
 
-小车人体跟随App功能为控制机器人跟随人体移动，App由MIPI图像采集、人体检测和跟踪、人体跟随策略、图像编解码、Web展示端组成，流程如下图：
+The Car Body Tracking app is used to control the robot to follow the movement of the human body. The app consists of MIPI image acquisition, body detection and tracking, body tracking strategy, image coding and decoding, and a web display interface. The workflow is shown in the following diagram:
 
 ![](./image/car_tracking/body_tracking_workflow.jpg)
 
-App以PC端Gazebo仿真环境下的虚拟小车举例，发布的控制指令也可以直接用于控制实物小车。
+The app is demonstrated using a virtual car in the PC-side Gazebo simulation environment, but the control commands can also be directly used to control a physical car.
 
-代码仓库：<https://github.com/HorizonRDK/body_tracking>
+Code Repository: <https://github.com/HorizonRDK/body_tracking>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | 启动MIPI/USB摄像头获取图像，并进行人体关键点检测以及人体跟踪，最后通过Gazebo展示跟随效果 |
+| Platform | Operating System | Example Functionality                  |
+| ---------| ---------------- | ------------------------------------- |
+| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04  | Start MIPI/USB camera to capture images, perform body keypoints detection and body tracking, and display the tracking effect in Gazebo |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on Horizon RDK.
 
-3. 地平线RDK已安装MIPI或者USB摄像头。
+3. MIPI or USB camera has been installed on Horizon RDK.
 
-4. 和地平线RDK在同一网段（有线或者连接同一无线网，IP地址前三段需保持一致）的PC，PC端需要安装的环境包括：
+4. The PC used for Horizon RDK should be in the same network segment (either wired or connected to the same wireless network, with the first three parts of the IP address being consistent). The PC should have the following environment installed:
 
-   - Ubuntu 20.04系统
-   - [ROS2 Foxy桌面版](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
-   - Gazebo和Turtlebot3相关的功能包，安装方法：
+   - Ubuntu 20.04 system
+   - [ROS2 Foxy Desktop](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
+   - Gazebo and Turtlebot3 related packages can be installed using the following commands:
 
     ```shell
     sudo apt-get install ros-foxy-gazebo-*
@@ -42,15 +42,13 @@ App以PC端Gazebo仿真环境下的虚拟小车举例，发布的控制指令也
     sudo apt install ros-foxy-turtlebot3-simulations
     ```
 
-## 使用介绍
+## User Guide
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-运行小车人体跟随App后，小车运动控制package选择距离小车前方最近的人体（人体检测框宽度最大）作为跟随对象。当人体距离小车较远时，小车开始前进运动靠近人体，并保持人体在小车正前方。
+After running the Car Body Tracking app, the car motion control package will select the human body closest to the front of the car (with the largest width of the body detection box) as the tracking target. When the human body is far from the car, the car starts to move forward to approach the body and keeps it in front of the car.After the APP is launched, the sensor will publish images and corresponding algorithm results, which can be rendered and displayed on the PC browser. (Enter http://IP:8000 in the browser, where IP is the IP address of the Horizon RDK).
 
-APP启动后可以在PC端浏览器上渲染显示sensor发布的图片和对应的算法结果（浏览器输入http://IP:8000，IP为地平线RDK的IP地址）。
-
-PC端启动仿真环境：
+Launch the simulation environment on the PC side:
 
 ```shell
 source /opt/ros/foxy/setup.bash
@@ -58,49 +56,46 @@ export TURTLEBOT3_MODEL=burger
 ros2 launch turtlebot3_gazebo empty_world.launch.py
 ```
 
-启动成功后，仿真环境中小车效果如下：
+After successful launch, the car effect in the simulation environment is as follows:
 
 ![](./image/car_gesture_control/gazebo.jpeg)
 
 
-**使用mipi摄像头发布图片**
+**Publish images using MIPI camera**
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从TogetheROS的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the configuration file needed for running the example from the installation path of TogetheROS.
 cp -r /opt/tros/lib/mono2d_body_detection/config/ .
 
-# 配置MIPI摄像头
+# Configure the MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch body_tracking body_tracking_without_gesture.launch.py
 ```
 
-**使用USB摄像头发布图片**
+**Publish images using USB camera**
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the configuration file needed for running the example from the installation path of tros.b.
 cp -r /opt/tros/lib/mono2d_body_detection/config/ .
 
-# 配置USB摄像头
+# Configure the USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch body_tracking body_tracking_without_gesture.launch.py
 ```
 
-## 结果分析
+## Result Analysis
 
-在地平线RDK板端运行终端输出如下信息：
-
-```shell
-[body_tracking-7] [WARN] [1653430533.523069034] [ParametersClass]: TrackCfg param are
+The following information is outputted in the terminal when running on the Horizon RDK board.[body_tracking-7] [WARN] [1653430533.523069034] [ParametersClass]: TrackCfg param are
 [body_tracking-7] activate_wakeup_gesture: 0
 [body_tracking-7] track_serial_lost_num_thr: 100
 [body_tracking-7] activate_robot_rotate_thr: 45
@@ -116,8 +111,6 @@ ros2 launch body_tracking body_tracking_without_gesture.launch.py
 [body_tracking-7] [WARN] [1653430535.220268535] [TrackingManager]: Do rotate move, ts sec: 3397, nanosec: 387800000
 [body_tracking-7] [WARN] [1653430535.220408576] [RobotCmdVelNode]: RobotCtl, angular: 0 0 0, linear: 0.3 0 0, pub twist ts: 1653430535220394
 
-```
-
 以上log截取了一段App启动后的输出。启动后先打印相关配置（TrackCfg param）。检测到人体后小车就开始进入跟随状态（tracking_sta值为1），并以0.3m/s的速度前进运动（RobotCtl, angular: 0 0 0, linear: 0.3 0 0）靠近人体。
 
 PC端在终端使用`ros2 topic list`命令可以查询到地平线RDK的topic信息：
@@ -132,8 +125,7 @@ $ ros2 topic list
 /parameter_events
 /rosout
 ```
-
-其中`/image`是地平线RDK发布的从MIPI sensor采集图像后经过JPEG格式编码的图片，`/hobot_mono2d_body_detection`是地平线RDK发布的包含人体检测结果的算法msg，`/cmd_vel`是地平线RDK发布的运动控制指令。
+Among them, `/image` is the image captured by the Horizon RDK from the MIPI sensor and encoded in JPEG format, `/hobot_mono2d_body_detection` is the algorithm message published by the Horizon RDK which contains the human body detection results, and `/cmd_vel` is the motion control command published by the Horizon RDK.
 
 PC端在终端使用`ros2 topic echo /cmd_vel`命令可以查看到地平线RDK发布的运动控制指令：
 
@@ -147,17 +139,16 @@ angular:
   y: 0.0
   z: -0.5
 ---
-linear:
-  x: 0.5
-  y: 0.0
-  z: 0.0
+linear:x: 0.5
+y: 0.0
+z: 0.0
 angular:
-  x: 0.0
-  y: 0.0
-  z: -0.5
+x: 0.0
+y: 0.0
+z: -0.5
 ---
 ```
 
-PC端仿真环境中小车跟随人体运动，仿真小车运动效果如下：
+In the PC simulation environment, the car follows the movement of the human body. The simulated car movement effect is as follows:
 
 ![](./image/car_tracking/tracking.gif)

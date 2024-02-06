@@ -2,55 +2,53 @@
 sidebar_position: 7
 ---
 
-# 4.7 语音追踪控制小车运动
+# 4.7 Voice Tracking Control Car Movement
 
-## 功能介绍
+## Function Introduction
 
-语音追踪控制小车运动功能根据声源定位的DOA角度信息控制机器人转向声源方向，并且控制机器人向前移动。此功能需要搭配地平线机器人操作系统的智能语音模块一起使用。当用户说出智能语音识别模块配置的唤醒词唤醒设备之后，语音追踪控制小车功能会激活，后续用户说出唤醒词或者配置的命令词，智能语音识别模块会输出声源的DOA角度信息，此模块收到DOA角度信息之后会控制消息转向声源方向，并且前进一定距离。
+The voice tracking control car movement function controls the robot to rotate towards the direction of the sound source based on the DOA angle information of the sound source localization, and controls the robot to move forward. This function needs to be used together with the intelligent voice module of the Horizon Robot Operating System. When the user speaks the wake-up word configured by the intelligent voice recognition module to wake up the device, the voice tracking control car function will be activated. After that, when the user speaks the wake-up word or the configured command word, the intelligent voice recognition module will output the DOA angle information of the sound source. After receiving the DOA angle information, this module will control the robot to turn towards the direction of the sound source and move forward a certain distance.
 
-流程如下图：
+The process is as follows:
 
 ![](./image/car_audio_tracking/audio_control.jpg)
 
-App以PC端Gazebo仿真环境下的虚拟小车举例，发布的控制指令也可以直接用于控制实物小车。
+This App uses a virtual car in Gazebo simulation environment on the PC as an example, and the published control instructions can also be directly used to control a physical car.
 
-智能语音功能输出的声源定位DOA角度信息，单位为角度，支持线形和环形两种类型麦克风阵列，其中线形麦克风阵列角度范围为0度~180度，环形麦克风阵列角度范围为0度~360度。麦克风角度的相对位置关系与麦克风的安装位置强相关，实际角度示意图如下：
+The DOA angle information of the sound source localization output by the intelligent voice function is in units of degrees, and supports two types of microphone arrays: linear and circular. The angle range of the linear microphone array is 0 degrees to 180 degrees, and the angle range of the circular microphone array is 0 degrees to 360 degrees. The relative positional relationship between the microphone angles is strongly related to the installation position of the microphones. The actual angle diagram is as follows:
 
-线形麦克风：
+Linear microphone array:
 
 ![](./image/car_audio_tracking/doa_line.jpg)
 
-环形麦克风：
+Circular microphone array:
 
 ![](./image/car_audio_tracking/doa_circle.jpg)
 
-代码仓库：<https://github.com/HorizonRDK/audio_tracking.git>
+Code repository: <https://github.com/HorizonRDK/audio_tracking.git>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3| Ubuntu 20.04 | 启动智能语音模块解析语音信息并进行语音追踪通过Gazebo展示追踪效果 |
+| Platform | Operating Method | Example Function          |
+| -------- | ---------------- | ------------------------- |
+| RDK X3   | Ubuntu 20.04     | Start intelligent voice module, parse voice information, perform voice tracking, and display tracking results in Gazebo |
 
-**注意：仅支持RDK X3，RDK X3 Module暂不支持。**
+**Note: Only supports RDK X3, RDK X3 Module is not supported for now.**
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. The Horizon RDK has been burned with the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-3. 地平线RDK已成功安装智能语音算法包，安装命令：`apt update; apt install tros-hobot-audio`。
+3. The intelligent voice algorithm package has been successfully installed on the Horizon RDK. Install command: `apt update; apt install tros-hobot-audio`.
 
-4. 地平线RDK已成功接好适配的音频板（可参考[智能语音章节](../boxs/box_adv#智能语音)）。
+4. The compatible audio board has been successfully connected to the Horizon RDK (refer to the [Intelligent Voice section](../boxs/box_adv#智能语音) for details).
 
-5. 和地平线RDK在同一网段（有线或者连接同一无线网，IP地址前三段需保持一致）的PC，PC端需要安装的环境包括：
-
-   - Ubuntu 20.04系统
-   - [ROS2 Foxy桌面版](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
-   - Gazebo和Turtlebot3相关的功能包，安装方法：
+5. The PC that is in the same network segment as the Horizon RDK (either wired or connected to the same wireless network) needs to have the following environment packages installed:- Ubuntu 20.04 system
+   - [ROS2 Foxy Desktop Edition](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
+   - Installation method for Gazebo and Turtlebot3 related packages:
 
      ```shell
      sudo apt-get install ros-foxy-gazebo-*
@@ -58,13 +56,13 @@ App以PC端Gazebo仿真环境下的虚拟小车举例，发布的控制指令也
      sudo apt install ros-foxy-turtlebot3-simulations
      ```
 
-## 使用介绍
+## User Guide
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-运行语音追踪功能后，语音追踪控制模块会接收从智能语音功能模块发布的智能语音消息结果，并且解析消息，根据消息中的唤醒事件以及DOA角度信息发布控制小车转向某个方向特定角度的指令，当小车转向特定角度之后，继续控制小车前进一定距离（此模块默认控制小车前进0.2米的距离）。
+After running the voice tracking function, the voice tracking control module will receive the voice message results published by the intelligent voice function module, and parse the message. Based on the wake-up event and DOA angle information in the message, the control module will publish commands to the car to turn to a specific angle. After the car turns to the specific angle, the control module will continue to control the car to move forward a certain distance (by default, the module controls the car to move forward by 0.2 meters).
 
-PC端启动仿真环境：
+Start the simulation environment on the PC:
 
 ```shell
 source /opt/ros/foxy/setup.bash
@@ -72,36 +70,34 @@ export TURTLEBOT3_MODEL=burger
 ros2 launch turtlebot3_gazebo empty_world.launch.py
 ```
 
-启动成功后，仿真环境中小车效果如下：
+After successful startup, the car in the simulation environment will appear as follows:
 
 ![](./image/car_audio_tracking/gazebo.jpeg)
 
-地平线RDK平台启动程序：
+Startup program for the Horizon RDK platform:
 
-1. 拷贝音频配置文件和加载音频驱动
+1. Copy the audio configuration file and load the audio driver
 
     ```shell
-    # 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+    # Copy the configuration file required for running the example from the installation path of tros.b.
     cp -r /opt/tros/lib/hobot_audio/config/ .
     ```
 
-2. 确认麦克风设备
+2. Confirm the microphone device
 
-    麦克风设备号通过配置文件 *config/audio_config.json* 中 `micphone_name` 字段设置，默认为"hw:0,0"，表示音频设备Card0 Device0，设备号可通过命令 `ls /dev/snd`  查看如："pcmC0D1c"；最后字母c表示capture设备，C0表示Card0，D1表示Device1，修改参数为"hw:0,1"。
+    The microphone device number is set through the `microphone_name` field in the configuration file *config/audio_config.json*, and the default value is "hw:0,0", which indicates audio device Card0 Device0. The device number can be checked with the command `ls /dev/snd` such as: "pcmC0D1c"; the letter `c` indicates a capture device, `C0` indicates Card0, and `D1` indicates Device1. Modify the parameter to "hw:0,1".
 
-3. 启动程序
+3. Start the program
 
     ```shell
-    # 配置tros.b环境
+    # Configure the tros.b environment
     source /opt/tros/setup.bash
 
-    # 启动launch文件，并指定小车正前方对应的语音DOA角度，以90为例
+    # Start the launch file and specify the voice DOA angle corresponding to the front of the car, taking 90 as an example
     ros2 launch audio_tracking audio_tracking.launch.py car_front_audio_angle:=90
-    ```
+    ```## Result Analysis
 
-## 结果分析
-
-在地平线RDK运行终端输出如下信息：
+The following information is the output of the Horizon RDK running on the terminal:
 
 ```text
 
@@ -110,12 +106,12 @@ ros2 launch turtlebot3_gazebo empty_world.launch.py
 ============================================
         audio tracking usage
 
-Wake up device is "地平线你好".
-Audio control commnad word definitions are:
-        "向前走"
-        "向后退"
-        "向右转"
-        "向左转" 
+Wake up device is "Horizon Hello".
+Audio control command word definitions are:
+        "Go forward"
+        "Go backward"
+        "Turn right"
+        "Turn left" 
 When you say the wake word, the car turns toward you 
 Let's start the experience
 ============================================
@@ -145,19 +141,15 @@ rotate_step: 0.348
 [WARN] [1663149823.377099758] [audio_tracking]: cancel move
 ```
 
-以上log截取了一段音频控制pkg启动后的输出。log内容显示，智能语音识别模块配置的设备唤醒词是“地平线你好”，语音追踪控制模块接收到唤醒事件之后接收到DOA角度信息，如log上面显示DOA是80度，此时语音追踪控制模块发布控制小车左转20度，转动之后控制小车前进，后面控制小车停止运动。
+The above logs capture a segment of the output after the audio control package is launched. The log shows that the wake-up word configured for the intelligent voice recognition module is "Horizon Hello". After receiving the wake-up event, the audio tracking control module receives DOA angle information. As shown in the log above, the DOA is 80 degrees. At this time, the audio tracking control module publishes a command to make the car turn left by 20 degrees. After the rotation, the car moves forward, and later the car stops moving.
 
-PC端在终端使用`ros2 topic list`命令可以查询到地平线RDK的topic信息：
-
-```shell
-$ ros2 topic list
+On the PC side, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK.$ ros2 topic list
 /audio_smart
 /cmd_vel
-```
 
-其中`/audio_smart`是X3发布的包含智能语音结果的算法感知msg，`/cmd_vel`是地平线RDK发布的运动控制指令。
+The topic "/audio_smart" is the algorithm perception message published by X3, which contains intelligent voice results. The topic "/cmd_vel" is the motion control command published by Horizon RDK.
 
-PC端在终端使用`ros2 topic echo /cmd_vel`命令可以查看到是地平线RDK发布的运动控制指令：
+On the PC side, the command "ros2 topic echo /cmd_vel" can be used in the terminal to view the motion control command published by Horizon RDK:
 
 ```text
 linear:
@@ -198,7 +190,7 @@ angular:
 ---
 linear:
   x: 0.0
-  y: 0.30000001192092896
+```y: 0.30000001192092896
   z: 0.0
 angular:
   x: 0.0
@@ -207,8 +199,8 @@ angular:
 ---
 ```
 
-PC端仿真环境中语音追踪控制小车运动，效果如下：
+The PC simulation environment controls the movement of the car based on voice tracking. The effect is shown as follows:
 
 ![](./image/car_audio_tracking/audio_tracking.gif)
 
-上图中左边为仿真小车根据声源定位角度转动，右边为程序输出的log，log中包含有DOA角度信息。
+In the image above, the simulated car on the left rotates according to the angle of the sound source, and the log outputted by the program is on the right. The log contains the DOA angle information.

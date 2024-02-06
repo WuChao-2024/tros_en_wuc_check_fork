@@ -2,89 +2,86 @@
 sidebar_position: 3
 ---
 
-# 4.3 姿态检测
+# 4.3 Pose Detection
 
-## 功能介绍
+## Function Introduction
 
-姿态检测App通过订阅摄像头发布的图片消息，检测出人体关键点后分析人体姿态，并发布姿态事件。
+The Pose Detection App subscribes to the image messages published by the camera, detects key points of the human body, analyzes the body posture, and publishes pose events.
 
-姿态事件使用自定义算法msg发布出去, 用户可以订阅此topic的msg用于应用开发。
+Pose events are published using a custom algorithm message. Users can subscribe to the msg of this topic for application development.
 
-目前只支持跌倒检测功能，检测人体是否跌倒。
+Currently, only fall detection function is supported, which detects whether a person falls.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_falldown_detection>
+Code Repository: <https://github.com/HorizonRDK/hobot_falldown_detection>
 
-## 支持平台
+## Supported Platforms
 
-| 平台     | 运行方式     | 示例功能                       |
+| Platform     | Operation     | Example Function                       |
 | -------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK UltraUbuntu 20.04 | 启动MIPI/USB摄像头获取图像，并进行人体关键点检测以及姿态检测，最后通过Web展示图像和算法效果，发布姿态事件 |
+| RDK X3, RDK X3 Module, RDK UltraUbuntu 20.04 | Start MIPI/USB camera to capture images, perform human body key point detection and pose detection, and finally display images and algorithm effects through web, and publish pose events |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04镜像。
+1. Horizon RDK has burned the Ubuntu 20.04 image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. The TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-3. 确认PC机跟地平线RDK处于同一网段，IP地址前三段需保持一致
+3. Make sure the PC is in the same network segment as the Horizon RDK, and the IP address of the first three segments should be consistent.
 
-4. 地平线RDK已安装MIPI或者USB摄像头。
+4. The Horizon RDK has installed MIPI or USB cameras.
 
-## 使用介绍
+## Usage Introduction
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-姿态检测pkg订阅人体关键点检测pkg发布的数据，经过算法推理后发布算法msg，通过websocket package实现在PC端浏览器上渲染显示发布的图片和对应的算法结果。
+The pose detection package subscribes to the data published by the human body key point detection package, publishes algorithm messages after algorithm inference, and uses the websocket package to render and display the published images and corresponding algorithm results on the PC browser.
 
-友情提示：体验App时，将摄像头旋转90度，模拟人跌倒的效果。
+Friendly reminder: When experiencing the App, rotate the camera by 90 degrees to simulate the effect of a person falling.
 
-**使用mipi摄像头发布图片**
+**Publish images using MIPI camera**
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
-cp -r /opt/tros/lib/mono2d_body_detection/config/ .
-
-# 配置MIPI摄像头
+# Copy the required configuration files from the installation path of tros.b
+cp -r /opt/tros/lib/mono2d_body_detection/config/ .# Configure MIPI camera 
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch hobot_falldown_detection hobot_falldown_detection.launch.py
-```
 
-**使用USB摄像头发布图片**
+**Publish images using USB camera**
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the necessary configuration files from the installation path of tros.b for running the example.
 cp -r /opt/tros/lib/mono2d_body_detection/config/ .
 
-# 配置USB摄像头
+# Configure the USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch hobot_falldown_detection hobot_falldown_detection.launch.py
 ```
 
-运行命令中的参数说明，参考hobot_falldown_detection package源码中的README.md。
+For the explanation of the parameters in the command, please refer to the README.md in the hobot_falldown_detection package source code.
 
-## 结果分析
+## Result analysis
 
-启动姿态检测pkg后，在运行终端输出如下信息：
+After starting the pose detection package, the following information will be displayed in the terminal:
 
 ```shell
 [hobot_falldown_detection-4] [INFO] [1660271558.250055538] [body_kps_Subscriber]: receive targetType: personpointType: body_kps
 [hobot_falldown_detection-4] [INFO] [1660271558.250598996] [fall_down_publisher]: track_id: 1 is fall down
 ```
 
-输出log显示，订阅到了body_kps数据，并发布了姿态事件。
+The output log shows that the body_kps data is subscribed and the pose event is published.
 
-在PC端的浏览器输入<http://IP:8000>，人体检测框，关键点和姿态检测结果在web端展示渲染效果（IP为地平线RDK的IP地址）：
+In the PC's browser, enter `<http://IP:8000>`, and the body detection frame, keypoints, and pose detection results will be displayed in the web interface (IP refers to the IP address of the Horizon RDK):
 
 ![](./image/fall_detection/falldown.jpg)

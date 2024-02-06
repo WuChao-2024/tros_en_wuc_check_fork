@@ -1,104 +1,100 @@
 ---
 sidebar_position: 3
 ---
+# 2.3 Image Codec
 
-# 2.3 图像编解码
+## Introduction
 
-## 功能介绍
+The image codec functionality is similar to the ROS image_transport package. The Horizon RDK utilizes hardware acceleration to convert between the MJPEG/H264/H265 and BGR8/RGB8/NV12 formats, which significantly reduces CPU usage while improving conversion efficiency. On the X86 platform, only the conversion between MJPEG and BGR8/RGB8/NV12 formats is supported.
 
-图像编解码功能与ROS image_transport package类似，地平线RDK采用硬件单元加速MJPEG/H264/H265与BGR8/RGB8/NV12格式之间转换，可以大幅降低CPU占用的同时提升格式转换效率，X86平台仅支持MJPEG与BGR8/RGB8/NV12格式之间的转换。
+Code repository: <https://github.com/HorizonRDK/hobot_codec>
 
-代码仓库：<https://github.com/HorizonRDK/hobot_codec>
+## Supported Platforms
 
-## 支持平台
+| Platform                       | Operating System | Example Functionality                                |
+| ------------------------------ | ---------------- | --------------------------------------------------- |
+| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04     | Start MIPI camera to capture images, encode them, and display them via Web |
+| X86                            | Ubuntu 20.04     | Publish YUV images using an image publishing tool, encode them, and display them via Web |
 
-| 平台    | 运行方式     | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | 启动MIPI摄像头获取图像，然后进行图像编码，最后通过Web展示 |
-| X86     | Ubuntu 20.04 | 使用图像发布工具发布YUV图像，然后进行图像编码，最后通过Web展示 |
+***RDK Ultra does not support H.264 video encoding.***
 
-***RDK Ultra不支持H.264视频编码格式。***
+## Preparation
 
-## 准备工作
+### Horizon RDK Platform
 
-### 地平线RDK平台
+1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+3. The Horizon RDK has been connected to a camera, such as the F37 or other MIPI cameras.
 
-3. 地平线RDK已连接摄像头F37或其他MIPI摄像头。
+### X86 Platform
 
-### X86平台
+1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
-1. X86环境已配置Ubuntu 20.04系统镜像。
+2. The X86 environment has been installed with the X86 version of tros.b.
 
-2. X86环境已安装X86版本tros.b。
+## Usage
 
-## 使用方式
+Taking JPEG encoding as an example, this section explains how to obtain NV12 format image data from a camera or image publishing tool, compress and encode it as JPEG, and preview the image on a PC via a web interface.
 
-下面以 JPEG 编码为例，介绍从摄像头或图像发布工具获取NV12格式图片数据，经过JPEG压缩编码后，实现在PC的Web端预览图片。
+1. Obtain YUV data and start JPEG encoding:
 
-1. 获取YUV数据，并启动JPGE编码：
+    **Horizon RDK Platform**
 
-    **地平线RDK平台**
+    Log in to the Horizon RDK via SSH and use `mipi_cam` as the data source. Configure `hobot_codec` to input NV12 format and output JPEG format. Modify `mipi_cam` to the actual sensor model being used.
 
-    通过SSH登录地平线RDK，使用mipi_cam作为数据来源，配置hobot_codec输入为NV12格式，输出为JPEG格式，可修改mipi_cam为实际使用的sensor型号。
-
-    a. 启动mipi_cam
-
-    ```shell
-    source /opt/tros/setup.bash
-
-    ros2 launch mipi_cam mipi_cam.launch.py mipi_video_device:=F37
-    ```
-
-    b. 启动hobot_codec编码
+    a. Start `mipi_cam`
 
     ```shell
-    source /opt/tros/setup.bash
+source /opt/tros/setup.bash
 
-    ros2 launch hobot_codec hobot_codec.launch.py codec_in_mode:=shared_mem codec_in_format:=nv12 codec_out_mode:=ros codec_out_format:=jpeg codec_sub_topic:=/hbmem_img codec_pub_topic:=/image_jpeg
-    ```
+ros2 launch mipi_cam mipi_cam.launch.py mipi_video_device:=F37
+```
 
-    **X86平台**
+b. Launch the hobot_codec encoder
 
-    a. 启动图像发布节点
+```shell
+source /opt/tros/setup.bash
 
-    ```shell
-    // 配置 tros.b 环境：
-    source /opt/tros/setup.bash
+ros2 launch hobot_codec hobot_codec.launch.py codec_in_mode:=shared_mem codec_in_format:=nv12 codec_out_mode:=ros codec_out_format:=jpeg codec_sub_topic:=/hbmem_img codec_pub_topic:=/image_jpeg
+```
 
-    //从tros.b的安装路径中拷贝出运行示例需要的图片文件
-    cp -r /opt/tros/lib/hobot_image_publisher/config/ .
+**X86 platform**
 
-    // 启动图像发布节点
-    
-    ros2 launch hobot_image_publisher hobot_image_publisher.launch.py publish_output_image_w:=960 publish_output_image_h:=544 publish_message_topic_name:=/hbmem_img publish_fps:=20 
-    ```
+a. Launch the image publisher node
 
-    b. 启动JPEG图片编码&发布pkg
+```shell
+// Configure the tros.b environment:
+source /opt/tros/setup.bash
 
-    ```shell
-    source /opt/tros/setup.bash
+// Copy the required image files for demonstration from the installation path of tros.b
+cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 
-    ros2 launch hobot_codec hobot_codec.launch.py codec_in_mode:=shared_mem codec_in_format:=nv12 codec_out_mode:=ros codec_out_format:=jpeg codec_sub_topic:=/hbmem_img codec_pub_topic:=/image_jpeg
-    ```
+// Launch the image publisher node
+ros2 launch hobot_image_publisher hobot_image_publisher.launch.py publish_output_image_w:=960 publish_output_image_h:=544 publish_message_topic_name:=/hbmem_img publish_fps:=20 
+```
 
-2. Web端查看JPEG编码图像，另起一个终端：
+b. Launch the encoder & publisher package for JPEG images
 
-    ```shell
-    source /opt/tros/setup.bash
-    ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
-    ```
+```shell
+source /opt/tros/setup.bash
 
-3. PC打开浏览器（chrome/firefox/edge）输入<http://IP:8000>，IP为地平线RDK/X86设备IP地址，点击左上方Web端展示即可查看JPEG编码的实时画面
+ros2 launch hobot_codec hobot_codec.launch.py codec_in_mode:=shared_mem codec_in_format:=nv12 codec_out_mode:=ros codec_out_format:=jpeg codec_sub_topic:=/hbmem_img codec_pub_topic:=/image_jpeg
+```
 
-    ![web-f37-codec](./image/hobot_codec/web-f37-codec.png "实时图像")
+2. To view the JPEG encoded images on the web interface, open another terminal:
 
-## 注意事项
+```shell
+source /opt/tros/setup.bash
+ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
+```
 
-如遇到 Hobot codec 节点启动异常，可通过下述步骤进行问题排查：
+3. Open a web browser (Chrome/Firefox/Edge) on your PC and enter <http://IP:8000>. Replace IP with the IP address of the Horizon RDK/X86 device. Click on the Web端展示 (Web Display) at the top left to view the real-time JPEG encoded image.
 
-1. 是否设置 tros.b 环境
-2. 参数是否正确，具体参考Hobot_codec README.md
+ ![web-f37-codec](./image/hobot_codec/web-f37-codec.png "Real-time image")
+
+## Important notes:If you encounter an abnormal startup of the Hobot codec node, you can troubleshoot the problem by following these steps:
+
+1. Check if the tros.b environment is set.
+2. Verify if the parameters are correct, please refer to the Hobot_codec README.md for details.

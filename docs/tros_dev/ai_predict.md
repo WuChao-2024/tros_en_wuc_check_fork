@@ -2,41 +2,37 @@
 sidebar_position: 2
 ---
 
-# 5.2 模型推理
+# 5.2 Model Inference
 
-## 模型推理开发
+## Model Inference Development
 
-### 功能背景
+### Functional Background
 
-`hobot_dnn`是TogetheROS.Bot软件栈中的板端算法推理框架，在地平线地平线RDK上利用BPU处理器实现算法推理功能，基于地平线算法推理框架和ROS2 Node进行二次开发，为机器人应用开发提供更简单易用的模型集成开发接口，包括模型管理、基于模型描述的输入处理及结果解析，以及模型输出内存分配管理等功能。
+`hobot_dnn` is the edge algorithm inference framework in TogetheROS.Bot software stack. It utilizes the BPU processor on Horizon RDK to achieve algorithm inference. Based on the Horizon algorithm inference framework and ROS2 Node, it provides a simpler and easier-to-use model integration development interface for robot application development. This includes model management, model description-based input processing and result parsing, and model output memory allocation management.
 
-通过阅读本章节，用户可以使用地平线提供的模型，在地平线RDK上基于`hobot_dnn`创建并运行一个人体检测的算法Node。借助tros.b提供的组件，订阅摄像头采集&发布的图像，对图像进行算法推理检测出人体框后，使用多目标跟踪（`multi-target tracking`，即`MOT`）算法对检测框进行跟踪和目标编号分配，最终实现在PC端的Web浏览器上实时渲染展示图像、人体框检测和目标跟踪结果。
+By reading this chapter, users can use the models provided by Horizon to create and run a human detection algorithm Node based on `hobot_dnn` on Horizon RDK. With the help of the components provided by tros.b, it subscribes to the images captured and published by the camera, performs algorithm inference to detect human bounding boxes, and uses the Multi-Object Tracking (MOT) algorithm to track and assign target numbers to the detection boxes. Finally, it achieves real-time rendering and display of images, human bounding box detection, and target tracking results in a web browser on a PC.
 
-### 前置条件
+### Prerequisites
 
-1 地平线RDK开发板，并且已安装好相关软件，包括：
+1. Horizon RDK development board with relevant software installed, including:
+   - Ubuntu 20.04 system image provided by Horizon.
+   - tros.b software package.
+   - ROS2 software package build system ament_cmake. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`
+   - ROS2 build tools colcon. Installation command: `pip3 install -U colcon-common-extensions`
 
-- 地平线提供的Ubuntu 20.04系统镜像。
+2. Horizon RDK with F37 or GC4663 camera installed.
 
-- tros.b软件包。
+3. PC that can access Horizon RDK through the network.
 
-- ROS2软件包构建系统ament_cmake。安装命令：`apt update; apt-get install python3-catkin-pkg; pip3 install empy`
-
-- ROS2编译工具colcon。安装命令：`pip3 install -U colcon-common-extensions`
-
-2 地平线RDK已安装F37或者GC4663摄像头。
-
-3 可以通过网络访问地平线RDK的PC。
-
-关于`hobot_dnn`的详细使用说明可以参考`hobot_dnn`代码中的[README.md](https://github.com/HorizonRDK/hobot_dnn/blob/develop/README.md)和[接口说明文档](https://github.com/HorizonRDK/hobot_dnn/blob/develop/dnn_node/docs/API-Manual/API-Manual.md)。hobot_dnn的使用逻辑流程如下：
+For detailed instructions on how to use `hobot_dnn`, please refer to the [README.md](https://github.com/HorizonRDK/hobot_dnn/blob/develop/README.md) and [API documentation](https://github.com/HorizonRDK/hobot_dnn/blob/develop/dnn_node/docs/API-Manual/API-Manual.md) in the `hobot_dnn` code. The workflow of using `hobot_dnn` is as follows:
 
 ![](./image/ai_predict/dnnnode_workflow.jpg)
 
-在不了解`hobot_dnn`使用流程的情况下，用户也可以按照本章节流程使用`hobot_dnn`开发出模型推理示例。
+Without understanding the workflow of using `hobot_dnn`, users can also follow the steps in this chapter to develop a model inference example using `hobot_dnn`.
 
-### 任务内容
+### Task Content
 
-#### 1 创建package
+#### 1. Create package
 
 ```shell
 mkdir -p ~/dev_ws/src
@@ -47,9 +43,7 @@ cd cpp_dnn_demo
 touch src/body_det_demo.cpp
 ```
 
-#### 2 编写示例
-
-查看创建后的工程路径如下：
+#### 2. Write exampleThe created project path can be viewed as follows:
 
 ```shell
 root@ubuntu:~# cd ~
@@ -59,7 +53,7 @@ dev_ws/
     └── cpp_dnn_demo
         ├── CMakeLists.txt
         ├── include
-        │   └── cpp_dnn_demo
+        │   └── cpp_dnn_demo
         ├── package.xml
         └── src
             └── body_det_demo.cpp
@@ -67,9 +61,9 @@ dev_ws/
 5 directories, 3 files
 ```
 
-在地平线RDK上使用vi/vim等工具打开创建的代码源文件`body_det_demo.cpp`：`vi ~/dev_ws/src/cpp_dnn_demo/src/body_det_demo.cpp`
+Open the created source code file `body_det_demo.cpp` using tools like vi/vim on the Horizon RDK: `vi ~/dev_ws/src/cpp_dnn_demo/src/body_det_demo.cpp`
 
-拷贝如下代码到文件中：
+Copy the following code into the file:
 
 ```c++
 #include "dnn_node/dnn_node.h"
@@ -80,99 +74,96 @@ dev_ws/
 #include "hbm_img_msgs/msg/hbm_msg1080_p.hpp"
 #include "hobot_mot/hobot_mot.h"
 
-// 创建算法推理输出数据结构，添加消息头信息成员
+// Create an algorithm inference output data structure and add message header information as a member
 struct FasterRcnnOutput : public hobot::dnn_node::DnnNodeOutput {
   std::shared_ptr<std_msgs::msg::Header> image_msg_header = nullptr;
 };
 
-// 继承DnnNode虚基类，创建算法推理节点
+// Inherit from the DnnNode base class and create an algorithm inference node
 class BodyDetNode : public hobot::dnn_node::DnnNode {
  public:
   BodyDetNode(const std::string &node_name = "body_det",
   const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
 
  protected:
-  // 实现基类的纯虚接口，用于配置Node参数
+  // Implement the pure virtual interface of the base class to configure Node parameters
   int SetNodePara() override;
-  // 实现基类的虚接口，将解析后的模型输出数据封装成ROS Msg后发布
+  // Implement the virtual interface of the base class to encapsulate the parsed model output data into ROS Msg and publish it
   int PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput> &node_output)
     override;
-
- private:
-  // 算法模型输入图片数据的宽和高
+```private:
+  // Width and height of the input image data for the algorithm model
   int model_input_width_ = -1;
   int model_input_height_ = -1;
-  // 人体检测框结果对应的模型输出索引
+  // Model output index corresponding to the body detection box result
   const int32_t box_output_index_ = 1;
-  // 检测框输出索引集合
+  // Collection of detection box output indexes
   const std::vector<int32_t> box_outputs_index_ = {box_output_index_};
 
-  // 图片消息订阅者
+  // Image message subscriber
   rclcpp::SubscriptionHbmem<hbm_img_msgs::msg::HbmMsg1080P>::ConstSharedPtr
       ros_img_subscription_ = nullptr;
-  // 算法推理结果消息发布者
+  // Algorithm inference result message publisher
   rclcpp::Publisher<ai_msgs::msg::PerceptionTargets>::SharedPtr
       msg_publisher_ = nullptr;
-  // 多目标跟踪算法引擎
+  // Multi-target tracking algorithm engine
   std::shared_ptr<HobotMot> hobot_mot_ = nullptr;
 
-  // 图片消息订阅回调
+  // Image message subscription callback
   void FeedImg(const hbm_img_msgs::msg::HbmMsg1080P::ConstSharedPtr msg);
 };
 
 BodyDetNode::BodyDetNode(const std::string & node_name, const rclcpp::NodeOptions & options) :
   hobot::dnn_node::DnnNode(node_name, options) {
-  // Init中使用BodyDetNode子类实现的SetNodePara()方法进行算法推理的初始化
+  // Initialize the algorithm inference using the SetNodePara() method implemented in the BodyDetNode subclass
   if (Init() != 0 ||
     GetModelInputSize(0, model_input_width_, model_input_height_) < 0) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Node init fail!");
     rclcpp::shutdown();
   }
 
-  // 创建消息订阅者，从摄像头节点订阅图像消息
+  // Create a message subscriber to subscribe image messages from the camera node
   ros_img_subscription_ =
           this->create_subscription_hbmem<hbm_img_msgs::msg::HbmMsg1080P>(
           "/hbmem_img", 10, std::bind(&BodyDetNode::FeedImg, this, std::placeholders::_1));
-  // 创建消息发布者，发布算法推理消息
+  // Create a message publisher to publish algorithm inference messages
   msg_publisher_ = this->create_publisher<ai_msgs::msg::PerceptionTargets>(
       "/cpp_dnn_demo", 10);
-  // 创建多目标跟踪（MOT）算法引擎
+  // Create a multi-target tracking (MOT) algorithm engine
   hobot_mot_ = std::make_shared<HobotMot>("config/iou2_method_param.json");
 }
 
 int BodyDetNode::SetNodePara() {
   if (!dnn_node_para_ptr_) return -1;
-  // 指定算法推理使用的模型文件路径和模型名
+  // Specify the model file path and model name to be used for the algorithm inference
   dnn_node_para_ptr_->model_file = "config/multitask_body_kps_960x544.hbm";
   dnn_node_para_ptr_->model_name = "multitask_body_kps_960x544";
   return 0;
-}
-
-void BodyDetNode::FeedImg(const hbm_img_msgs::msg::HbmMsg1080P::ConstSharedPtr img_msg) {
+}void BodyDetNode::FeedImg(const hbm_img_msgs::msg::HbmMsg1080P::ConstSharedPtr img_msg) {
   if (!rclcpp::ok()) {
     return;
   }
 
-  // 对订阅到的图片消息进行验证，本示例只支持处理NV12格式图片数据
+  // Validate the subscribed image message, this example only supports processing NV12 format image data
   if (!img_msg) return;
   if ("nv12" != std::string(reinterpret_cast<const char*>(img_msg->encoding.data()))) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Only support nv12 img encoding!");
     return;
   }
 
-  // 根据模型输入图片分辨率，使用DnnNode中提供的方法创建模型输入数据
+  // Create model input data based on the model input resolution using the methods provided by DnnNode
   auto inputs = std::vector<std::shared_ptr<hobot::dnn_node::DNNInput>>{
     hobot::dnn_node::ImageProc::GetNV12PyramidFromNV12Img(
       reinterpret_cast<const char*>(img_msg->data.data()),
       img_msg->height, img_msg->width, model_input_height_, model_input_width_)};
-      
-  // 创建模型输出数据，填充消息头信息
+  
+  // Create model output data and fill in message header information
   auto dnn_output = std::make_shared<FasterRcnnOutput>();
   dnn_output->image_msg_header = std::make_shared<std_msgs::msg::Header>();
   dnn_output->image_msg_header->set__frame_id(std::to_string(img_msg->index));
   dnn_output->image_msg_header->set__stamp(img_msg->time_stamp);
 
-  // 以异步模式运行推理
+  // Run inference asynchronously
   Run(inputs, dnn_output, nullptr, false);
 }
 
@@ -181,50 +172,49 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     return 0;
   }
   
-  // 验证输出数据的有效性
+  // Validate the output data
   if (node_output->outputs.empty() ||
     static_cast<int32_t>(node_output->outputs.size()) < box_output_index_) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Invalid outputs");
     return -1;
   }
 
-  // 创建解析输出数据
-  // 检测框results的维度等于检测出来的目标类别数
+  // Create parsing output data
+  // Dimension of detection box results is equal to the number of detected object categories
   std::vector<std::shared_ptr<hobot::dnn_node::parser_fasterrcnn::Filter2DResult>>
       results;
-  // 关键点数据
+  // Keypoint data
   std::shared_ptr<hobot::dnn_node::parser_fasterrcnn::LandmarksResult> output_body_kps = nullptr;
 
-  // 使用hobot dnn内置的Parse解析方法，解析算法输出
+  // Use the built-in Parse method in hobot dnn to parse the algorithm output
   if (hobot::dnn_node::parser_fasterrcnn::Parse(node_output, nullptr,
   box_outputs_index_, -1, -1, results, output_body_kps) < 0) {
-    RCLCPP_ERROR(rclcpp::get_logger("dnn_node_sample"),
-                "Parse node_output fail!");
+RCLCPP_ERROR(rclcpp::get_logger("dnn_node_sample"), "Parse node_output fail!");
     return -1;
   }
 
   auto filter2d_result = results.at(box_output_index_);
   if (!filter2d_result) return -1;
 
-  // 将算法推理输出的人体检测框转成MOT算法输入数据类型
+  // Convert the human detection boxes inferred by the algorithm into the MOT algorithm input data type
   std::vector<MotBox> in_box_list;
   for (auto& rect : filter2d_result->boxes) {
     in_box_list.emplace_back(
         MotBox(rect.left, rect.top, rect.right, rect.bottom, rect.conf));
   }
   
-  // 根据消息头计算当前帧的时间戳
+  // Calculate the timestamp of the current frame based on the message header
   auto fasterRcnn_output =
       std::dynamic_pointer_cast<FasterRcnnOutput>(node_output);
   time_t time_stamp =
       fasterRcnn_output->image_msg_header->stamp.sec * 1000 +
       fasterRcnn_output->image_msg_header->stamp.nanosec / 1000 / 1000;
   
-  // 创建MOT算法的输出：带有目标编号的人体检测框和消失的目标编号
+  // Create the output of the MOT algorithm: human detection boxes with target IDs and disappeared target IDs
   std::vector<MotBox> out_box_list;
   std::vector<std::shared_ptr<MotTrackId>> disappeared_ids;
 
-  // 运行多目标跟踪算法
+  // Run the multi-object tracking algorithm
   if (hobot_mot_->DoProcess(in_box_list,
                             out_box_list,
                             disappeared_ids,
@@ -235,20 +225,19 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     return -1;
   }
 
-  // 创建用于发布推理结果的ROS Msg
+  // Create an ROS Msg for publishing the inference results
   ai_msgs::msg::PerceptionTargets::UniquePtr pub_data(
       new ai_msgs::msg::PerceptionTargets());
 
-  // 将消息头填充到ROS Msg
+  // Fill in the message header for the ROS Msg
   pub_data->header.set__stamp(fasterRcnn_output->image_msg_header->stamp);
   pub_data->header.set__frame_id(fasterRcnn_output->image_msg_header->frame_id);
 
-  // 将算法推理输出帧率填充到ROS Msg
+  // Fill in the algorithm inference output frame rate to the ROS Msg
   if (node_output->rt_stat) {
     pub_data->set__fps(round(node_output->rt_stat->output_fps));
-    // 如果算法推理统计有更新，输出算法模型输入和输出的帧率统计
-    if (node_output->rt_stat->fps_updated) {
-      RCLCPP_WARN(rclcpp::get_logger("dnn_demo"),
+    // If the algorithm inference statistics are updated, output the frame rate statistics of the algorithm model input and output
+    if (node_output->rt_stat->fps_updated) {RCLCPP_WARN(rclcpp::get_logger("dnn_demo"),
                   "input fps: %.2f, out fps: %.2f",
                   node_output->rt_stat->input_fps,
                   node_output->rt_stat->output_fps);
@@ -256,11 +245,11 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
   }
 
   for (auto& rect : out_box_list) {
-    // 验证目标跟踪结果的有效性
+    // Validate the effectiveness of the target tracking result
     if (rect.id < 0) {
       continue;
     }
-    // 将目标跟踪结果和检测框填充到ROS Msg
+    // Fill the target tracking result and detection box into ROS Msg
     ai_msgs::msg::Target target;
     target.set__type("person");
     target.set__track_id(rect.id);
@@ -274,7 +263,7 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     pub_data->targets.emplace_back(std::move(target));
   }
 
-  // 将消失的目标填充到ROS Msg
+  // Fill the disappeared targets into ROS Msg
   for (const auto& id_info : disappeared_ids) {
     if (id_info->value < 0 ||
         hobot_mot::DataState::INVALID == id_info->state_) {
@@ -289,7 +278,7 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     pub_data->disappeared_targets.emplace_back(std::move(target));
   }
 
-  // 发布ROS Msg
+  // Publish ROS Msg
   msg_publisher_->publish(std::move(pub_data));
 
   return 0;
@@ -297,50 +286,7 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
 
 int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<BodyDetNode>());
-  rclcpp::shutdown();
-  return 0;
-}
-
-```
-
-
-##### 2.1 Node设计
-
-示例的人体检测算法Node主要包含三部分逻辑独立的功能。
-
-**（1）Node初始化和启动**
-
-配置算法使用的模型信息，创建算法推理消息的发布者和图像消息的订阅者，启动目标跟踪算法引擎。
-
-**（2）订阅消息和算法推理**
-
-在创建图像消息订阅者时，注册了消息回调`FeedImg`，实现图像数据的处理并用于算法模型推理，回调中不等待算法推理完成。
-
-**（3）推理结果的处理和发布**
-
-算法推理完成后，通过注册的回调`PostProcess`输出推理结果，回调中对检测结果进行多目标跟踪算法（`HobotMot`）处理后，发布算法推理结果消息。
-
-Node的设计和流程逻辑如下图：
-
-![](./image/ai_predict/node_architecture.jpg)
-
-
-##### 2.2 代码说明
-
-**添加头文件**
-
-推理框架头文件`dnn_node/dnn_node.h`，用于算法模型管理和推理。
-
-算法模型输入处理头文件`dnn_node/util/image_proc.h`，用于算法模型输入图片处理。
-
-算法模型输出解析方法头文件`dnn_node/util/output_parser/detection/fasterrcnn_output_parser.h`，用于模型推理完成后，从输出地址解析出结构化数据（对于本示例使用的人体检测算法，对应的结构化数据为人体检测框）。
-
-ROS Msg头文件，用于消息的订阅和发布。
-
-MOT算法引擎头文件，用于对检测出的人体框进行目标跟踪。
-
-```c++
+  rclcpp::spin(std::make_shared<BodyDetNode>());```cpp
 #include "dnn_node/dnn_node.h"
 #include "dnn_node/util/image_proc.h"
 #include "dnn_node/util/output_parser/detection/fasterrcnn_output_parser.h"
@@ -348,11 +294,59 @@ MOT算法引擎头文件，用于对检测出的人体框进行目标跟踪。
 #include "ai_msgs/msg/perception_targets.hpp"
 #include "hbm_img_msgs/msg/hbm_msg1080_p.hpp"
 #include "hobot_mot/hobot_mot.h"
+
+rclcpp::shutdown();
+return 0;
+}
+
 ```
 
-**创建算法推理输出数据结构**
 
-继承`hobot_dnn`中的`DnnNodeOutput`基类，添加消息头信息成员，用于表示推理输出对应的图片信息。
+##### 2.1 Node Design
+
+The main body detection algorithm node in the example consists of three logically independent functionalities.
+
+**(1) Node Initialization and Startup**
+
+Configure the model information used by the algorithm, create the publisher for algorithm inference messages and the subscriber for image messages, and start the target tracking algorithm engine.
+
+**(2) Message Subscription and Algorithm Inference**
+
+When creating the subscriber for image messages, a message callback `FeedImg` is registered to process the image data for algorithm model inference. The callback does not wait for the algorithm inference to complete.
+
+**(3) Processing and Publishing of Inference Results**
+
+After the algorithm inference is completed, the inference results are output through the registered callback `PostProcess`. In the callback, the detection results are processed using the multi-object tracking algorithm (`HobotMot`), and the algorithm inference result messages are published.
+
+The design and flow logic of the Node are shown in the following figure:
+
+![](./image/ai_predict/node_architecture.jpg)
+
+##### 2.2 Code Explanation
+
+**Add Header Files**
+
+- `dnn_node/dnn_node.h`: Header file for the inference framework, used for algorithm model management and inference.
+
+- `dnn_node/util/image_proc.h`: Header file for algorithm model input image processing.
+
+- `dnn_node/util/output_parser/detection/fasterrcnn_output_parser.h`: Header file for algorithm model output parsing method, used to parse structured data (in this example, it corresponds to the human detection bounding boxes) from the output address after model inference.
+
+- ROS Msg header files: Used for message subscription and publishing.
+
+- `hobot_mot/hobot_mot.h`: Header file for the MOT (Multi-Object Tracking) algorithm engine, used for tracking the detected human bounding boxes.
+
+```cpp
+#include "dnn_node/dnn_node.h"
+#include "dnn_node/util/image_proc.h"
+#include "dnn_node/util/output_parser/detection/fasterrcnn_output_parser.h"
+#include "sensor_msgs/msg/image.hpp"
+#include "ai_msgs/msg/perception_targets.hpp"
+#include "hbm_img_msgs/msg/hbm_msg1080_p.hpp"
+#include "hobot_mot/hobot_mot.h"
+```**Creating algorithm inference output data structure**
+
+Inheriting the `DnnNodeOutput` base class from `hobot_dnn`, adding a message header information member to represent the image information corresponding to the inference output.
 
 ```C++
 struct FasterRcnnOutput : public hobot::dnn_node::DnnNodeOutput {
@@ -360,61 +354,60 @@ struct FasterRcnnOutput : public hobot::dnn_node::DnnNodeOutput {
 };
 ```
 
-**创建算法推理Node**
+**Creating algorithm inference Node**
 
-继承`hobot_dnn`中的`DnnNode`虚基类，定义算法推理节点`BodyDetNode`，实现`DnnNode`中定义的虚接口。
+Inheriting the virtual base class `DnnNode` from `hobot_dnn`, defining the algorithm inference node `BodyDetNode` and implementing the virtual interfaces defined in `DnnNode`.
 
-  `int SetNodePara()`：配置模型参数。
+  `int SetNodePara()`: Configuring model parameters.
 
-  `int PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput> &node_output)`：推理结果回调，将解析后结构化的模型输出数据封装成ROS Msg后发布。
+  `int PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput>& node_output)`: Callback for inference results, packaging the parsed and structured model output data into ROS Msg and publishing them.
 
 ```c++
 class BodyDetNode : public hobot::dnn_node::DnnNode {
  public:
-  BodyDetNode(const std::string &node_name = "body_det",
-  const rclcpp::NodeOptions &options = rclcpp::NodeOptions());
+  BodyDetNode(const std::string& node_name = "body_det",
+  const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
 
  protected:
   int SetNodePara() override;
-  int PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput> &node_output)
-    override;
+  int PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput>& node_output) override;
 ```
 
-**实现BodyDetNode子类的构造**
+**Implementing the constructor of the BodyDetNode subclass**
 
-`BodyDetNode`子类的构造函数中进行Node的初始化，同时通过`GetModelInputSize`接口获取了模型输入图片的尺寸，包括图片的宽`model_input_width_`和高`model_input_height_`，用于模型前处理，不同的模型一般输入图片的尺寸不同。
+The constructor of the `BodyDetNode` subclass initializes the Node and retrieves the size of the model's input image through the `GetModelInputSize` interface, including the width `model_input_width_` and height `model_input_height_` of the image. This is used for model pre-processing as different models generally have different input image sizes.
 
-通过零拷贝的通信方式，创建图片消息的订阅者，从摄像头节点订阅图像消息，用于算法模型推理。订阅的topic为`/hbmem_img`，消息类型为tros.b中定义的图片消息类型`hbm_img_msgs::msg::HbmMsg1080P`。
+Creating a subscriber for image messages using zero-copy communication method, subscribing to image messages from camera node for algorithm model inference. The subscribed topic is `/hbmem_img` and the message type is the image message type defined in `tros.b`, `hbm_img_msgs::msg::HbmMsg1080P`.
 
-创建消息发布者，用于发布算法推理消息。发布的topic为`/cpp_dnn_demo`，消息类型为tros.b中定义的算法消息类型`ai_msgs::msg::PerceptionTargets`。
+Creating a publisher for algorithm inference messages. The published topic is `/cpp_dnn_demo` and the message type is the algorithm message type defined in `tros.b`, `ai_msgs::msg::PerceptionTargets`.
 
-创建多目标跟踪（MOT）算法引擎，用于对每个人体检测框进行目标跟踪。
+Creating a Multiple Object Tracking (MOT) algorithm engine for tracking each person detection box.
 
-`BodyDetNode`构造函数实现：
+Constructor of `BodyDetNode`:
 
 ```c++
-BodyDetNode::BodyDetNode(const std::string & node_name, const rclcpp::NodeOptions & options) :
+BodyDetNode::BodyDetNode(const std::string& node_name, const rclcpp::NodeOptions& options) :
   hobot::dnn_node::DnnNode(node_name, options) {
-  // Init中使用BodyDetNode子类实现的SetNodePara()方法进行算法推理的初始化
+  // Initialize algorithm inference using the SetNodePara() method implemented in the BodyDetNode subclass
   if (Init() != 0 ||
     GetModelInputSize(0, model_input_width_, model_input_height_) < 0) {
-    RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Node init fail!");
+```RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Node init fail!");
     rclcpp::shutdown();
   }
 
-  // 创建消息订阅者，从摄像头节点订阅图像消息
+  // Create message subscriber, subscribe to image messages from camera node
   ros_img_subscription_ =
           this->create_subscription_hbmem<hbm_img_msgs::msg::HbmMsg1080P>(
           "/hbmem_img", 10, std::bind(&BodyDetNode::FeedImg, this, std::placeholders::_1));
-  // 创建消息发布者，发布算法推理消息
+  // Create message publisher, publish algorithm inference messages
   msg_publisher_ = this->create_publisher<ai_msgs::msg::PerceptionTargets>(
       "/cpp_dnn_demo", 10);
-  // 创建多目标跟踪（MOT）算法引擎
+  // Create multi-object tracking (MOT) algorithm engine
   hobot_mot_ = std::make_shared<HobotMot>("config/iou2_method_param.json");
 }
 ```
 
-其中`Init()`是`DnnNode`基类中定义并实现的接口，执行算法推理初始化，只做pipeline的串联，具体的`SetNodePara()`步骤由用户（子类中）实现。串联的初始化流程如下：
+Where `Init()` is an interface defined and implemented in the `DnnNode` base class, which performs algorithm inference initialization, only concatenates the pipeline, and the specific `SetNodePara()` steps are implemented by the user (in the subclass). The initialization process of the concatenation is as follows:
 
 ```c++
 int DnnNode::Init() {
@@ -447,8 +440,7 @@ int DnnNode::Init() {
     RCLCPP_ERROR(rclcpp::get_logger("dnn"), "Set output parser failed!");
     return ret;
   }
-
-  // 4. task init
+```// 4. task init
   ret = dnn_node_impl_->TaskInit();
   if (ret != 0) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn"), "Task init failed!");
@@ -457,11 +449,12 @@ int DnnNode::Init() {
 
   return ret;
 }
+
 ```
 
-**配置模型参数**
+**Set model parameters**
 
-配置算法推理使用的模型文件路径和模型名。
+Set the path and name of the model file used for algorithm inference.
 
 ```c++
 int BodyDetNode::SetNodePara() {
@@ -472,16 +465,16 @@ int BodyDetNode::SetNodePara() {
 }
 ```
 
-**实现图片订阅结果回调**
+**Implement the image subscription callback**
 
-创建`DNNInput`类型的模型输入数据。订阅到的消息中包含图片信息（图片的编码方式、内容数据和分辨率等信息），使用`hobot_dnn`中的算法模型输入图片处理接口`hobot::dnn_node::ImageProc::GetNV12PyramidFromNV12Img`，将订阅到的`nv12`格式的图片按照模型输入分辨率（`model_input_width_`和`model_input_height_`，在`BodyDetNode`的构造函数中通过`GetModelInputSize`接口从加载的模型中查询得到）转成模型输入的数据类型。接口定义如下：
+Create `DNNInput` type model input data. The subscribed message contains image information (such as encoding method, content data, resolution, etc.). Use the image processing interface `hobot::dnn_node::ImageProc::GetNV12PyramidFromNV12Img` in `hobot_dnn` algorithm module to convert the subscribed `nv12` format image to the data type required by the model input, according to the model input resolution (`model_input_width_` and `model_input_height_`, obtained from the loaded model by querying with the `GetModelInputSize` interface in the constructor of `BodyDetNode`). The interface is defined as follows:
 
 ```c++
-//   - [in] in_img_data 图片数据
-//   - [in] in_img_height 图片的高度
-//   - [in] in_img_width 图片的宽度
-//   - [in] scaled_img_height 模型输入的高度
-//   - [in] scaled_img_width 模型输入的宽度
+//   - [in] in_img_data: image data
+//   - [in] in_img_height: height of the image
+//   - [in] in_img_width: width of the image
+//   - [in] scaled_img_height: height of the model input
+//   - [in] scaled_img_width: width of the model input
 std::shared_ptr<NV12PyramidInput> GetNV12PyramidFromNV12Img(
     const char* in_img_data,
     const int& in_img_height,
@@ -490,70 +483,56 @@ std::shared_ptr<NV12PyramidInput> GetNV12PyramidFromNV12Img(
     const int& scaled_img_width);
 ```
 
-创建`FasterRcnnOutput`类型的模型输出数据。订阅到的消息中包含消息头（frame_id和时间戳），使用订阅到的消息头填充输出数据的消息头，用于表述算法推理输出对应的图片信息。
+Create `FasterRcnnOutput` type model output data. The subscribed message contains message headers (`frame_id` and timestamp). Use the subscribed message headers to fill in the message headers of the output data, which represent the image information corresponding to the algorithm inference output.
 
-启动推理。使用`DnnNode`基类中的`Run`接口以异步模式运行推理，接口的第四个参数为`false`表示使用效率更高的异步推理模式。`Run`接口定义如下：
+Start inference. Use the `Run` interface in the base class `DnnNode` to run the inference asynchronously, with the fourth parameter of the interface set as `false` indicating the more efficient asynchronous inference mode. The `Run` interface is defined as follows:
 
 ```c++
-  // - 参数
-  //   - [in] inputs 输入数据智能指针列表
-  //   - [in] outputs 输出数据智能指针
-  //   - [in] rois 抠图roi数据，只对ModelRoiInferType模型有效
-  //   - [in] is_sync_mode 预测模式，true为同步模式，false为异步模式
-  //   - [in] alloctask_timeout_ms 申请推理任务超时时间，单位毫秒
-  //                               默认一直等待直到申请成功
-  //   - [in] infer_timeout_ms 推理超时时间，单位毫秒，默认1000毫秒推理超时
-  int Run(std::vector<std::shared_ptr<DNNInput>> &inputs,
-          const std::shared_ptr<DnnNodeOutput> &output = nullptr,
-          const std::shared_ptr<std::vector<hbDNNRoi>> rois = nullptr,
-          const bool is_sync_mode = true,
-          const int alloctask_timeout_ms = -1,
-          const int infer_timeout_ms = 1000);
+  // - Parameters
+  //   - [in] inputs: shared pointers to input data
+  //   - [in] outputs: shared pointer to output data
 ```
 
-完整的图片订阅结果回调`FeedImg`实现如下：
-
 ```c++
-void BodyDetNode::FeedImg(const hbm_img_msgs::msg::HbmMsg1080P::ConstSharedPtr img_msg) {
-  if (!rclcpp::ok()) {
+struct Filter2DResult {
+  int track_id;  // 目标编号
+  hbm_common_msgs::msg::BBox2D bbox;  // 人体检测框
+};
+
+// 算法推理结果回调，将模型输出数据转换成带目标编号的人体检测框
+void BodyDetNode::OnInferenceResult(const std::shared_ptr<hobot::dnn_node::DNNOutput>& output) {
+  if (!output || !output->FrameStamps().size()) {
     return;
   }
 
-  // 对订阅到的图片消息进行验证，本示例只支持处理NV12格式图片数据
-  if (!img_msg) return;
-  if ("nv12" != std::string(reinterpret_cast<const char*>(img_msg->encoding.data()))) {
-    RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Only support nv12 img encoding!");
-    return;
+  // 根据算法推理结果填充`Filter2DResult`类型的结构化推理结果数据
+  std::vector<Filter2DResult> results;
+  const auto* dnn_output = static_cast<const FasterRcnnOutput*>(output.get());
+  for (size_t i = 0; i < dnn_output->bboxes.size(); ++i) {
+    Filter2DResult result;
+    result.track_id = dnn_output->track_ids[i];
+    result.bbox.x = dnn_output->bboxes[i].tl().x;
+    result.bbox.y = dnn_output->bboxes[i].tl().y;
+    result.bbox.width = dnn_output->bboxes[i].br().x - dnn_output->bboxes[i].tl().x;
+    result.bbox.height = dnn_output->bboxes[i].br().y - dnn_output->bboxes[i].tl().y;
+    results.push_back(result);
   }
 
-  // 根据模型输入图片分辨率，使用hobot_dnn中提供的方法创建模型输入数据
-  auto inputs = std::vector<std::shared_ptr<hobot::dnn_node::DNNInput>>{
-    hobot::dnn_node::ImageProc::GetNV12PyramidFromNV12Img(
-      reinterpret_cast<const char*>(img_msg->data.data()),
-      img_msg->height, img_msg->width, model_input_height_, model_input_width_)};
-      
-  // 创建模型输出数据，填充消息头信息
-  auto dnn_output = std::make_shared<FasterRcnnOutput>();
-  dnn_output->image_msg_header = std::make_shared<std_msgs::msg::Header>();
-  dnn_output->image_msg_header->set__frame_id(std::to_string(img_msg->index));
-  dnn_output->image_msg_header->set__stamp(img_msg->time_stamp);
-
-  // 以异步模式运行推理
-  Run(inputs, dnn_output, nullptr, false);
+  // 对推理结果进行MOT算法处理，获取消失的目标编号数据
+  std::vector<int> disappear_ids;
+  // TODO: MOT算法处理逻辑
+  
+  // 将解析后的结构化推理结果和消失的目标编号发布出去
+  PublishDetection(results);
+  PublishDisappearingTarget(disappear_ids);
 }
 ```
 
-**实现推理结果回调**
+在推理结果回调`OnInferenceResult`中，根据模型输出数据填充`Filter2DResult`类型的结构化推理结果数据。然后，使用MOT算法对推理结果进行处理，获取消失的目标编号数据。最后，将解析后的结构化推理结果和消失的目标编号发布出去。Using the built-in Parse parsing method in hobot dnn, parse the output of the human detection algorithm.
 
-算法推理结果回调是将解析后结构化的模型输出数据经过MOT算法处理后，输出带有目标编号的人体检测框和消失的目标编号数据，封装成ROS Msg后发布。
+Run the multi-target tracking algorithm. Convert the human detection boxes outputted by the algorithm into the data type required by the MOT algorithm. Calculate the timestamp of the current frame based on the message header. After processing with the MOT algorithm, obtain the human detection boxes with target ID and the disappeared target ID.
 
-创建`Filter2DResult`类型的结构化推理结果数据。
-
-使用hobot dnn内置的Parse解析方法，解析人体检测算法输出。
-
-运行多目标跟踪算法。将算法推理输出的人体检测框转成`MOT`算法输入数据类型，并根据消息头计算当前帧的时间戳，经过`MOT`算法处理后得到带有目标编号的人体检测框和消失的目标编号。
-
-发布算法推理结果。创建ROS Msg，填充算法推理结果对应的图片消息头（帧ID和时间戳），带有目标编号的人体检测框，算法推理输出的帧率统计，消失的目标编号。发布的ROS Msg可以被其他ROS Node订阅和使用。
+Publish the results of the algorithm inference. Create a ROS Msg, fill in the image message header (frame ID and timestamp) corresponding to the results of the algorithm inference, the human detection boxes with target ID, the frame rate statistics outputted by the algorithm inference, and the disappeared target ID. The published ROS Msg can be subscribed and used by other ROS Nodes.
 
 ```c++
 int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutput> &node_output) {
@@ -561,21 +540,21 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     return 0;
   }
   
-  // 验证输出数据的有效性
+  // Validate the validity of the output data
   if (node_output->outputs.empty() ||
     static_cast<int32_t>(node_output->outputs.size()) < box_output_index_) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Invalid outputs");
     return -1;
   }
 
-  // 创建解析输出数据
-  // 检测框results的维度等于检测出来的目标类别数
+  // Create the parsing output data
+  // The dimension of detection box results is equal to the number of detected target categories
   std::vector<std::shared_ptr<hobot::dnn_node::parser_fasterrcnn::Filter2DResult>>
       results;
-  // 关键点数据
+  // Key point data
   std::shared_ptr<hobot::dnn_node::parser_fasterrcnn::LandmarksResult> output_body_kps = nullptr;
 
-  // 使用hobot dnn内置的Parse解析方法，解析算法输出
+  // Parse the algorithm output using the built-in Parse method in hobot dnn
   if (hobot::dnn_node::parser_fasterrcnn::Parse(node_output, nullptr,
   box_outputs_index_, -1, -1, results, output_body_kps) < 0) {
     RCLCPP_ERROR(rclcpp::get_logger("dnn_node_sample"),
@@ -586,75 +565,74 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
   auto filter2d_result = results.at(box_output_index_);
   if (!filter2d_result) return -1;
 
-  // 将算法推理输出的人体检测框转成MOT算法输入数据类型
+  // Convert the human detection boxes outputted by the algorithm inference into the data type required by MOT algorithm
   std::vector<MotBox> in_box_list;
   for (auto& rect : filter2d_result->boxes) {
     in_box_list.emplace_back(
         MotBox(rect.left, rect.top, rect.right, rect.bottom, rect.conf));
   }
   
-  // 根据消息头计算当前帧的时间戳
+  // Calculate the timestamp of the current frame based on the message header
   auto fasterRcnn_output =
       std::dynamic_pointer_cast<FasterRcnnOutput>(node_output);
   time_t time_stamp =
       fasterRcnn_output->image_msg_header->stamp.sec * 1000 +
-      fasterRcnn_output->image_msg_header->stamp.nanosec / 1000 / 1000;
-  
-  // 创建MOT算法的输出：带有目标编号的人体检测框和消失的目标编号
-  std::vector<MotBox> out_box_list;
-  std::vector<std::shared_ptr<MotTrackId>> disappeared_ids;
+```fasterRcnn_output->image_msg_header->stamp.nanosec / 1000 / 1000;
 
-  // 运行多目标跟踪算法
-  if (hobot_mot_->DoProcess(in_box_list,
-                            out_box_list,
-                            disappeared_ids,
-                            time_stamp,
-                            model_input_width_,
-                            model_input_height_) < 0) {
-    RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Do mot fail");
-    return -1;
+// Create output of MOT algorithm: detection boxes with object IDs and disappeared object IDs
+std::vector<MotBox> out_box_list;
+std::vector<std::shared_ptr<MotTrackId>> disappeared_ids;
+
+// Run multi-object tracking algorithm
+if (hobot_mot_->DoProcess(in_box_list,
+                          out_box_list,
+                          disappeared_ids,
+                          time_stamp,
+                          model_input_width_,
+                          model_input_height_) < 0) {
+  RCLCPP_ERROR(rclcpp::get_logger("dnn_demo"), "Do mot fail");
+  return -1;
+}
+
+// Create ROS Msg for publishing inference results
+ai_msgs::msg::PerceptionTargets::UniquePtr pub_data(
+  new ai_msgs::msg::PerceptionTargets());
+
+// Fill message header to ROS Msg
+pub_data->header.set__stamp(fasterRcnn_output->image_msg_header->stamp);
+pub_data->header.set__frame_id(fasterRcnn_output->image_msg_header->frame_id);
+
+// Fill algorithm inference output FPS to ROS Msg
+if (node_output->rt_stat) {
+  pub_data->set__fps(round(node_output->rt_stat->output_fps));
+  // If there is an update in algorithm inference statistics, output the statistics of input and output FPS of the algorithm model
+  if (node_output->rt_stat->fps_updated) {
+    RCLCPP_WARN(rclcpp::get_logger("dnn_demo"),
+                "input fps: %.2f, out fps: %.2f",
+                node_output->rt_stat->input_fps,
+                node_output->rt_stat->output_fps);
   }
+}
 
-  // 创建用于发布推理结果的ROS Msg
-  ai_msgs::msg::PerceptionTargets::UniquePtr pub_data(
-      new ai_msgs::msg::PerceptionTargets());
-
-  // 将消息头填充到ROS Msg
-  pub_data->header.set__stamp(fasterRcnn_output->image_msg_header->stamp);
-  pub_data->header.set__frame_id(fasterRcnn_output->image_msg_header->frame_id);
-
-  // 将算法推理输出帧率填充到ROS Msg
-  if (node_output->rt_stat) {
-    pub_data->set__fps(round(node_output->rt_stat->output_fps));
-    // 如果算法推理统计有更新，输出算法模型输入和输出的帧率统计
-    if (node_output->rt_stat->fps_updated) {
-      RCLCPP_WARN(rclcpp::get_logger("dnn_demo"),
-                  "input fps: %.2f, out fps: %.2f",
-                  node_output->rt_stat->input_fps,
-                  node_output->rt_stat->output_fps);
-    }
+for (auto& rect : out_box_list) {
+  // Validate the validity of the target tracking result
+  if (rect.id < 0) {
+    continue;
   }
-
-  for (auto& rect : out_box_list) {
-    // 验证目标跟踪结果的有效性
-    if (rect.id < 0) {
-      continue;
-    }
-    // 将目标跟踪结果和检测框填充到ROS Msg
-    ai_msgs::msg::Target target;
-    target.set__type("person");
-    target.set__track_id(rect.id);
-    ai_msgs::msg::Roi roi;
-    roi.type = "body";
-    roi.rect.set__x_offset(rect.x1);
-    roi.rect.set__y_offset(rect.y1);
-    roi.rect.set__width(rect.x2 - rect.x1);
+  // Fill target tracking result and detection box to ROS Msg
+  ai_msgs::msg::Target target;
+  target.set__type("person");
+  target.set__track_id(rect.id);
+  ai_msgs::msg::Roi roi;
+  roi.type = "body";
+  roi.rect.set__x_offset(rect.x1);
+  roi.rect.set__y_offset(rect.y1);roi.rect.set__width(rect.x2 - rect.x1);
     roi.rect.set__height(rect.y2 - rect.y1);
     target.rois.emplace_back(roi);
     pub_data->targets.emplace_back(std::move(target));
   }
 
-  // 将消失的目标填充到ROS Msg
+  // Fill in the disappeared targets to ROS Msg
   for (const auto& id_info : disappeared_ids) {
     if (id_info->value < 0 ||
         hobot_mot::DataState::INVALID == id_info->state_) {
@@ -669,59 +647,56 @@ int BodyDetNode::PostProcess(const std::shared_ptr<hobot::dnn_node::DnnNodeOutpu
     pub_data->disappeared_targets.emplace_back(std::move(target));
   }
 
-  // 发布ROS Msg
+  // Publish ROS Msg
   msg_publisher_->publish(std::move(pub_data));
 
   return 0;
 }
 ```
 
-dnn node中内置了多种检测、分类和分割算法的模型输出解析方法，RDK X3上安装tros.b后查询支持的解析方法如下：
+The dnn node contains built-in methods for parsing the output of various detection, classification, and segmentation algorithms. After installing tros.b on the RDK X3, the supported parsing methods can be queried as follows:
 
 ```shell
 root@ubuntu:~# tree /opt/tros/include/dnn_node/util/output_parser
 /opt/tros/include/dnn_node/util/output_parser
 ├── classification
-│   └── ptq_classification_output_parser.h
+│   └── ptq_classification_output_parser.h
 ├── detection
-│   ├── fasterrcnn_output_parser.h
-│   ├── fcos_output_parser.h
-│   ├── nms.h
-│   ├── ptq_efficientdet_output_parser.h
-│   ├── ptq_ssd_output_parser.h
-│   ├── ptq_yolo2_output_parser.h
-│   ├── ptq_yolo3_darknet_output_parser.h
-│   └── ptq_yolo5_output_parser.h
+│   ├── fasterrcnn_output_parser.h
+│   ├── fcos_output_parser.h
+│   ├── nms.h
+│   ├── ptq_efficientdet_output_parser.h
+│   ├── ptq_ssd_output_parser.h
+│   ├── ptq_yolo2_output_parser.h
+│   ├── ptq_yolo3_darknet_output_parser.h
+│   └── ptq_yolo5_output_parser.h
 ├── perception_common.h
 ├── segmentation
-│   └── ptq_unet_output_parser.h
+│   └── ptq_unet_output_parser.h
 └── utils.h
 
 3 directories, 12 files
-```
+```You can see that there are three paths under the `/opt/tros/include/dnn_node/util/output_parser` directory, which correspond to the output parsing methods for classification, detection, and segmentation algorithms.
 
-可以看到`/opt/tros/include/dnn_node/util/output_parser`路径下有`classification`、`detection`和`segmentation`三个路径，分别对应分类、检测和分割算法的模型输出解析方法。
+`perception_common.h` defines the data type of the parsed perception results.
 
-`perception_common.h`为定义的解析后的感知结果数据类型。
+The algorithm models and their corresponding output parsing methods are as follows:
 
-算法模型和对应的输出解析方法如下：
+| Algorithm Category | Algorithm                | Output Parsing Method       |
+| ------------------ | ------------------------ | --------------------------- |
+| Object Detection   | [FCOS](../boxs/box_basic#fcos) | fcos_output_parser.h        |
+| Object Detection   | [EfficientNet_Det](../boxs/box_basic#efficientnet_det) | ptq_efficientdet_output_parser.h |
+| Object Detection   | [MobileNet_SSD](../boxs/box_basic#mobilenet_ssd) | ptq_ssd_output_parser.h     |
+| Object Detection   | [YoloV2](../boxs/box_basic#yolo) | ptq_yolo2_output_parser.h   |
+| Object Detection   | [YoloV3](../boxs/box_basic#yolo) | ptq_yolo3_darknet_output_parser.h |
+| Object Detection   | [YoloV5](../boxs/box_basic#yolo) | ptq_yolo5_output_parser.h   |
+| Human Detection    | [FasterRcnn](../boxs/box_adv#detection_and_track) | fasterrcnn_output_parser.h |
+| Image Classification | [mobilenetv2](../boxs/box_basic#mobilenetv2) | ptq_classification_output_parser.h |
+| Semantic Segmentation | [mobilenet_unet](../boxs/box_basic#mobilenet_unet) | ptq_unet_output_parser.h |
 
-| 算法类别       | 算法                 | 算法输出解析方法 |
-| ---------------------- | ---------------------- | ----------- |
-| 目标检测       | [FCOS](../boxs/box_basic#fcos)           | fcos_output_parser.h         |
-| 目标检测       | [EfficientNet_Det](../boxs/box_basic#efficientnet_det)           | ptq_efficientdet_output_parser.h         |
-| 目标检测       | [MobileNet_SSD](../boxs/box_basic#mobilenet_ssd)        |   ptq_ssd_output_parser.h       |
-| 目标检测       | [YoloV2](../boxs/box_basic#yolo)       |   ptq_yolo2_output_parser.h       |
-| 目标检测       | [YoloV3](../boxs/box_basic#yolo)       |    ptq_yolo3_darknet_output_parser.h       |
-| 目标检测       | [YoloV5](../boxs/box_basic#yolo)       |  ptq_yolo5_output_parser.h        |
-| 人体检测       | [FasterRcnn](../boxs/box_adv#detection_and_track)             |  fasterrcnn_output_parser.h       |
-| 图片分类       | [mobilenetv2](../boxs/box_basic#mobilenetv2)  |  ptq_classification_output_parser.h        |
-| 语义分割       | [mobilenet_unet](../boxs/box_basic#mobilenet_unet)      |  ptq_unet_output_parser.h        |
+**Entrance Function**
 
-
-**入口函数**
-
-创建`BodyDetNode`的实例，在`BodyDetNode`的构造中初始化和启动推理任务，直到用户输入退出信号才停止推理。
+Create an instance of `BodyDetNode`, initialize and start the inference task in the constructor of `BodyDetNode`, and stop the inference only when the user inputs the exit signal.
 
 ```c++
 int main(int argc, char** argv) {
@@ -732,56 +707,24 @@ int main(int argc, char** argv) {
 }
 ```
 
+##### 2.3 Compilation Dependencies
 
-##### 2.3 编译依赖
+In step 1, the `cpp_dnn_demo` package was created using the `ros2 pkg create` command. The `CMakeLists.txt` and `package.xml` files have been automatically created in the `dev_ws/src/cpp_dnn_demo` directory.
 
-步骤1的创建package中通过`ros2 pkg create`命令创建了cpp_dnn_demo package，在`dev_ws/src/cpp_dnn_demo`路径下已经自动创建了CMakeLists.txt和package.xml。
+The `package.xml` file automatically adds the compiled dependencies, which include `rclcpp`, `sensor_msgs`, `ai_msgs`, `hbm_img_msgs`, `dnn_node`, and `hobot_mot`. `ai_msgs` defines the message format of the algorithm output in TogatherROS, `hbm_img_msgs` defines the image message format used for zero-copy communication, `dnn_node` is the algorithm inference framework, and `hobot_mot` is the multi-object tracking algorithm. These packages are installed when TogatherROS is installed.
 
-在package.xml中自动添加了编译依赖的pkg，涉及到的依赖包括`rclcpp`、`sensor_msgs`、`ai_msgs`、`hbm_img_msgs`、`dnn_node`和`hobot_mot`。其中`ai_msgs`为TogatherROS中定义的算法输出消息格式，`hbm_img_msgs`为TogatherROS中定义的用于零拷贝通信方式下使用的图片消息格式，`dnn_node`为算法推理框架，`hobot_mot`为多目标跟踪算法。在TogatherROS安装时已安装这些pkg。
+##### 2.4 Compilation Script
 
-##### 2.4 编译脚本
+Add package dependencies and compilation installation information in `CMakeLists.txt`.
 
-在 CMakeLists.txt 中添加pkg依赖和编译安装信息。
-
-（1）添加多目标跟踪算法和算法推理引擎库依赖
+(1) Add dependencies on the multi-object tracking algorithm and the algorithm inference engine library.
 
 ```cmake
 link_directories(
   /opt/tros/lib/
-  /usr/lib/hbbpu/
-)
-```
+``````cmake
+# CMakeLists.txt 
 
-（2）添加pkg编译信息
-
-```cmake
-add_executable(${PROJECT_NAME}
-  src/body_det_demo.cpp
-)
-
-ament_target_dependencies(
-  ${PROJECT_NAME}
-  rclcpp
-  dnn_node
-  sensor_msgs
-  ai_msgs
-  hobot_mot
-  hbm_img_msgs
-)
-```
-
-（3）添加pkg安装信息，实现通过ros2 run运行编译出来的pkg
-
-```cmake
-install(
-  TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION lib/${PROJECT_NAME}
-)
-```
-
-完整的CMakeLists.txt如下：
-
-```cmake
 cmake_minimum_required(VERSION 3.5)
 project(cpp_dnn_demo)
 
@@ -799,7 +742,29 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
+# (1) Set the library path to "/usr/lib/hbbpu/"
+set(LIBHB_PATH /usr/lib/hbbpu/)
+
+# (2) Add pkg compilation information
+add_executable(${PROJECT_NAME}
+  src/body_det_demo.cpp
+)
+
+ament_target_dependencies(
+  ${PROJECT_NAME}
+  rclcpp
+  dnn_node
+  sensor_msgs
+  ai_msgs
+  hobot_mot
+  hbm_img_msgs
+)
+
+# (3) Add pkg installation information to enable running the compiled pkg with "ros2 run"
+install(
+  TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)# find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
@@ -836,42 +801,42 @@ install(
 ament_package()
 ```
 
-#### 3 编译和运行
+#### 3 Build and Run
 
-##### 3.1 编译
+##### 3.1 Build
 
-在安装了tros.b的地平线RDK上，执行以下命令编译pkg：
+In the Horizon RDK with tros.b installed, execute the following command to build the package:
 
 ```shell
 cd ~/dev_ws
 
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 编译pkg
+```# Compiling pkg
 colcon build --packages-select cpp_dnn_demo
 ```
 
-如果编译成功，在编译所在路径下产生cpp_dnn_demo pkg的部署包install，编译终端输出如下信息：
+If the compilation is successful, an installation package called "install" will be generated in the compilation path for the cpp_dnn_demo pkg. The following information will be displayed in the compilation terminal:
 
 ```shell
 Starting >>> cpp_dnn_demo
-[Processing: cpp_dnn_demo]                              
-Finished <<< cpp_dnn_demo [32.7s]                       
+[Processing: cpp_dnn_demo]
+Finished <<< cpp_dnn_demo [32.7s]
 
 Summary: 1 package finished [33.4s]
 ```
 
-##### 3.2 编译常见错误
+##### 3.2 Common Compilation Errors
 
-1、ModuleNotFoundError: No module named 'ament_package'
+1. ModuleNotFoundError: No module named 'ament_package'
 
-具体错误信息如下：
+Specific error message:
 
 ```
 # colcon build --packages-select cpp_dnn_demo
 Starting >>> cpp_dnn_demo
---- stderr: cpp_dnn_demo                         
+--- stderr: cpp_dnn_demo
 CMake Error at CMakeLists.txt:19 (find_package):
   By not providing "Findament_cmake.cmake" in CMAKE_MODULE_PATH this project
   has asked CMake to find a package configuration file provided by
@@ -890,24 +855,19 @@ CMake Error at CMakeLists.txt:19 (find_package):
 
 
 ---
-Failed   <<< cpp_dnn_demo [2.83s, exited with code 1]
+Failed <<< cpp_dnn_demo [2.83s, exited with code 1]
 
 Summary: 0 packages finished [3.44s]
   1 package failed: cpp_dnn_demo
   1 package had stderr output: cpp_dnn_demo
 ```
 
-说明ROS2环境没有配置成功。在终端输入ros2命令进行环境检查：
-
-```
-# ros2
+This indicates that the ROS2 environment is not configured successfully. Enter the "ros2" command in the terminal to check the environment:# ros2
 
 -bash: ros2: command not found
-```
 
-如果提示“command not found”，说明ROS2环境没有配置成功，检查source /opt/tros/setup.bash命令是否执行成功。配置成功的输出信息如下：
+If you receive the "command not found" prompt, it means that the ROS2 environment has not been configured successfully. Please check if the command source /opt/tros/setup.bash has been executed successfully. The successful output information is as follows:
 
-```
 # ros2
 
 usage: ros2 [-h] Call `ros2 <command> -h` for more detailed usage. ...
@@ -916,13 +876,11 @@ ros2 is an extensible command-line tool for ROS 2.
 
 optional arguments:
   -h, --help            show this help message and exit
-```
 
-2、查找不到dnn_node package
+2. Cannot find the dnn_node package
 
-具体错误信息如下：
+The specific error message is as follows:
 
-```
 colcon build --packages-select cpp_dnn_demo
 Starting >>> cpp_dnn_demo
 [Processing: cpp_dnn_demo]
@@ -943,46 +901,43 @@ Failed <<< cpp_dnn_demo [59.7s, exited with code 1]
 Summary: 0 packages finished [1min 1s]
  1 package failed: cpp_dnn_demo
  1 package had stderr output: cpp_dnn_demo
-```
 
-说明hobot_dnn环境没有配置成功，检查/opt/tros/share/dnn_node是否存在。
+This indicates that the hobot_dnn environment has not been configured successfully. Please check if /opt/tros/share/dnn_node exists.
 
-##### 3.3 运行
+##### 3.3 RunningIn order to better display the effect of algorithm reasoning and experience perception ability, the MIPI camera image capture, image encoding, and WEB data display Node in tros.b are used to provide the ability of data sensing and display. The system can publish the captured images from the camera on RDK X3, perform algorithm reasoning to detect human body frames, and render and display the images and human body frame detection results in real time on the WEB browser on the PC side.
 
-为了更好的展示算法推理效果，体验感知能力，使用tros.b中的MIPI摄像头图像采集、图像编码和WEB数据展示Node，提供数据传感和展示的能力，实现在RDK X3上发布摄像头采集到的图像，对图像进行算法推理检测出人体框后，在PC端的WEB浏览器上实时渲染展示图像和人体框检测结果。
-
-运行时系统流程图如下：
+The runtime system process diagram is as follows:
 
 ![](./image/ai_predict/pipeline.jpg)
 
-RDK X3上的运行4个node，其中算法推理为本示例。
+There are 4 nodes running on RDK X3, and algorithm reasoning is one of them in this example.
 
-系统启动流程如下：
+The system startup process is as follows:
 
-（1）RDK X3上打开终端1，启动算法推理node
+(1) Open terminal 1 on RDK X3 and start the algorithm reasoning node:
 ```shell
 cd ~/dev_ws
 
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 配置cpp_dnn_demo环境
+# Configure the cpp_dnn_demo environment
 source ./install/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
-# 模型文件
+# Copy the necessary configuration files for running the example from the tros.b installation path
+# Model file
 mkdir -p config && cp /opt/tros/lib/dnn_benchmark_example/config/multitask_body_kps_960x544.hbm config/
-# 多目标跟踪配置文件
+# Multi-object tracking configuration file
 cp -r /opt/tros/lib/hobot_mot/config/iou2_method_param.json config/
 
 
-# 运行cpp_dnn_demo pkg
+# Run the cpp_dnn_demo pkg
 ros2 run cpp_dnn_demo cpp_dnn_demo --ros-args --log-level warn
 ```
 
-（2）RDK X3上打开终端2，启动tros.b中的图像发布、编码和展示Node
+(2) Open terminal 2 on RDK X3 and start the image publishing, encoding, and display Node in tros.b:
 
-由于启动的Node比较多，使用启动脚本通过launch批量启动Node。在RDK X3的任意路径下创建启动脚本`cpp_dnn_demo.launch.py`，内容如下：
+Since multiple Nodes need to be started, a launch script is used to start the Nodes in batches. Create a launch script `cpp_dnn_demo.launch.py` in any path on RDK X3, with the following content:
 
 ```python
 import os
@@ -998,14 +953,14 @@ from ament_index_python.packages import get_package_prefix
 def generate_launch_description():
     web_service_launch_include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(
+```os.path.join(
                 get_package_share_directory('websocket'),
                 'launch/hobot_websocket_service.launch.py'))
     )
 
     return LaunchDescription([
         web_service_launch_include,
-        # 启动图片发布pkg
+        # Start image publishing package
         Node(
             package='mipi_cam',
             executable='mipi_cam',
@@ -1019,7 +974,7 @@ def generate_launch_description():
             ],
             arguments=['--ros-args', '--log-level', 'error']
         ),
-        # 启动jpeg图片编码&发布pkg
+        # Start jpeg image encoding & publishing package
         Node(
             package='hobot_codec',
             executable='hobot_codec_republish',
@@ -1035,7 +990,7 @@ def generate_launch_description():
             ],
             arguments=['--ros-args', '--log-level', 'error']
         ),
-        # 启动web展示pkg
+        # Start web display package
         Node(
             package='websocket',
             executable='websocket',
@@ -1047,29 +1002,27 @@ def generate_launch_description():
             ],
             arguments=['--ros-args', '--log-level', 'error']
         )
-    ])
-```
+    ])Using startup script:
 
-使用启动脚本：
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 启动图像发布、编码和展示node
+# Launch the nodes for image publishing, encoding, and display
 ros2 launch cpp_dnn_demo.launch.py
 ```
 
-##### 3.4 运行常见错误
+##### 3.4 Common Errors
 
-如果启动报如下错误信息：
+If the following error message is displayed during startup:
 
 `error while loading shared libraries: libdnn_node.so: cannot open shared object file: No such file or directory`
 
-说明配置hobot_dnn环境失败，检查/opt/tros/share/dnn_node是否存在。
+It indicates that the configuration of the hobot_dnn environment has failed. Please check if /opt/tros/share/dnn_node exists.
 
-##### 3.5 运行结果
+##### 3.5 Results
 
-运行成功后，启动终端输出如下信息：
+After successful execution, the terminal outputs the following information:
 
 ```shell
 root@ubuntu:~/dev_ws# ros2 run cpp_dnn_demo cpp_dnn_demo
@@ -1095,12 +1048,9 @@ root@ubuntu:~/dev_ws# ros2 run cpp_dnn_demo cpp_dnn_demo
 [WARN] [1666629243.576435625] [dnn_demo]: input fps: 30.01, out fps: 30.07
 ```
 
-输出log显示，初始化时算法推理使用的模型输入图片分辨率为960x544，使用一个推理任务，`MOT`算法引擎使用的配置文件为`config/iou2_method_param.json`。推理时算法输入和输出帧率为30fps，每秒钟刷新一次统计帧率。
+The log output shows that the model used for algorithm inference during initialization has an input image resolution of 960x544. The `MOT` algorithm engine is using the configuration file `config/iou2_method_param.json`. During inference, the input and output frame rate of the algorithm is 30fps, and the statistics are refreshed once per second.
 
-在RDK X3上使用ros2命令查询并输出推理Node发布的`/cpp_dnn_demo`话题消息内容：
-
-```shell
-root@ubuntu:~# source /opt/tros/setup.bash
+Use the `ros2` command on RDK X3 to query and output the contents of the `/cpp_dnn_demo` topic messages published by the inference node.root@ubuntu:~# source /opt/tros/setup.bash
 root@ubuntu:~# ros2 topic list
 /cpp_dnn_demo
 /hbmem_img08172824022201080202012021072315
@@ -1147,14 +1097,13 @@ targets:
   rois:
   - type: body
     rect:
-      x_offset: 569
-      y_offset: 161
-      height: 340
-      width: 123
-      do_rectify: false
-  attributes: []
-  points: []
-  captures: []
+      x_offset: 569y_offset: 161
+  height: 340
+  width: 123
+  do_rectify: false
+attributes: []
+points: []
+captures: []
 - type: person
   track_id: 4
   rois:
@@ -1186,111 +1135,105 @@ disappeared_targets: []
 
 ```
 
-输出的`/cpp_dnn_demo`话题消息表明算法检测出5个人体框（rois type为body），并输出了每个检测框的坐标（rect）和对应的目标跟踪结果(track_id)。
+The output `/cpp_dnn_demo` topic message indicates that the algorithm detected 5 human body boxes (rois type is body), and output the coordinates (rect) and corresponding target tracking results (track_id) for each detection box.
 
-在PC端的WEB浏览器上输入http://IP:8000（IP为RDK X3的IP地址，如本示例使用的IP地址为10.64.28.88）查看实时的图片和算法推理渲染效果：
+Enter http://IP:8000 (IP is the IP address of RDK X3, for example, the IP address used in this example is 10.64.28.88) on the PC's web browser to view real-time images and algorithm inference rendering effects:
 
 ![](./image/ai_predict/render.jpg)
 
-每个检测框上渲染了检测框类型（如`body`表示是人体检测框）和目标跟踪结果，浏览器左下角的`fps`字段表示实时的算法推理输出帧率。
+Each detection box is rendered with the detection box type (such as `body` indicating human body detection box) and the target tracking result. The `fps` field in the lower left corner of the browser indicates the real-time algorithm inference output frame rate.
 
-输入`Ctrl+C`命令退出程序。
+Enter the `Ctrl+C` command to exit the program.
 
-### 本节总结
+Summary of this sectionThis chapter introduces how to use the models provided by Horizon to create and run an algorithm inference example for human detection based on `hobot_dnn`. It uses images published from the camera, obtains the algorithm output, and renders and displays the image and algorithm inference results in real-time on the PC browser.
 
-本章节介绍了如何使用地平线提供的模型，基于`hobot_dnn`创建并运行一个人体检测的算法推理示例。使用从摄像头发布的图片，获取算法输出并在PC端浏览器上实时渲染展示图片和算法推理结果。
+Users can refer to the [README.md](https://github.com/HorizonRDK/hobot_dnn/blob/develop/README.md) and the [API Manual](https://github.com/HorizonRDK/hobot_dnn/blob/develop/docs/API-Manual/API-Manual.md) in `hobot_dnn` to learn about the richer algorithm inference capabilities.
 
-用户可以参考`hobot_dnn`中的[README.md](https://github.com/HorizonRDK/hobot_dnn/blob/develop/README.md)和[接口说明文档](https://github.com/HorizonRDK/hobot_dnn/blob/develop/docs/API-Manual/API-Manual.md)，了解更丰富的算法推理功能。
+## Algorithm Workflow Construction
 
-## 算法wokflow构建
+### Functional Background
 
-### 功能背景
+ROS2 nodes decompose complex robot software systems into multiple functional and logically independent modules. For example, a robot application may include multiple nodes for sensing and algorithm perception functions. Nodes exchange data through "topics". Nodes with different functions in the robot software system are connected through topics to form a directed acyclic graph (DAG).
 
-ROS2的节点（[Node](http://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html)）将复杂的机器人软件系统拆解成多个功能和逻辑独立的模块，例如一个机器人应用可能包含多个传感和算法感知功能的Node。Node之间通过“话题”（[Topic](http://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html)）进行数据交换，机器人软件系统中不同功能的ROS2 Node通过Topic连接起来形成一个有向无环图（DAG）。
+The Horizon TogetheROS.Bot software stack includes rich robot development components and algorithm nodes. The sensing nodes support capturing image data from the camera and publishing it for use in perception algorithm inference. The human bounding box detection algorithm node in the perception algorithm library performs inference on image data and outputs human bounding box detection results. The human keypoint detection algorithm node performs inference on image data and the human bounding box detection results to output human keypoint detection results. Therefore, the human keypoint detection algorithm node needs to communicate with the human bounding box detection algorithm node by subscribing to the human bounding box messages published by that node.
 
-地平线TogetheROS.Bot软件栈中包含丰富的机器人开发组件和算法Node，其中传感Node支持从摄像头采集图像数据并发布，用于感知算法推理使用。感知算法库中的人手框检测算法Node使用图像数据进行推理，输出人手框检测结果；人手关键点检测算法Node使用图像数据和人手框检测结果推理输出人手关键点检测结果。因此人手关键点检测算法Node需要基于Topic通信，订阅人手框检测算法Node发布的人手框消息。
+By reading this chapter, users can use the sensing nodes, human bounding box detection algorithm nodes, and human keypoint detection algorithm nodes in Horizon RDK, connect the sensing nodes and perception nodes through ROS2 topics, and achieve the goal of developing complex robot algorithm applications.
 
-通过阅读本章节，用户可以在地平线RDK上使用\tros.b中的传感Node、人手框检测和人手关键点检测算法Node，基于ROS2 Topic通信，串联起传感和感知Node，实现开发复杂机器人算法应用的目标。
+### Prerequisites
 
+1. Horizon RDK development board with the following software installed:
 
-### 前置条件
+- Horizon-provided Ubuntu 20.04 system image
 
-1 地平线RDK开发板，并且已安装好相关软件，包括：
+- `tros.b` software package
 
-- 地平线提供的Ubuntu 20.04系统镜像。
+2. Horizon RDK with F37 or GC4663 camera installed
 
-- tros.b软件包。
+3. A PC in the same network segment (wired or connected to the same wireless network, with the first three segments of the IP address consistent with Horizon RDK). The PC needs to have the following environment installed:
 
-2 地平线RDK已安装F37或者GC4663摄像头。
+  - Ubuntu 20.04 system
 
-3 和地平线RDK在同一网段（有线或者连接同一无线网，IP地址前三段需保持一致）的PC，PC端需要安装的环境包括：
+  - [ROS2 Foxy Desktop](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
 
-  - Ubuntu 20.04系统
+  - [rqt graphical tool](http://docs.ros.org/en/foxy/Concepts/About-RQt.html)
 
-  - [ROS2 Foxy桌面版](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
+### Task Content
 
-  - [rqt图形化工具](http://docs.ros.org/en/foxy/Concepts/About-RQt.html)
+#### 1. Start Data Collection Node
 
-
-### 任务内容
-
-#### 1 启动数据采集Node
-
-地平线RDK上打开一个终端启动图像发布Node，从F37摄像头采集图像数据并发布，用于算法推理使用：
+On the Horizon RDK, open a terminal and start the image publishing node, which captures image data from the F37 camera and publishes it for algorithm inference:
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
-# 启动Node
+# Start the node
 ros2 run mipi_cam mipi_cam --ros-args -p out_format:=nv12 -p image_width:=960 -p image_height:=544 -p video_device:=F37 -p io_method:=shared_mem --log-level warn
 ```
 
-#### 2 启动人手框检测算法Node
+#### 2. Start Human Bounding Box Detection Algorithm Node
 
-地平线RDK上打开一个终端启动人手框检测算法Node，订阅数据采集Node发布的图像消息，检测并发布人手检测框消息。
-
-启动命令中指定了发布的Topic为`hobot_hand_detection`。
+On the Horizon RDK, open a terminal and start the human bounding box detection algorithm node, which subscribes to the image messages published by the data collection node, detects and publishes human bounding box messages.The publishing topic specified in the launch command is `hobot_hand_detection`.
 
 ```shell
-# 配置tros.b环境
+# Set up tros.b environment
 source /opt/tros/setup.bash
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the required configuration files from the installation path of tros.b.
 cp -r /opt/tros/lib/mono2d_body_detection/config/ .
-# 启动Node
+# Start Node
 ros2 run mono2d_body_detection mono2d_body_detection --ros-args --log-level warn --ros-args -p ai_msg_pub_topic_name:=hobot_hand_detection
 ```
 
-#### 3 启动人手关键点检测算法Node
+#### 3 Start the Node for Hand Keypoint Detection Algorithm
 
-地平线RDK上打开一个终端启动人手关键点检测算法Node，订阅数据采集Node发布的图像消息以及人手框检测算法Node发布的人手框消息。
+Open a terminal on the Horizon RDK and start the Node for hand keypoint detection algorithm. It subscribes to image messages published by the data collection Node and hand bounding box messages published by the hand bounding box detection algorithm Node.
 
-启动命令中指定了发布消息的Topic为`hobot_hand_lmk_detection`，订阅消息的Topic为`hobot_hand_detection`。
+The publishing topic is specified as `hobot_hand_lmk_detection`, and the subscribing topic is specified as `hobot_hand_detection` in the launch command.
 
 ```shell
-# 配置tros.b环境
+# Set up tros.b environment
 source /opt/tros/setup.bash
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the required configuration files from the installation path of tros.b.
 cp -r /opt/tros/lib/hand_lmk_detection/config/ .
-# 启动Node
+# Start Node
 ros2 run hand_lmk_detection hand_lmk_detection --ros-args --log-level warn --ros-args -p ai_msg_pub_topic_name:=hobot_hand_lmk_detection -p ai_msg_sub_topic_name:=hobot_hand_detection
 ```
 
-#### 4 查看算法推理结果输出
+#### 4 View the Output of the Algorithm Inference
 
-地平线RDK上打开一个终端使用ROS2命令查看算法推理Node发布的Topic消息。
+Open a terminal on the Horizon RDK and use the ROS2 command to view the Topic messages published by the algorithm inference Node.
 
-**查看人手框检测算法Node发布出来的人手框检测消息**
+**View the hand bounding box detection messages published by the hand bounding box detection algorithm Node**
 
-查询命令：
+Query command:
 
 ```shell
-# 配置tros.b环境
+# Set up tros.b environment
 source /opt/tros/setup.bash
-# 启动Node
+# Start Node
 ros2 topic echo /hobot_hand_detection
 ```
 
-输出结果：
+Output:
 
 ```
 header:
@@ -1298,7 +1241,7 @@ header:
     sec: 1660034025
     nanosec: 429969208
   frame_id: '8049'
-fps: 30
+```fps: 30
 targets:
 - type: person
   track_id: 10
@@ -1314,22 +1257,21 @@ targets:
   points: []
   captures: []
 disappeared_targets: []
-```
 
-可以看到人手框检测算法Node发布出来的消息中包含一个人手框检测结果（roi type为hand）。
+The message contains the results of a person's hand detection algorithm (roi type: hand) published by the fps: 30 target detection algorithm Node.
 
-**查看人手关键点检测算法Node发布出来的人手关键点检测消息**
+**View the hand keypoint detection message published by the hand keypoint detection algorithm Node**
 
-查询命令：
+Query command:
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
-# 启动Node
+# Start the Node
 ros2 topic echo /hobot_hand_lmk_detection
 ```
 
-输出结果：
+Output result:
 
 ```
 header:
@@ -1347,121 +1289,91 @@ targets:
       x_offset: 619
       y_offset: 128
       height: 229
-      width: 168
-      do_rectify: false
-  attributes: []
-  points:
-  - type: hand_kps
-    point:
-    - x: 715.2421875
-      y: 348.0546875
-      z: 0.0
-    - x: 673.4921875
-      y: 315.8515625
-      z: 0.0
-    - x: 655.2265625
-      y: 294.3828125
-      z: 0.0
-    - x: 639.5703125
-      y: 262.1796875
-      z: 0.0
-    - x: 621.3046875
-      y: 229.9765625
-      z: 0.0
-    - x: 686.5390625
-      y: 247.8671875
-      z: 0.0
-    - x: 683.9296875
-      y: 201.3515625
-      z: 0.0
-    - x: 683.9296875
-      y: 176.3046875
-      z: 0.0
-    - x: 681.3203125
-      y: 147.6796875
-      z: 0.0
-    - x: 712.6328125
-      y: 240.7109375
-      z: 0.0
-    - x: 717.8515625
-      y: 194.1953125
-      z: 0.0
-    - x: 720.4609375
-      y: 161.9921875
-      z: 0.0
-    - x: 723.0703125
-      y: 129.7890625
-      z: 0.0
-    - x: 736.1171875
-      y: 247.8671875
-      z: 0.0
-    - x: 743.9453125
-      y: 201.3515625
-      z: 0.0
-    - x: 749.1640625
-      y: 172.7265625
-      z: 0.0
-    - x: 749.1640625
-      y: 140.5234375
-      z: 0.0
-    - x: 759.6015625
-      y: 262.1796875
-      z: 0.0
-    - x: 770.0390625
-      y: 226.3984375
-      z: 0.0
-    - x: 775.2578125
-      y: 204.9296875
-      z: 0.0
-    - x: 775.2578125
-      y: 179.8828125
-      z: 0.0
-    confidence: []
-  captures: []
+      width: 168do_rectify: false
+attributes: []
+points:
+- type: hand_kps
+  point:
+  - x: 715.2421875
+    y: 348.0546875
+    z: 0.0
+  - x: 673.4921875
+    y: 315.8515625
+    z: 0.0
+  - x: 655.2265625
+    y: 294.3828125
+    z: 0.0
+  - x: 639.5703125
+    y: 262.1796875
+    z: 0.0
+  - x: 621.3046875
+    y: 229.9765625
+    z: 0.0
+  - x: 686.5390625
+    y: 247.8671875
+    z: 0.0
+  - x: 683.9296875
+    y: 201.3515625
+    z: 0.0
+  - x: 683.9296875
+    y: 176.3046875
+    z: 0.0
+  - x: 681.3203125
+    y: 147.6796875
+    z: 0.0
+  - x: 712.6328125
+    y: 240.7109375
+    z: 0.0
+  - x: 717.8515625
+    y: 194.1953125
+    z: 0.0
+  - x: 720.4609375
+    y: 161.9921875
+    z: 0.0
+  - x: 723.0703125
+    y: 129.7890625
+    z: 0.0
+  - x: 736.1171875
+    y: 247.8671875
+    z: 0.0
+  - x: 743.9453125
+    y: 201.3515625
+    z: 0.0- x: 749.1640625
+  y: 172.7265625
+  z: 0.0
+- x: 749.1640625
+  y: 140.5234375
+  z: 0.0
+- x: 759.6015625
+  y: 262.1796875
+  z: 0.0
+- x: 770.0390625
+  y: 226.3984375
+  z: 0.0
+- x: 775.2578125
+  y: 204.9296875
+  z: 0.0
+- x: 775.2578125
+  y: 179.8828125
+  z: 0.0
+confidence: []
+captures: []
 disappeared_targets: []
-```
 
-可以看到人手关键点检测算法Node在订阅到人手检测框消息并用于推理后，发布出来的消息中包含一个人手框和人手关键点检测结果（roi type为hand，points type为hand_kps）。发布出来的人手框消息内容来源于订阅到的人手框消息，和上一步查出来的数据一致。
-
-
-#### 5 Node串联出来的Graph
-
-地平线RDK上打开一个终端使用ROS2命令查看运行时设备的Node和Topic信息：
-
-```shell
-# 配置tros.b环境
-root@ubuntu:~# source /opt/tros/setup.bash
-# 查询Node信息
-root@ubuntu:~# ros2 node list
-/hand_lmk_det
-/mipi_cam
-/mono2d_body_det
-# 查询Topic信息
-root@ubuntu:~# ros2 topic list
-/hbmem_img08172824022201080202012021072315
-/hobot_hand_detection
-/hobot_hand_lmk_detection
-/image_raw
-/parameter_events
-/rosout
-```
-
-查询到地平线RDK上运行着3个Node。
-
-在PC端（**PC需要和地平线RDK处于同一网段**）通过rqt的Node Graph功能可以可视化的展示地平线RDK上运行的Node，Node发布和订阅的topic，以及Node基于这些Topic组成的graph，如下图：
+We can see that the published message contains the bounding box and keypoint detection results of the hand. The bounding box information is consistent with the subscribed message.The Rqt's Node Graph function on the PC side (**the PC needs to be in the same network segment as the Horizon RDK**) can visualize the Nodes running on the Horizon RDK, the topics published and subscribed by the Nodes, and the graph composed of these topics, as shown in the figure below:
 
 ![](./image/ai_predict/rosgraph_handlmk.jpg)
 
-其中椭圆形框内为Node名，矩形框内为Topic名。可以看到，整个graph由3个Node和2个Topic组成。
+In the figure, the ellipses represent the Node names, and the rectangles represent the Topic names. It can be seen that the entire graph consists of 3 Nodes and 2 Topics.
 
-mipi_cam（传感Node）为起点，实现从摄像头采集和发布图像。
+The "mipi_cam" (sensing Node) is the starting point, responsible for capturing and publishing images from the camera.
 
-mono2d_body_det（算法感知Node）为中间节点，订阅mipi_cam Node发布的图像数据，实现人手框的检测。
+The "mono2d_body_det" (algorithm perception Node) is the middle node, subscribing to the image data published by the "mipi_cam" Node and performing human body box detection.
 
-hand_lmk_det（算法感知Node）为终点，订阅mipi_cam Node发布的图像数据以及mono2d_body_det Node发布的人手框检测数据，实现人手关键点的检测。
+The "hand_lmk_det" (algorithm perception Node) is the end node, subscribing to the image data published by the "mipi_cam" Node and the human body box detection data published by the "mono2d_body_det" Node, and performing hand keypoint detection.
 
-### 本节总结
+### Summary
 
-本章节介绍了在地平线RDK上使用地平线tros.b中的传感Node、人手框检测和人手关键点检测算法Node，基于ROS2 Topic通信，串联起两个感知算法Node，实现从摄像头采集图像后用于算法推理并发布检测出的人手关键点消息的功能。
+This chapter introduces the use of sensing Nodes, human body box detection Nodes, and hand keypoint detection algorithm Nodes in the Horizon RDK, based on ROS2 topic communication. By connecting two perception algorithm Nodes, images captured from the camera are used for algorithm inference and the detected hand keypoints are published as messages.
 
-基于本章节介绍的算法串联原理，用户可以在地平线RDK上串联更多算法Node，开发出功能丰富的机器人算法应用。
+Based on the algorithm chaining principle introduced in this chapter, users can connect more algorithm Nodes on the Horizon RDK and develop feature-rich robot algorithm applications.

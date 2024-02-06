@@ -1,58 +1,53 @@
 ---
 sidebar_position: 6
 ---
+# 2.6 Model Inference
 
-# 2.6 模型推理
+## Function Introduction
 
-## 功能介绍
+This section introduces the usage of the model inference function. You can input a local image for inference, and get the rendered image saved locally.
 
-本章节介绍模型推理功能的使用，输入一张本地图片进行推理，得到渲染后的图片并保存在本地。
+Code repository: [https://github.com/HorizonRDK/hobot_dnn](https://github.com/HorizonRDK/hobot_dnn)
 
-代码仓库：<https://github.com/HorizonRDK/hobot_dnn>
+## Supported Platforms
 
-## 支持平台
-
-| 平台    | 运行方式     |
-| ------- | ------------ |
+| Platform    | Running Mode     |
+| ------------ | ---------------- |
 | RDK X3, RDK X3 Module| Ubuntu 20.04 |
 | X86     | Ubuntu 20.04 |
 
-***RDK Ultra模型推理功能体验参考[3. Boxs算法仓库](../category/boxs/)。***
+***For experience of RDK Ultra model inference, please refer to [3. Boxs algorithm repository](../category/boxs/)***
 
-## 准备工作
+## Prerequisites
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. The Horizon RDK is already burned with the provided Ubuntu 20.04 system image.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. The TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-### X86平台
+### X86 Platform
 
-1. 确认X86平台系统为Ubuntu 20.04，且已成功安装tros.b。
+1. Confirm that the X86 platform system is Ubuntu 20.04, and TogetheROS.Bot has been successfully installed.
 
-## 使用介绍
+## Usage Introduction
 
-使用hobot_dnn配置文件中的本地JPEG格式图片和模型（FCOS目标检测模型，支持的目标检测类型包括人、动物、水果、交通工具等共80种类型），通过回灌进行推理，并存储渲染后的图片。
+Use the local JPEG format image and model in the hobot_dnn configuration file (FCOS object detection model, supporting 80 types of object detection including human, animal, fruit, and transportation, etc.), perform inference through feedback, and save the rendered image.
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。config中为example使用的模型，回灌使用的本地图片
+# Copy the configuration file needed for the example to run from the installation path of tros.b. config contains the model used by the example and the local image used for feedback
 cp -r /opt/tros/lib/dnn_node_example/config/ .
 
-# 使用本地jpg格式图片进行回灌预测，并存储渲染后的图片
+# Perform feedback prediction using the local jpg format image and save the rendered image
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image:=config/target.jpg
 ```
 
-运行成功后，在运行路径下自动保存渲染后的图片，命名方式为render_feedback_0_0.jpeg，使用ctrl+c退出程序。
+After a successful run, the rendered image will be automatically saved in the execution path, named as render_feedback_0_0.jpeg. Use Ctrl+C to exit the program.## Analysis of Results
 
-运行命令中的参数说明，以及如何订阅并使用从camera发布的图片进行算法推理的运行方法参考dnn_node_example package源码中的README.md。
-
-## 结果分析
-
-在运行终端输出如下信息：
+The terminal output during the execution of the command provides the following information:
 
 ```text
 [example-1] [INFO] [1679901151.612290039] [ImageUtils]: target size: 6
@@ -71,8 +66,8 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-1] [WARN] [1679901151.612652352] [ImageUtils]: Draw result to file: render_feedback_0_0.jpeg
 ```
 
-输出log显示，算法使用输入的图片推理出6个目标，并输出了每个目标的类别（target type）和检测框坐标（检测框左上位置的x坐标x_offset和y坐标y_offset，检测框的宽width和高height）。存储的渲染图片文件名为render_feedback_0_0.jpeg。
+The log output shows that the algorithm has inferred 6 targets based on the input image and provided the class (target type) and the coordinates of the detection boxes (x_offset and y_offset for the top left corner of the box, and width and height of the box). The rendered image file is saved as render_feedback_0_0.jpeg.
 
-渲染后的图片render_feedback_0_0.jpeg：
+The rendered image, render_feedback_0_0.jpeg, is shown below:
 
 ![](./image/ai_predict/render1.jpg)

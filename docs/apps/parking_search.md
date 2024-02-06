@@ -2,77 +2,75 @@
 sidebar_position: 8
 ---
 
-# 4.8 小车车位寻找
+# 4.8 Car Parking Space Search
 
-## 功能介绍
+## Function Introduction
 
-车位寻找控制App功能为通过车位检测算法指导机器人运动到停车位，包括左右旋转和前后平移运动。App由MIPI图像采集、车位检测算法、车位寻找控制策略、图像编解码、Web展示端组成，流程如下图：
+The Car Parking Space Search control app guides the robot to move to a parking space using parking detection algorithms, including left and right rotation and forward and backward translation. The app consists of MIPI image acquisition, parking detection algorithm, parking search control strategy, image encoding and decoding, and web display end. The process is shown in the following image:
 
 ![](./image/parking_search/msg_workflow.png)
 
-App通过车位寻找控制策略发布的控制指令直接控制实物小车，也可以利用PC端Gazebo仿真环境下的虚拟小车进行测试。
+The app directly controls the physical car through control commands published by the parking search control strategy, and can also use the virtual car in the PC side Gazebo simulation environment for testing.
 
-代码仓库：<https://github.com/HorizonRDK/parking_search.git>
+Code repository: <https://github.com/HorizonRDK/parking_search.git>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | 启动MIPI/USB摄像头获取图像，并进行停车区域检测和车位寻找，最后通过实车运动展示寻找效果 |
+| Platform         | Running Method | Example Function                            |
+| ---------------- | -------------- | ------------------------------------------- |
+| RDK X3, RDK X3 Module | Ubuntu 20.04   | Start MIPI/USB camera to capture images, and perform parking area detection and parking space search, finally demonstrating the search effect through the motion of the actual car. |
 
-## 设计说明
+## Design Description
 
-1.视野设置:
+1. Field of view settings:
 
-将视野场景区域分为“左”、“中”、“右”三个区域。计算每个区域内停车区域和行车区域的IOU，根据阈值判断对应区域类型，从而完成小车运动决策。
+Divide the field of view scene into "left", "middle", and "right" regions. Calculate the IOU (Intersection over Union) of the parking area and the driving area in each region, and determine the corresponding region type based on the threshold, thus completing the decision-making of the car's movement.
 
 ![](./image/parking_search/view_area.png)
 
-2.阈值设置:
+2. Threshold settings:
 
-| 视野区域 | 左 | 中 | 右 |
-| - | - | - | - |
-| 停车区域 IOU | 0.6 | 0.7 | 0.6 |
-| 行车区域 IOU | 0.8 | 0.9 | 0.8 |
+| Field of view region | Left | Middle | Right |
+| ------------------- | ---- | ------ | ----- |
+| Parking area IOU    | 0.6  | 0.7    | 0.6   |
+| Driving area IOU    | 0.8  | 0.9    | 0.8   |
 
-3.类别设置:
+3. Category settings:
 
-| 视野区域 | 道路 | 背景 | 车道线 | 标志线 | 车位线 | 车位区域 | 停车杆 | 地锁 |
-| - | - | - | - | - | - | - | - | - |
-| 停车区域 IOU | | | | | √ | √ | | |
-| 行车区域 IOU | √ | | √ | √ | √ | √ | | |
+| Field of view region | Road | Background | Lane line | Sign line | Parking line | Parking area | Parking pole | Parking lock |
+| ------------------- | ---- | ---------- | --------- | --------- | ------------ | ------------ | -------------| ------------- |
+| Parking area IOU    |      |            |           |           | √            | √            |              |              |
+| Driving area IOU    | √    |            | √         | √         | √            | √            |              |              |
 
-说明：由于实际检测中，由于算法本身检测精度不能达到100%，存在将行车区域误检为停车区域的情况，因此计算行车区域时将停车区域类别包括其中。
+Note: In actual detection, due to the fact that the detection accuracy of the algorithm itself cannot reach 100%, there may be cases where the driving area is mistakenly detected as the parking area. Therefore, when calculating the driving area, the parking area category is included.
 
-4.算法流程:
+4. Algorithm flow:
 
-![](./image/parking_search/workflow.png)
+![](./image/parking_search/workflow.png)## Preparation
 
-## 准备工作
+### Horizon RDK Platform
 
-### 地平线RDK平台
+1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+2. The Horizon RDK has successfully installed TogetheROS.Bot.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+3. The Horizon RDK has installed a MIPI or USB camera.
 
-3. 地平线RDK已安装MIPI或者USB摄像头。
-
-4. 一台古月居小车作为控制下位机。
+4. A Gu Yue Ju car is used as the control device.
 
 ![](./image/parking_search/car.jpg)
 
-## 使用介绍
+## Instructions
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-将小车置于水平地面，调整相机角度为水平，运行车位寻找App后，小车根据停车区域检测算法的结果，自动进行决策并控制小车运动，直到找到车位并进入车位停止。
+Place the car on a level surface, adjust the camera angle to be horizontal, and run the Parking Search App. The car will automatically make decisions and control its movement based on the results of the parking area detection algorithm until it finds a parking space and stops.
 
-APP启动后可以在PC端浏览器上渲染显示sensor发布的图片和对应的算法结果（浏览器输入http://IP:8000，IP为地平线RDK的IP地址）。
+After the app is launched, you can view the images published by the sensors and the corresponding algorithm results on the PC browser (enter http://IP:8000 in the browser, where IP is the IP address of the Horizon RDK).
 
-打开Web端，需打开界面右上角设置，选中”全图分割“选项，可显示渲染效果。（参考4.2 Boxs应用算法——室外停车区域检测）
+Open the Web interface and click on the settings in the upper right corner of the page. Select the "Full Image Segmentation" option to display the rendered effect (refer to Section 4.2 Boxs Application Algorithm - Outdoor Parking Area Detection).
 
-启动古月居小车，在地平线RDK上运行控制下位机节点：
+Start the Gu Yue Ju car and run the control node on the Horizon RDK:
 
 ```shell
 source /opt/tros/setup.bash
@@ -80,7 +78,7 @@ source /userdata/originbot/local_setup.bash
 ros2 run originbot_base originbot_base
 ```
 
-启动成功后，地平线RDK输出log信息：
+After the startup is successful, the Horizon RDK will output log information:
 
 ```shell
 Loading parameters:
@@ -92,41 +90,40 @@ Loading parameters:
 [INFO] [1662551769.742268424] [originbot_base]: OriginBot Start, enjoy it.
 ```
 
-**使用MIPI摄像头发布图片**
+**Publishing Images Using MIPI Camera**
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
-
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+```# Copy the configuration files needed to run the example from the installation path of tros.b.
 cp -r /opt/tros/lib/parking_perception/config/ .
 
-# 配置MIPI摄像头
+# Configure the MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch parking_search parking_search.launch.py
 ```
 
-**使用USB摄像头发布图片**
+**Publishing images using a USB camera**
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the configuration files needed to run the example from the installation path of tros.b.
 cp -r /opt/tros/lib/parking_perception/config/ .
 
-# 配置USB摄像头
+# Configure the USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch parking_search parking_search.launch.py
 ```
 
-## 结果分析
+## Result Analysis
 
-1.小车在行车区域搜寻前进时地平线RDK运行终端输出log信息，其中控制小车以0.1m/s的速度前进运动（do move, direction: 0, step: 0.100000）。
+1. When the car searches and moves forward in the driving area, the log information is outputted in the Horizon RDK terminal. The car is controlled to move forward at a speed of 0.1m/s (do move, direction: 0, step: 0.100000).
 
 ```shell
 [parking_search-4] [WARN] [1661942399.306904646] [ParkingSearchEngine]: do move, direction: 0, step: 0.100000
@@ -138,7 +135,7 @@ ros2 launch parking_search parking_search.launch.py
 
 ![](./image/parking_search/cap1.gif)
 
-2.小车发现车位后转向时在地平线RDK运行终端输出log信息:
+2. When the car finds a parking space and turns, the log information is outputted in the Horizon RDK terminal:
 
 ```shell
 [parking_search-4] [WARN] [1662539779.408424498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
@@ -147,12 +144,9 @@ ros2 launch parking_search parking_search.launch.py
 [parking_search-4] [WARN] [1662539779.522690915] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_search-4] [WARN] [1662539779.563660873] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_perception-3] [WARN] [1662539779.595755290] [parking_perception]: input fps: 29.87, out fps: 29.63
-[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
-```
+[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000![](./image/parking_search/cap2.gif)
 
-![](./image/parking_search/cap2.gif)
-
-3.小车确定车位后前进并最终停止时在地平线RDK运行终端输出log信息:
+3. When the car determines the parking space and moves forward to stop, the Horizon RDK terminal outputs log information:
 
 ```shell
 [parking_search-4] [WARN] [1662539796.196264298] [ParkingSearchEngine]: do move, direction: 0, step: 0.100000
@@ -170,7 +164,7 @@ ros2 launch parking_search parking_search.launch.py
 
 ![](./image/parking_search/cap3.gif)
 
-PC端在终端使用`ros2 topic list`命令可以查询到地平线RDK的topic信息：
+On the PC terminal, you can use the `ros2 topic list` command to query the topic information of the Horizon RDK:
 
 ```shell
 $ ros2 topic list
@@ -186,4 +180,4 @@ $ ros2 topic list
 /tf
 ```
 
-其中`/image_jpeg`是地平线RDK发布的从MIPI sensor采集图像后经过JPEG格式编码的图片，`/ai_msg_parking_perception`是地平线RDK发布的包含车位检测信息的算法msg，`/cmd_vel`是地平线RDK发布的运动控制指令。
+Among them, `/image_jpeg` is the JPEG-encoded image published by the Horizon RDK after capturing images from the MIPI sensor, `/ai_msg_parking_perception` is the algorithm message published by the Horizon RDK containing parking detection information, and `/cmd_vel` is the motion control command published by the Horizon RDK.

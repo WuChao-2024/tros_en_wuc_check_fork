@@ -2,73 +2,73 @@
 sidebar_position: 8
 ---
 
-# 2.8 文本转语音
+# 2.8 Text to Speech
 
-## 功能介绍
+## Function Introduction
 
-本章节介绍如何将一段文本转化为语音信号，并通过音频输出接口播放。
+This section describes how to convert a text into a speech signal and play it through an audio output interface.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_tts.git>
+Code repository: <https://github.com/HorizonRDK/hobot_tts.git>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式     | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3 | Ubuntu 20.04 | 订阅文本消息，然后转化为语音数据，最后播放出去 |
+| Platform | Operation System | Example Function               |
+| -------- | ---------------- | ------------------------------ |
+| RDK X3   | Ubuntu 20.04    | Subscribe to text messages, convert them into speech data, and play them out |
 
-**注意：仅支持RDK X3，RDK X3 Module暂不支持。**
+**Note: Only supports RDK X3, RDK X3 Module is not supported yet.**
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
-2. 地平线RDK已成功安装TogetheROS.Bot。
-3. 已有地平线适配的音频驱动板，并参考[智能语音章节](../boxs/box_adv#智能语音)搭建好环境。
-4. 音频板耳机接口连接耳机或音响。
+1. Horizon RDK has been flashed with Ubuntu 20.04 system image provided by Horizon.
+2. TogetheROS.Bot has been successfully installed on Horizon RDK.
+3. An audio driver board compatible with Horizon has been obtained, and the environment has been set up according to [Smart Voice section](../boxs/box_adv#Smart Voice).
+4. Connect the audio board's headphone interface with headphones or speakers.
 
-## 使用方式
+## Usage
 
-### 地平线RDK平台
+### Horizon RDK platform
 
-1. 首次运行需要下载模型文件并解压，详细命令如下：
+1. For the first run, you need to download the models file and extract it. The detailed commands are as follows:
 
     ```bash
     wget http://sunrise.horizon.cc/tts-model/tts_model.tar.gz
     sudo tar -xf tts_model.tar.gz -C /opt/tros/lib/hobot_tts/
     ```
 
-2. 运行如下命令检查音频设备是否正常：
+2. Run the following command to check if the audio device is normal:
 
     ```bash
     root@ubuntu:~# ls /dev/snd/
     by-path  controlC0  pcmC0D0c  pcmC0D1p  timer
     ```
 
-    如果出现类似`pcmC0D1p`音频播放设备则表示设备正常。
+    If a similar audio playback device like `pcmC0D1p` appears, it means the device is working fine.
 
-3. 启动hobot_tts程序
+3. Start the hobot_tts program.
 
-    ```bash
-    source /opt/tros/setup.bash
+```bash
+source /opt/tros/setup.bash
 
-    # 屏蔽调式打印信息
-    export GLOG_minloglevel=1
+# Disable debug print information
+export GLOG_minloglevel=1
 
-    ros2 run hobot_tts hobot_tts
-    ```
+ros2 run hobot_tts hobot_tts
+```
 
-    注意：若音频播放设备不是`pcmC0D1p`，则需要使用参数`playback_device`指定播放音频设备。例如音频播放设备为`pcmC1D1p`，启动命令为：`ros2 run hobot_tts hobot_tts --ros-args -p playback_device:="hw:1,1"`
+Note: If the audio playback device is not `pcmC0D1p`, you need to use the `playback_device` parameter to specify the playback audio device. For example, if the audio playback device is `pcmC1D1p`, the launch command should be: `ros2 run hobot_tts hobot_tts --ros-args -p playback_device:="hw:1,1"`
 
-4. 新开一个终端，使用echo命令发布一条topic
+4. Open a new terminal and use the echo command to publish a topic
 
    ```bash
    source /opt/tros/setup.bash
-   ros2 topic pub --once /tts_text std_msgs/msg/String "{data: ""你知道地平线吗？是的，我知道地平线。它是一条从地面延伸到天空的线，它定义了地面和天空之间的分界线。""}"
+   ros2 topic pub --once /tts_text std_msgs/msg/String "{data: ""Do you know the horizon? Yes, I know the horizon. It is a line that extends from the ground to the sky, defining the boundary between the ground and the sky.""}"
    ```
 
-5. 耳机或音响可以听到播放的声音
+5. You can hear the playback sound from your headphones or speakers.
 
-## 注意事项
+## Notes
 
-目前仅支持中文和英文文本内容，切记勿发布其他语言文本消息。
+Currently, only Chinese and English text content are supported. Do not publish text messages in other languages.

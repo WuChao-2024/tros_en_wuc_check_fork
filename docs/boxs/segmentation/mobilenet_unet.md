@@ -1,108 +1,105 @@
----
 sidebar_position: 1
 ---
 # mobilenet_unet
 
-## 功能介绍
+## Introduction
 
-mobilenet_unet分割算法示例使用图片作为输入，利用BPU进行算法推理，发布包含分割结果msg。
+The mobilenet_unet segmentation algorithm example uses images as input and performs algorithm inference using BPU. It publishes segmentation result messages.
 
-mobilenet_unet是使用[Cityscapes](https://www.cityscapes-dataset.com/)数据集训练出来的Onnx模型，模型来源：<https://github.com/HorizonRobotics-Platform/ModelZoo/tree/master/MobilenetUnet>。支持对人、车辆、路面、路标等类别进行分割。
+The mobilenet_unet model is trained on the [Cityscapes](https://www.cityscapes-dataset.com/) dataset and the Onnx model is sourced from <https://github.com/HorizonRobotics-Platform/ModelZoo/tree/master/MobilenetUnet>. It supports segmentation of categories such as humans, vehicles, road surfaces, and road signs.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_dnn>
+Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
-应用场景：mobilenet_unet由MobileNet与UNet组成，能够从像素级别分割图像内容，可实现道路识别、遥感地图分析、医学影像诊断等功能，主要应用于自动驾驶、地质检测，医疗影像分析等领域。
+Applications: mobilenet_unet, composed of MobileNet and UNet, can segment images at the pixel level. It can be used for road recognition, remote sensing map analysis, medical image diagnosis, and other functions. It is mainly applied in the fields of autonomous driving, geological detection, and medical image analysis.
 
-背景虚化案例：<https://github.com/rusito-23/mobile_unet_segmentation>
+Background blurring example: <https://github.com/rusito-23/mobile_unet_segmentation>
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module| Ubuntu 20.04 | · 启动MIPI/USB摄像头/本地回灌，渲染结果保存在本地 |
-| X86     | Ubuntu 20.04 | · 使用本地回灌，渲染结果保存在本地 |
+| Platform | Running Mode | Example Functionality                     |
+| -------- | ------------ | ---------------------------------------- |
+| RDK X3, RDK X3 Module | Ubuntu 20.04 | - Start MIPI/USB cameras/local image playback and save the rendered results locally. |
+| X86      | Ubuntu 20.04 | - Use local image playback and save the rendered results locally. |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. The Horizon RDK platform has been flashed with the provided Ubuntu 20.04 system image.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK platform.
 
-3. 地平线RDK已安装MIPI或者USB摄像头，无摄像头的情况下通过回灌本地JPEG/PNG格式图片的方式体验算法效果。
+3. A MIPI or USB camera has been installed on the Horizon RDK platform. If there is no camera available, the algorithm's effects can be experienced by playing back local JPEG/PNG format images.
 
-### X86平台
+### X86 Platform
 
-1. X86环境已配置好Ubuntu 20.04系统镜像。
+1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
-2. X86环境系统已成功安装tros.b。
+2. The tros.b has been successfully installed on the X86 environment.
 
-## 使用介绍
+## Usage Guide
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-#### 使用摄像头发布图片
+#### Publishing Images Using the Camera
 
-##### 使用MIPI摄像头发布图片
+##### Publishing Images Using a MIPI Camera
 
-mobilenet_unet分割示例订阅sensor package发布的图片，经过推理后发布算法msg，并在运行路径下自动保存渲染后的图片，命名方式为render_frameid_时间戳秒_时间戳纳秒.jpg。
+The mobilenet_unet segmentation example subscribes to images published by the sensor package. After inference, it publishes algorithm messages and saves the rendered images automatically in the running directory. The saved images are named in the format of `render_frameid_timestampInSeconds_timestampInNanoseconds.jpg`.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 配置MIPI摄像头
+# Configure MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Start launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_dump_render_img:=1 dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-##### 使用USB摄像头发布图片
+##### Publish images using USB camera
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 配置USB摄像头
+# Configure USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Start launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_dump_render_img:=1 dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-#### 使用本地图片回灌
+#### Use local images for feedback
 
-mobilenet_unet分割示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The mobilenet_unet segmentation example uses local JPEG/PNG format images for feedback. After inference, the rendered images of the algorithm results are stored in the local running path.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Start launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image:=config/raw_unet.jpeg
 ```
 
-### X86平台
+### X86 platform
 
-#### 使用本地图片回灌
+#### Use local images for feedback
 
-mobilenet_unet分割示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The mobilenet_unet segmentation example uses local JPEG/PNG format images for feedback. After inference, the rendered images of the algorithm results are stored in the local running path.
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Start launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image:=config/raw_unet.jpeg
-```
+```## Analysis of Results
 
-## 结果分析
+### Publishing Images Using a Camera
 
-### 使用摄像头发布图片
-
-在运行终端输出如下信息：
+The terminal output shows the following information:
 
 ```shell
 [example-3] [WARN] [1655095719.035374293] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
@@ -118,17 +115,17 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-3] [WARN] [1655095725.093525634] [img_sub]: Sub img fps 3.91
 ```
 
-输出log显示，发布算法推理结果的topic为`hobot_dnn_detection`，订阅图片的topic为`/hbmem_img`，其中图片发布的帧率根据会根据算法推理输出帧率自适应。此外，地平线RDK上会渲染语义分割结果并存储图片在运行路径下，会使帧率下降。
+The log output shows that the topic used for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic used for subscribing to the images is `/hbmem_img`. The frame rate at which the images are published will adapt according to the algorithm inference output frame rate. Additionally, rendering the semantic segmentation results on the Horizon RDK and saving the images in the running path will cause a decrease in frame rate.
 
-原始图片：
+Original image:
 ![raw](./image/mobilenet_unet/mobilenet_unet_raw.jpeg)
 
-渲染后的图片：
+Rendered image:
 ![render_web](./image/mobilenet_unet/mobilenet_unet_render_web.jpeg)
 
-### 使用本地图片回灌
+### Injecting Local Images for Feedback
 
-在运行终端输出如下信息：
+The terminal output shows the following information:
 
 ```shell
 [example-1] [INFO] [1654769881.171005839] [dnn]: The model input 0 width is 2048 and height is 1024
@@ -144,6 +141,6 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-1] [INFO] [1654769881.995920396] [UnetPostProcess]: Draw result to file: render_unet_feedback_0_0.jpeg
 ```
 
-输出log显示，算法使用输入的图片config/raw_unet.jpeg推理，存储的渲染图片文件名为render_unet_feedback_0_0.jpeg，渲染图片效果：
+The log output shows that the algorithm performs inference using the input image `config/raw_unet.jpeg`, and the rendered image is stored with the file name `render_unet_feedback_0_0.jpeg`. The rendered image looks like this:
 
 ![render_feedback](./image/mobilenet_unet/mobilenet_unet_render_feedback.jpeg)

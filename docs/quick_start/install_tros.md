@@ -1,75 +1,70 @@
 ---
 sidebar_position: 2
 ---
+# 1.2 apt installation and upgrade
 
-# 1.2 apt安装与升级
+This section introduces how to use apt to install TogetheROS.Bot on Horizon RDK and X86 platforms.
 
-本章节介绍地平线RDK和X86平台如何使用apt安装TogetheROS.Bot。
+## Horizon RDK platform
 
-## 地平线RDK平台
+Prerequisites
 
-前提
+- The environment preparation in section 1.1 has been completed.
+- The Horizon RDK system has been installed with version 2.x.
+- The Horizon RDK can access the internet normally.
+- The Horizon RDK can be accessed remotely via SSH.
 
-- 已完成1.1章节环境准备工作
-- 地平线RDK已安装2.x版本系统
-- 地平线RDK能够正常访问互联网
-- 地平线RDK能够远程ssh
+**Note**
 
-**注意**
+| Dependency  | 1.x tros.b  | 2.x tros.b |
+| ----------- | ------------| ------------|
+| 1.x system image |       √     |       x     |
+| 2.x system image |       x     |       √     |
 
-| 依赖关系    | 1.x tros.b  | 2.x tros.b |
-| -----------| ------------| ------------|
-| 1.x系统镜像 |       √     |       x     |
-| 2.x系统镜像 |       x     |       √     |
+- **The 2.x version of tros.b only supports 2.x version of the system image, and the [1.x version of tros.b](https://developer.horizon.cc/api/v1/fileData/TogetherROS/index.html) only supports 1.x version of the system.**
 
-- **2.x版本tros.b仅支持2.x版本系统镜像，[1.x版本tros.b](https://developer.horizon.cc/api/v1/fileData/TogetherROS/index.html)仅支持1.x版本系统。**
+- **If you are using a 1.x version of the system image, you need to [upgrade the system](./preparation) to the 2.x version.**
 
-- **如果您使用的是1.x版本系统镜像，需要将[系统升级](./preparation)到2.x版本。**
+- **For information on how to check the system and tros.b version numbers and detailed instructions, please refer to the [FAQs](../FAQs/hardware_and_system.md).**
 
-- **系统和tros.b版本号查看方法以及详细说明，请查看[FAQs](../FAQs/hardware_and_system.md)。**
+### Install tros.b
 
+**Note: The IP address of the Horizon RDK used here is 10.64.61.241. Replace it with your own Horizon RDK IP address during installation.**
 
-### 安装tros.b
-
-**注意：这里使用的地平线RDK IP为10.64.61.241，安装时需要根据自己的地平线RDK IP进行替换**
-
-登录地平线RDK
+Login to the Horizon RDK
 
 ```shell
 ssh root@10.64.61.241
 ```
 
-安装tros.b功能包，`sudo apt update; sudo apt install tros`
+Install the tros.b package, `sudo apt update; sudo apt install tros`
 
-**注意：如果您运行安装命令后提示`E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution).`，先执行`apt --fix-broken install`命令安装相关依赖后再安装tros.b。**
+**Note: If you encounter the error `E: Unmet dependencies. Try 'apt --fix-broken install' with no packages (or specify a solution).' after running the installation command, please execute the command `apt --fix-broken install` to install the related dependencies before installing tros.b.**
 
-安装完成后，查看/opt目录下文件
+After the installation is complete, check the files in the /opt directory
 
 ```bash
 root@ubuntu:/userdata# ls /opt/
-hobot  tros
-```
+hobot  trosThe tros.b is installed in the /opt directory.
 
-可以看到tros.b已安装在/opt目录下
+### Upgrade tros.b
 
-### 升级tros.b
+Take Horizon RDK installation as an example, the X86 Ubuntu upgrade method is the same as Horizon RDK.
 
-以地平线RDK安装为例，X86 Ubuntu升级方法和地平线RDK一致。
-
-登录地平线RDK
+Login to Horizon RDK:
 
 ```shell
 ssh root@10.64.61.241
 ```
 
-升级tros.b deb包
+Upgrade tros.b deb package:
 
 ```shell
 sudo apt update
 sudo apt upgrade
 ```
 
-查看当前tros.b版本
+Check the current version of tros.b:
 
 ```bash
 root@ubuntu:~# apt show tros
@@ -85,49 +80,48 @@ Description: TogetheROS Bot
 
 ```
 
-可以看到当前tros.b版本已升级为2.0.0版本
+It can be seen that the current version of tros.b has been upgraded to version 2.0.0.
 
-## X86平台
+## X86 Platform
 
-前提：
+Prerequisites:
 
-- 已完成2.1章节环境准备工作
-- Ubuntu系统为Ubuntu 20.04，且能够正常访问互联网
+- The environment preparation work in Chapter 2.1 has been completed.
+- The Ubuntu system is Ubuntu 20.04 and can access the Internet normally.
 
-1. 设置locale和启用universe软件源
-
-   ```bash
-   sudo apt update && sudo apt install locales
-   sudo locale-gen en_US en_US.UTF-8
-   sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-   export LANG=en_US.UTF-8
-
-   sudo apt install software-properties-common
-   sudo add-apt-repository universe
-   ```
-
-2. 下载gpg密钥文件并添加源列表：
+1. Set locale and enable the universe software repository:
 
    ```bash
-   sudo apt update && sudo apt install curl
+   sudo apt update && sudo apt install localessudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
 
-   sudo curl -sSL http://sunrise.horizon.cc/keys/sunrise.gpg -o /usr/share/keyrings/sunrise.gpg
-   echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sunrise.gpg] http://sunrise.horizon.cc/ubuntu-rdk-sim focal main" | sudo    tee /etc/apt/sources.list.d/sunrise.list > /dev/null
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+```
 
-   sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-   echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-   ```
+2. Download the GPG key file and add the source list:
 
-3. 更新源信息，安装tros.b：
+```bash
+sudo apt update && sudo apt install curl
 
-   ```bash
-   sudo apt update
-   
-   sudo apt install tros
-   ```
+sudo curl -sSL http://sunrise.horizon.cc/keys/sunrise.gpg -o /usr/share/keyrings/sunrise.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sunrise.gpg] http://sunrise.horizon.cc/ubuntu-rdk-sim focal main" | sudo tee /etc/apt/sources.list.d/sunrise.list > /dev/null
 
-**注意**
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
 
-- **如果您的X86平台已安装1.x版本tros.b，请先使用命令`sudo apt remove tros`删除后再安装2.x版本tros.b**。
+3. Update the source information and install tros.b:
 
-- **关于如何查看tros.b版本号，请查看[FAQs](../FAQs/hardware_and_system.md)**。
+```bash
+sudo apt update
+
+sudo apt install tros
+```
+
+**Note:**
+
+- **If you have already installed tros.b version 1.x on your X86 platform, please remove it with the command `sudo apt remove tros` before installing version 2.x of tros.b**.
+
+- **To check the version number of tros.b, please refer to the [FAQs](../FAQs/hardware_and_system.md)**.

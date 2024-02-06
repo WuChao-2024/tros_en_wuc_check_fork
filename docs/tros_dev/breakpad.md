@@ -1,39 +1,38 @@
 ---
 sidebar_position: 3
 ---
+# 5.3 Using Breakpad
 
-# 5.3 breakpad使用
+## Functional Background
 
-## 功能背景
+Breakpad is a tool suite for recording crash information in applications, which is more powerful than the Linux core mechanism. It can be used to view crash information of applications that have been stripped of compiler debugging information. When a program crashes, the crash information is recorded in a compact "minidump" file and sent back to the server. It can generate C and C++ stack traces from these minidumps and symbol files. Breakpad is located in the tools folder of TogetheROS.
 
-Breakpad是一个比Linux core机制更强大的、用于记录程序崩溃时信息的工具套件，可用来查看被strip，也就是被剔除了编译器调试信息的应用程序的崩溃信息。在程序崩溃时，将崩溃信息记录在一个小巧的“ minidump”文件中，将其发送回服务器。并且可以从这些minidump和符号文件来生成C和C++堆栈跟踪。breakpad位于TogetheROS的tools文件夹内。
+## Prerequisites
 
-## 前置条件
+Breakpad is located in the code repository <https://github.com/HorizonRDK/breakpad.git>, with the develop branch. The directory contains the bin, lib, includes, and other folders that have been cross-compiled and can run on the Horizon RDK, which include the breakpad tools, static libraries, header files, and other contents.
 
-Breakpad位于代码仓库<https://github.com/HorizonRDK/breakpad.git>，分支为develop，目录内包含了经过交叉编译，可在地平线RDK上运行的bin，lib，includes等文件夹，分别包含了breakpad工具，静态链接库，头文件等内容。
-
-## 任务内容
-### 1. 创建、编译并运行test程序
-在Breakpad目录下新建测试程序 test.cpp，并编译为可执行程序 test，其中要带上 -g 选项。新建目录 /tmp，再运行可执行程序 test
+## Task Content
+### 1. Creating, compiling, and running the test program
+Create a new test program named test.cpp in the Breakpad directory and compile it into an executable program named test, making sure to include the -g option. Create a new directory /tmp, and then run the executable program test.
 
 ```c++
 //  test.cpp
 
-//  包含breakpad核心头文件
+//  Include the core Breakpad header file
 #include "client/linux/handler/exception_handler.h"
 
-//  发生crash时的回调函数
+//  Callback function when a crash occurs
 static bool dumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,
                           void* context, bool succeeded) {
   printf("Dump path: %s\n", descriptor.path());
   return succeeded;
 }
 
-//  crash函数
+//  Crash function
 void crash() { volatile int* a = (int*)(nullptr); *a = 1; }
 
 int main(int argc, char* argv[]) {
-  //  初始化 descriptor，设置coredmup文件路径为 /tmp
+  //  Initialize the descriptor and set the coredump file path to /tmp
   google_breakpad::MinidumpDescriptor descriptor("/tmp");
   google_breakpad::ExceptionHandler eh(descriptor, NULL, dumpCallback, NULL,
                                         true, -1);
@@ -46,24 +45,22 @@ int main(int argc, char* argv[]) {
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# g++ ./test.cpp -o test -g \
   -I ./include/breakpad/ \
   -L ./lib/ \
-  -lbreakpad -lbreakpad_client -lpthread
-
-root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# mkdir /tmp
+  -lbreakpad -lbreakpad_client -lpthreadroot@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# mkdir /tmp
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# ./test
 Dump path: /tmp/4113ab89-7169-49df-963945b3-383e8364.dmp
 Segmentation fault
 ```
 
-### 2. 使用breakpad生成dump文件  
+### 2. Generate dump file using breakpad
 
-赋予程序可执行权限, 使用 dump_sys工具把可执行程序 test的symbols信息dump为test.sym文件
+Give execute permission to the program, and use the dump_syms tool to dump the symbols information of the executable program "test" to a file named "test.sym".
 
 ```shell
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# chmod +x ./bin/*
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# ./bin/dump_syms ./test > test.sym
 ```
 
-查看test.sym第一行信息，并新建相关文件夹
+View the first line of the test.sym file and create the related folders.
 
 ```shell
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# head -n1 test.sym
@@ -72,15 +69,15 @@ root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# mkdir -p ./symbols/test/3816BF71
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# cp test.sym ./symbols/test/3816BF7138E87673BEE70E2C86F5FAC80 
 ```
 
-运行可执行程序test，生成 minidump.dmp文件，运行下面的命令，可得到程序的堆栈信息。注意 .dmp文件名可能不同，这里的是第一步生成的dmp文件
+Run the executable program "test" to generate a minidump.dmp file. Run the following command to get the program's stack trace information. Note that the .dmp filename may be different. Here, we use the dmp file generated in the first step.
 
 ```shell
 root@ubuntu:~/cc_ws/tros_ws/src/tools/breakpad# ./bin/minidump_stackwalk /tmp/4113ab89-7169-49df-963945b3-383e8364.dmp ./symbols
 ```
 
-### 3. 分析
+### 3. Analysis
 
- 上一节第四步的命令的输出结果如下所示，可以看到程序在test.cpp的第11行崩溃，符合程序的预期。
+The output of the command in the previous step is shown below, which indicates that the program crashes at line 11 of test.cpp, which is expected.
 
 ```text
 Thread 0 (crashed)
@@ -98,34 +95,41 @@ Thread 0 (crashed)
     x20 = 0x0000000000000000   x21 = 0x0000005571710470
     x22 = 0x0000000000000000   x23 = 0x0000000000000000
     x24 = 0x0000000000000000   x25 = 0x0000000000000000
-    x26 = 0x0000000000000000   x27 = 0x0000000000000000
-    x28 = 0x0000000000000000    fp = 0x0000007ffb82b550
-      lr = 0x0000005571710668    sp = 0x0000007ffb82b540
-      pc = 0x00000055717105c4
-    Found by: given as instruction pointer in context
-  1  test!main [test.cpp : 18 + 0x0]
-    x19 = 0x00000055717333d0   x20 = 0x0000000000000000
-    x21 = 0x0000005571710470   x22 = 0x0000000000000000
-    x23 = 0x0000000000000000   x24 = 0x0000000000000000
-    x25 = 0x0000000000000000   x26 = 0x0000000000000000
-    x27 = 0x0000000000000000   x28 = 0x0000000000000000
-      fp = 0x0000007ffb82b550    sp = 0x0000007ffb82b550
-      pc = 0x0000005571710668
-    Found by: call frame info
-  2  libc.so.6 + 0x20d4c
-    x19 = 0x00000055717333d0   x20 = 0x0000000000000000
-    x21 = 0x0000005571710470   x22 = 0x0000000000000000
-    x23 = 0x0000000000000000   x24 = 0x0000000000000000
-    x25 = 0x0000000000000000   x26 = 0x0000000000000000
-    x27 = 0x0000000000000000   x28 = 0x0000000000000000
-      fp = 0x0000007ffb82b700    sp = 0x0000007ffb82b700
-      pc = 0x0000007fb68f3d50
-    Found by: call frame info
-```
-
-## 本节总结
-
-本章节介绍了如何使用breakpad框架生成崩溃文件并分析堆栈信息。应用程序通过指定dump文件生成的目录，并注册崩溃时的回调函数完成breakpad的初始化。
-再使用breakpad的dump_syms工具生成symbol文件，同时创建symbol目录。最后利用minidump_stackwalk工具解析出dump文件并分析堆栈信息。
-
-更详细的内容可以参考breakpad官方网站：https://chromium.googlesource.com/breakpad/breakpad/
+```x26 = 0x0000000000000000
+x27 = 0x0000000000000000
+x28 = 0x0000000000000000
+fp = 0x0000007ffb82b550
+lr = 0x0000005571710668
+sp = 0x0000007ffb82b540
+pc = 0x00000055717105c4
+Found by: given as instruction pointer in context
+1 test!main [test.cpp : 18 + 0x0]
+x19 = 0x00000055717333d0
+x20 = 0x0000000000000000
+x21 = 0x0000005571710470
+x22 = 0x0000000000000000
+x23 = 0x0000000000000000
+x24 = 0x0000000000000000
+x25 = 0x0000000000000000
+x26 = 0x0000000000000000
+x27 = 0x0000000000000000
+x28 = 0x0000000000000000
+fp = 0x0000007ffb82b550
+sp = 0x0000007ffb82b550
+pc = 0x0000005571710668
+Found by: call frame info
+2 libc.so.6 + 0x20d4c
+x19 = 0x00000055717333d0
+x20 = 0x0000000000000000
+x21 = 0x0000005571710470
+x22 = 0x0000000000000000
+x23 = 0x0000000000000000
+x24 = 0x0000000000000000
+x25 = 0x0000000000000000
+x26 = 0x0000000000000000
+x27 = 0x0000000000000000
+x28 = 0x0000000000000000
+fp = 0x0000007ffb82b700
+sp = 0x0000007ffb82b700
+pc = 0x0000007fb68f3d50
+Found by: call frame info

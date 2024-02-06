@@ -3,107 +3,105 @@ sidebar_position: 3
 ---
 # MobileNet_SSD
 
-## 功能介绍
+## Function Introduction
 
-MobileNet_SSD目标检测算法示例使用图片作为输入，利用BPU进行算法推理，发布包含目标类别和检测框的算法msg。
+The MobileNet_SSD object detection algorithm example uses images as input, performs algorithm inference using BPU, and publishes algorithm messages that include target categories and detection boxes.
 
-Mobilenet_SSD是从 <https://github.com/chuanqi305/MobileNet-SSD> 获得的 caffe 模型，使用[VOC数据集](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/)进行训练，支持的目标检测类型包括人、动物、水果、交通工具等共20种类型。
+MobileNet_SSD is a caffe model obtained from <https://github.com/chuanqi305/MobileNet-SSD>, trained using the VOC dataset (http://host.robots.ox.ac.uk/pascal/VOC/voc2012/). It supports 20 types of target detection, including humans, animals, fruits, and vehicles.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_dnn>
+Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
-应用场景：MobileNet_SSD是以MobileNet为基础的目标检测算法，具有速度快，易于部署的优点，可实现物体检测、垃圾识别等功能，主要应用于自动驾驶、智能家居等领域。
+Application scenarios: MobileNet_SSD is an object detection algorithm based on MobileNet, which has the advantages of fast speed and easy deployment. It can achieve functions such as object detection and garbage recognition, and is mainly used in the fields of autonomous driving and smart home.
 
-人脸检测案例：<https://github.com/bruceyang2012/Face-detection-with-mobilenet-ssd>    
-车牌检测案例：<https://github.com/soonhahwang/Mobilenet-SSD-to-detect-Licence-Plate>
+Face detection example: <https://github.com/bruceyang2012/Face-detection-with-mobilenet-ssd>
+License plate detection example: <https://github.com/soonhahwang/Mobilenet-SSD-to-detect-Licence-Plate>
 
-## 支持平台
+## Supported Platforms
 
-| 平台                  | 运行方式     | 示例功能                                                     |
-| --------------------- | ------------ | ------------------------------------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | · 启动MIPI/USB摄像头，并通过web展示推理渲染结果<br/>· 使用本地回灌，渲染结果保存在本地 |
-| X86                   | Ubuntu 20.04 | · 使用本地回灌，渲染结果保存在本地                           |
+| Platform                 | Operating Method | Example Function                                             |
+| ------------------------ | ---------------- | ------------------------------------------------------------ |
+| RDK X3, RDK X3 Module    | Ubuntu 20.04     | · Start the MIPI/USB camera and display the inference rendering results through the web<br/>· Use local feedback to save the rendering results locally |
+| X86                      | Ubuntu 20.04     | · Use local feedback to save the rendering results locally   |
 
-## 准备工作
+## Preparation
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. Horizon RDK has successfully installed TogetheROS.Bot.
 
-3. 地平线RDK已安装MIPI或者USB摄像头，无摄像头的情况下通过回灌本地JPEG/PNG格式图片或者MP4、H.264和H.265的视频方式体验算法效果。
+3. Horizon RDK has installed a MIPI or USB camera. In the absence of a camera, the algorithm effect can be experienced by feeding back local JPEG/PNG format images or MP4, H.264, and H.265 videos.
 
-4. 确认PC机能够通过网络访问地平线RDK。
+4. Confirm that the PC can access the Horizon RDK through the network.
 
-### X86平台
+### X86 Platform
 
-1. X86环境已配置好Ubuntu 20.04系统镜像。
+1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
-2. X86环境系统已成功安装tros.b。
+2. The X86 environment system has successfully installed tros.b.
 
-## 使用介绍
+## User Guide
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-#### 使用MIPI摄像头发布图片
+#### Publish Images using MIPI Camera
 
-MobileNet_SSD目标检测算法示例订阅sensor package发布的图片，经过推理后发布算法msg，通过websocket package实现在PC端浏览器上渲染显示发布的图片和对应的算法结果。
+The MobileNet_SSD object detection algorithm example subscribes to the images published by the sensor package, performs inference, and publishes algorithm messages. The algorithm messages and corresponding images are rendered and displayed on the PC browser using the websocket package.
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 配置MIPI摄像头
+# Configure the MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Start the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenet_ssd_workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### 使用USB摄像头发布图片
+#### Publish Images from USB Camera
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 配置USB摄像头
+# Configure the USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Start the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenet_ssd_workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### 使用本地图片回灌
+#### Use Local Images for Feedback
 
-MobileNet_SSD目标检测算法示例使用本地JPEG/PNG格式图片回灌，经过推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The MobileNet_SSD object detection algorithm example uses local JPEG/PNG format images for feedback. After inference, the algorithm results with rendered images are stored in the local runtime path.
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Start the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenet_ssd_workconfig.json dnn_example_image:=config/target.jpg
 ```
 
-### X86平台
+### X86 Platform
 
-#### 使用本地图片回灌
+#### Use Local Images for Feedback
 
-MobileNet_SSD目标检测算法示例使用本地JPEG/PNG格式图片回灌，经过算法推理后将算法结果渲染后的图片存储在本地的运行路径下。
+The MobileNet_SSD object detection algorithm example uses local JPEG/PNG format images for feedback. After running the inference, the algorithm results with rendered images are stored in the local runtime path.
 
 ```shell
-# 配置tros.b环境
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 启动launch文件
+# Start the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenet_ssd_workconfig.json dnn_example_image:=config/target.jpg
-```
+```## Result Analysis
 
-## 结果分析
+### Publish Images Using Camera
 
-### 使用摄像头发布图片
-
-在运行终端输出如下信息：
+The following information is displayed in the terminal output:
 
 ```shell
 [example-3] [WARN] [1655095279.473675326] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
@@ -116,15 +114,15 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-3] [WARN] [1655095282.744084511] [example]: Smart fps 30.00
 ```
 
-输出log显示，发布算法推理结果的topic为`hobot_dnn_detection`，订阅图片的topic为`/hbmem_img`，订阅到的图片和算法推理输出帧率约为30fps。
+The output log shows that the topic for publishing algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate of the subscribed images and the algorithm inference output is approximately 30fps.
 
-在PC端的浏览器输入http://IP:8000 即可查看图像和算法渲染效果（IP为地平线RDK的IP地址）：
+To view the image and algorithm rendering effects, input http://IP:8000 in the browser on the PC (where IP is the IP address of the Horizon RDK):
 
 ![render_web](./image/box_basic/mobilenet_ssd_render_web.jpeg)
 
-### 使用本地图片回灌
+### Feedback with Local Images
 
-在运行终端输出如下信息：
+The following information is displayed in the terminal output:
 
 ```shell
 [example-1] [INFO] [1654930510.201326806] [example]: Output from image_name: config/target.jpg, frame_id: feedback, stamp: 0.0
@@ -134,6 +132,6 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 [example-1] [INFO] [1654930510.201778415] [PostProcessBase]: det rect: 62.3792 155.731 221.676 223.179, det type: sofa, score:0.982129
 ```
 
-输出log显示，算法使用输入的图片推理出2个目标，并输出了目标检测框坐标（输出的坐标顺序分别是人体框的左上的x和y坐标，和右下的x和y坐标）和类别。存储的渲染图片文件名为render_feedback_0_0.jpeg，渲染图片效果：
+The output log shows that the algorithm infers 2 targets from the input image and outputs the coordinates of the detected bounding boxes (the order of the output coordinates is the top-left x and y coordinates of the human bounding box, and the bottom-right x and y coordinates) and the class. The rendered image file is named render_feedback_0_0.jpeg, and the rendering effect is:
 
 ![render_feedback](./image/box_basic/mobilenet_ssd_render_feedback.jpeg)

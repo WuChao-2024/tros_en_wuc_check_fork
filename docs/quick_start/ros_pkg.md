@@ -1,42 +1,41 @@
 ---
 sidebar_position: 5
 ---
+# 1.5 Using ROS2 package
 
-# 1.5 使用ROS2 package
+Prerequisite: TogetheROS.Bot installed successfully
 
-前提：已成功安装TogetheROS.Bot
+tros.b foxy version interface is fully compatible and able to reuse the rich ROS toolset. Here, we use the installation and usage of ROS foxy version ros-foxy-image-transport as an example to introduce how to use ROS package in tros.b.
 
-tros.b foxy版本接口完全兼容，能够复用ROS丰富工具包，这里以安装和使用ROS foxy版本ros-foxy-image-transport为例介绍如何在tros.b中使用ROS package。
+## Installing ROS2 package
 
-## 安装ROS2 package
+### 1. Add ROS apt source
 
-### 1 添加ROS apt源
+When installing tros.b, ROS apt source is automatically added, so there is no need to manually add it.
 
-安装tros.b时，已自动添加ROS apt源，无需手动添加。
-
-更新apt仓库
+Update apt repository
 
 ```shell
 sudo apt update
 ```
 
-### 2 安装packages
+### 2. Install packages
 
 ```shell
 sudo apt install ros-foxy-image-transport
 sudo apt install ros-foxy-image-transport-plugins
 ```
 
-## 使用ROS2 package
+## Using ROS2 package
 
-与ROS使用一样
+Same as using ROS
 
 ```shell
 source /opt/tros/setup.bash
 ros2 run image_transport list_transports
 ```
 
-运行结果如下，展示了image_transport package支持的图像格式
+The running result is as follows, showing the supported image formats by image_transport package.
 
 ```shell
 root@ubuntu:/opt/tros# ros2 run image_transport list_transports
@@ -48,7 +47,7 @@ image_transport/theora
 
 Details:
 ----------
-"image_transport/compressed"
+```"image_transport/compressed"
  - Provided by package: compressed_image_transport
  - Publisher:
       This plugin publishes a CompressedImage using either JPEG or PNG compression.
@@ -82,4 +81,3 @@ Details:
 
  - Subscriber:
       This plugin decodes a video packet stream encoded using Theora.
-```

@@ -1,55 +1,52 @@
 ---
 sidebar_position: 5
 ---
+# 2.5 Data Communication
 
-# 2.5 数据通信
+## Zero-copy
 
-## 零拷贝
+### Introduction
 
-### 功能介绍
+TogetheROS.Bot provides a flexible and efficient zero-copy function that can significantly reduce the communication latency and CPU usage of large-sized data. By integrating the performance_test tool, tros.b can easily evaluate the performance difference before and after enabling zero-copy. The performance_test tool can configure parameters such as sub count, message size, and QoS to facilitate the evaluation of communication performance in different scenarios. The main performance indicators are as follows:
 
-TogetheROS.Bot提供了灵活、高效的零拷贝功能，可以显著降低大尺寸数据的通信延时和CPU占用。tros.b通过集成performance_test工具，可以方便的评测开启零拷贝前后的性能差异。performance_test工具能够实现sub数量、消息大小、QoS等参数配置，方便评估不同场景下的通信性能，主要性能指标如下：
+- Latency: The time it takes for a message to be transmitted from pub to sub.
+- CPU usage: The percentage of CPU usage by communication activities.
+- Resident memory: Includes heap allocated memory, shared memory, and stack memory used for system internals.
+- Sample statistics: Includes the number of messages sent, received, and lost in each experiment.
 
-- 时延（latency）：对应消息从pub到sub的传输时间
-- CPU使用率（CPU usage）：通信活动所占CPU使用百分比
-- 驻留内存（resident memory）：包括堆分配内存、共享内存以及用于系统内部的栈内存
-- 样本统计（sample statistics）：包括每次实验发送、接收以及丢失的消息数量
+Code repositories: [https://github.com/HorizonRDK/rclcpp](https://github.com/HorizonRDK/rclcpp), [https://github.com/HorizonRDK/rcl_interfaces](https://github.com/HorizonRDK/rcl_interfaces)
 
-代码仓库：<https://github.com/HorizonRDK/rclcpp>，<https://github.com/HorizonRDK/rcl_interfaces>
+### Supported Platforms
 
-### 支持平台
-
-| 平台    | 运行方式      | 示例功能                       |
+| Platform    | Running Method      | Example Functionality                       |
 | ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | 展示零拷贝性能指标测试结果 |
+| RDK X3, RDK X3 Module | Ubuntu 20.04 | Show zero-copy performance test results |
 
-***RDK Ultra平台支持零拷贝数据通信，暂未提供零拷贝性能指标测试安装包。***
+***RDK Ultra platform supports zero-copy data communication but does not provide an installation package for zero-copy performance metrics testing.***
 
-### 准备工作
+### Preparation
 
-#### 地平线RDK
+#### Horizon RDK
 
-1. 开始测试前，需要将地平线RDK调整为性能模型，以保证测试结果准确性，命令如下：
+1. Before starting the test, adjust the Horizon RDK to performance mode to ensure the accuracy of the test results. Use the following commands:
 
    ```bash
    echo performance > /sys/class/devfreq/devfreq0/governor
    echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor 
    ```
 
-2. 地平线RDK已成功安装performance_test工具包，安装命令：`apt update; apt install tros-performance-test`。
+2. The performance_test package is already installed in Horizon RDK. Install it using the command: `apt update; apt install tros-performance-test`.
 
-### 使用介绍
+### Usage Guide
 
-#### 地平线RDK平台
+#### Horizon RDK Platform
 
-1. 不开启零拷贝功能的4M数据传输测试，命令如下：
+1. Test the transmission of 4M data without enabling zero-copy. Use the following command:
 
     ```bash
     source /opt/tros/setup.bash
     ros2 run performance_test perf_test --reliable --keep-last --history-depth 10 -s 1 -m Array4m -r 100 --max-runtime 30
-    ```
-
-    **测试结果如下**：
+    ```**Test results are shown below**:
 
     ```dotnetcli
     run time
@@ -89,84 +86,75 @@ TogetheROS.Bot提供了灵活、高效的零拷贝功能，可以显著降低大
     Maximum runtime reached. Exiting.
     ```
 
-2. 开启零拷贝功能(加入--zero-copy参数)的4M数据传输测试，命令如下：
+2. Start the 4M data transfer test with zero-copy (use --zero-copy parameter), the command is as follows:
 
       ```bash
       source /opt/tros/setup.bash
       ros2 run performance_test perf_test --zero-copy --reliable --keep-last --history-depth 10 -s 1 -m Array4m -r 100 --max-runtime 30
       ```
 
-    **测试结果如下**：
+    **Test results are shown below**:
+```dotnetcli
+run time
 
-    ```dotnetcli
-    run time
++--------------+-----------+--------+----------+
+| T_experiment | 30.554773 | T_loop | 1.000084 |
++--------------+-----------+--------+----------+
 
-    +--------------+-----------+--------+----------+
-    | T_experiment | 30.554773 | T_loop | 1.000084 |
-    +--------------+-----------+--------+----------+
+samples                                              latency
 
-    samples                                              latency
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
+| recv | sent | lost | data_recv | relative_loss |   | min      | max      | mean     | variance |
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
+| 99   | 99   | 0    | 418701472 | 0.000000      |   | 0.000146 | 0.000381 | 0.000195 | 0.000000 |
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
 
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
-    | recv | sent | lost | data_recv | relative_loss |   | min      | max      | mean     | variance |
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
-    | 99   | 99   | 0    | 418701472 | 0.000000      |   | 0.000146 | 0.000381 | 0.000195 | 0.000000 |
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
+publisher loop                                       subscriber loop
 
-    publisher loop                                       subscriber loop
++----------+----------+----------+----------+        +----------+----------+----------+----------+
+| min      | max      | mean     | variance |        | min      | max      | mean     | variance |
++----------+----------+----------+----------+        +----------+----------+----------+----------+
+| 0.009812 | 0.009895 | 0.009877 | 0.000000 |        | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
++----------+----------+----------+----------+        +----------+----------+----------+----------+
 
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
-    | min      | max      | mean     | variance |        | min      | max      | mean     | variance |
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
-    | 0.009812 | 0.009895 | 0.009877 | 0.000000 |        | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
+system usage
 
-    system usage
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| utime      | stime     | maxrss  | ixrss  | idrss  | isrss    | minflt | majflt |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| 8727113000 | 307920000 | 46224   | 0      | 0      | 0        | 6440   | 0      |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| nswap      | inblock   | oublock | msgsnd | msgrcv | nsignals | nvcsw  | nivcsw |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| 0          | 0         | 0       | 0      | 0      | 0        | 9734   | 2544   |
++------------+-----------+---------+--------+--------+----------+--------+--------+
 
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | utime      | stime     | maxrss  | ixrss  | idrss  | isrss    | minflt | majflt |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | 8727113000 | 307920000 | 46224   | 0      | 0      | 0        | 6440   | 0      |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | nswap      | inblock   | oublock | msgsnd | msgrcv | nsignals | nvcsw  | nivcsw |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | 0          | 0         | 0       | 0      | 0      | 0        | 9734   | 2544   |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
+Maximum runtime reached. Exiting.
+```
 
-    Maximum runtime reached. Exiting.
-    ```
 
-### 结果分析
+### Result Analysis
 
-performance_test工具可输出多种类型的统计结果，下面主要对比延时、系统占用的差异：
+The performance_test tool can output various types of statistical results. Below we mainly compare the differences in latency and system usage:
 
 **latency**
-  对比关闭和打开“zero-copy”功能的通信时延均值分别为4.546ms和0.195ms，可以看出“zero-copy”功能显著降低通信时延。
+The mean latency for communication with "zero-copy" enabled and disabled are 4.546ms and 0.195ms, respectively. It can be seen that "zero-copy" significantly reduces communication latency.
 
 **system usage**
 
 ```dotnetcli
-  +------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-  | utime            | stime         | maxrss            | ixrss  | idrss  | isrss    | minflt           | majflt              |
-  +------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-  | userspace耗时(Hz)| system耗时(Hz)| 驻留内存大小(Byte) | 0      | 0      | 0        | 次缺页错误次数   | 主缺页错误次数      |
-  +------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-  | nswap            | inblock       | oublock           | msgsnd | msgrcv | nsignals | nvcsw            | nivcsw              |
-  +------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-  | 0                | 0             | 0                 | 0      | 0      | 0        | 自愿上下文切换次数| 非自愿上下文切换次数|
-  +------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-```
++------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
+| utime            | stime         | maxrss            | ixrss  | idrss  | isrss    | minflt           | majflt              |
+```| Communication Method     | Latency     | utime+stime | maxrss | minflt | majflt | nvcsw | nivcsw |
+| ------------------------ | ----------- | ----------- | ------ | ------ | ------ | ------| ------ |
+| Non-"zero-copy"           | 0.004546    | 23242551000 | 65092  | 11578  | 2      | 9885  | 7193   |
+| "zero-copy"               | 0.000381    | 9035033000  | 46224  | 6440   | 0      | 9734  | 2544   |
 
-| 通信方式      | latency  | utime+stime |maxrss | minflt | majflt | nvcsw | nivcsw |
-| --------------| ---------| ------------|-------|--------|--------|-------|--------|
-| 非“zero-copy” | 0.004546 | 23242551000 | 65092 | 11578  |   2    | 9885  |  7193  |
-| “zero-copy”   | 0.000381 | 9035033000  | 46224 | 6440   |   0    | 9734  |  2544  |
+Comparing the two methods, we can see that:
 
-对比可知
+- The sum of utime and stime in the "zero-copy" method is significantly lower than in the non-"zero-copy" method, indicating that "zero-copy" consumes less CPU resources.
+- The maxrss in the "zero-copy" method is lower than in the non-"zero-copy" method, indicating that "zero-copy" occupies less memory.
+- The minflt and majflt in the "zero-copy" method are significantly lower than in the non-"zero-copy" method, indicating that "zero-copy" communication has less jitter.
+- The nvcsw and nivcsw in the "zero-copy" method are significantly lower than in the non-"zero-copy" method, indicating that "zero-copy" communication has less jitter.
 
-- “zero-copy” utime和stime之和明显低于非“zero-copy”，表明“zero-copy”消耗的CPU资源更少
-- “zero-copy” maxrss少于非“zero-copy”，表明“zero-copy”占用的内存少
-- “zero-copy” minflt、majflt明显少于非“zero-copy”，表明“zero-copy”通信抖动更小
-- “zero-copy” nvcsw、nivcsw明显少于非“zero-copy”，表明“zero-copy”通信抖动更小
-
-总的来说对于大数据通信，“zero-copy”在CPU消耗、内存占用以及通信延迟抖动方便均明显优于非“zero-copy”
+Overall, for large data communication, the "zero-copy" method is clearly superior to the non-"zero-copy" method in terms of CPU consumption, memory usage, and communication latency jitter.

@@ -2,183 +2,175 @@
 sidebar_position: 5
 ---
 
-# 5.5 垃圾检测
+# 5.5 Garbage Detection
 
-## 功能介绍
+## Function Introduction
 
-mono2d_trash_detection package 是基于 hobot_dnn package 开发的2D垃圾目标检测算法示例。与以往功能展示不同，本示例将以2D垃圾检测任务为例，展示如何基于开源框架训练模型、地平线工具链转换模型、地平线机器人操作系统完成算法全流程部署工作。
+The mono2d_trash_detection package is an example of 2D garbage object detection algorithm developed based on the hobot_dnn package. Unlike previous functionality demonstrations, this example will demonstrate how to train models based on open-source frameworks, convert models using the Horizon toolchain, and deploy the algorithm in the Horizon Robot Operating System.
 
-本package支持直接订阅sensors/msg/Image类型的话题，并且支持读取本地图片的形式进行推理，将算法信息通过话题发布的同时会将结果在Web页面渲染可视化，本地图片回灌时将渲染图片保存在当前目录。
+This package supports subscribing to topics of type sensors/msg/Image directly and supports inferring using local images. The algorithm information is published through topics and the results are rendered and visualized on a web page. When inferring with local images, the rendered images are saved in the current directory.
 
-代码仓库：<https://github.com/HorizonRDK/mono2d_trash_detection.git>
+Code repository: <https://github.com/HorizonRDK/mono2d_trash_detection.git>
 
-应用场景：室内外垃圾检测，识别出场景中的垃圾，可配合机器人用于垃圾寻找、垃圾捡取（配合机械臂）的APP设计。
+Application scenarios: Indoor and outdoor garbage detection, identifying garbage in scenes, can be used with robots for garbage finding and picking (in combination with robotic arms) in APP design.
 
-## 算法介绍
+## Algorithm Introduction
 
-本package采用[PaddlePaddle](https://github.com/PaddlePaddle/PaddleDetection.git)开源框架， 利用[PPYOLO](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.5)模型进行垃圾检测任务设计和训练，具体的模型配置为[ppyolo_r18vd_coco.yml](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/configs/ppyolo/ppyolo_r18vd_coco.yml)。
+This package uses the open-source framework [PaddlePaddle](https://github.com/PaddlePaddle/PaddleDetection.git) and the [PPYOLO](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.5) model for garbage detection task design and training. The specific model configuration is [ppyolo_r18vd_coco.yml](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/configs/ppyolo/ppyolo_r18vd_coco.yml).
 
-算法支持的目标检测类别如下：
+The supported object detection categories for the algorithm are as follows:
 
-| 类别                | 说明 | 数据类型 |
-| ---------------------- | ----------- | --- | 
-| trash           | 垃圾框         | Roi |
+| Category | Description | Data Type |
+| -------- | ----------- | -------- |
+| Trash    | Garbage box | Roi      |
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module| Ubuntu 20.04 | · 启动MIPI/USB摄像头/本地回灌，推理渲染结果在Web显示/保存在本地 |
-| X86     | Ubuntu 20.04 | · 启动本地回灌，推理渲染结果在Web显示/保存在本地 |
+| Platform         | Running Method | Example Functions                                             |
+| ---------------- | -------------- | ------------------------------------------------------------ |
+| RDK X3, RDK X3 Module | Ubuntu 20.04      | · Start MIPI/USB camera/local image inference, render and display results on the web/save locally |
+| X86              | Ubuntu 20.04      | · Start local image inference, render and display results on the web/save locally |
 
-## 准备工作
+## Preparation Work
 
-由于部署阶段我们不考虑算法模型内部的结构信息，只关注算法前后处理环节，前处理部分如图像读取、图像Resize等，后处理部分如检测头解码器、非极大值抑制（NMS）等。这些前后处理的方法在多数同类模型中是一致的，通用性较强，因此可以利用基础部署包进行快速部署。
+Since we do not consider the internal structure information of the algorithm model during deployment, we only focus on the pre-processing and post-processing steps of the algorithm. The pre-processing steps include image reading and image resizing, while the post-processing steps include detection header decoders and non-maximum suppression (NMS). These pre-processing and post-processing methods are consistent across most similar models and have strong universality. Therefore, the basic deployment package can be used for quick deployment.
 
-地平线机器人操作系统提供了[dnn_node_example](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example)部署包用于快速部署基础算法。目前支持的常见算法有图像分类、2D目标检测、语义分割。其中2D目标检测集成了Fasterrcnn、Fcos、yolov2、yolov3、yolov5、SSD、efficientnet供用户选择。
+The Horizon Robot Operating System provides the [dnn_node_example](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example) deployment package for rapid deployment of basic algorithms. The currently supported common algorithms include image classification, 2D object detection, and semantic segmentation. Among them, 2D object detection integrates Fasterrcnn, Fcos, yolov2, yolov3, yolov5, SSD, and efficientnet for user selection.
 
-本示例利用[dnn_node_example](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example)，通过替换地平线交叉编译模型、后处理配置文件、检测类别配置文件用以适配自定义检测模型。
+In this example, the [dnn_node_example](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example) is used to adapt custom detection models by replacing the Horizon cross-compiled model, post-processing configuration files, and detection category configuration files.
 
-如果前后处理环节与上述模型不同无法快速适配，自定义部署方法可参考[dnn_node_sample](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example)示例。
+If the pre-processing and post-processing steps are different from the above models and cannot be adapted quickly, the custom deployment method can refer to the [dnn_node_sample](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example) example.
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-3. 获得地平线交叉编译模型（如本例中[ppyolo_trashdet_416x416_nv12.bin](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyolo_trashdet_416x416_nv12.bin)
+3. Obtain the Horizon cross-compiled model (such as [ppyolo_trashdet_416x416_nv12.bin](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyolo_trashdet_416x416_nv12.bin)) in this example.4. Post-processing configuration file (such as [ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json) in this example)
 
-4. 后处理配置文件 (如本例中[ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json))
+5. Detection category configuration file (such as [trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list) in this example)
 
-5. 检测类别配置文件 (如本例中[trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list))
+### X86 Platform
 
-### X86平台
+1. X86 environment has been configured with Ubuntu 20.04 system image.
 
-1. X86环境已配置Ubuntu 20.04系统镜像。
+2. Tros.b has been successfully installed on the X86 environment.
 
-2. X86环境已成功安装tros.b。
+3. Obtain the Horizon cross-compiled model (such as [ppyolo_trashdet_416x416_nv12.bin](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyolo_trashdet_416x416_nv12.bin) in this example).
 
-3. 获得地平线交叉编译模型（如本例中[ppyolo_trashdet_416x416_nv12.bin](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyolo_trashdet_416x416_nv12.bin)
+4. Post-processing configuration file (such as [ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json) in this example).
 
-4. 后处理配置文件 (如本例中[ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json))
+5. Detection category configuration file (such as [trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list) in this example).
 
-5. 检测类别配置文件 (如本例中[trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list))
+## Explanation of Post-processing Configuration File
 
-
-## 后处理配置文件说明
-
-config_file配置文件格式为json格式，本示例[ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json)，具体配置如下：
+The config_file configuration file is in JSON format. In this example, the file is [ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json). The specific configuration is as follows:
 
 ```bash
   {
-    "model_file"：模型文件的路径
+    "model_file": the path to the model file
 
-    "model_name"：模型名称
+    "model_name": the name of the model
 
-    "dnn_Parser"：设置选择内置的后处理算法，示例采用的解析方法同yolov3，采用"yolov3"
+    "dnn_Parser": the choice of built-in post-processing algorithm. In this example, "yolov3" is used.
 
-    "model_output_count"：模型输出branch个数
+    "model_output_count": the number of output branches of the model
 
-    "class_num": 检测类别数
+    "class_num": the number of detection categories
 
-    "cls_names_list": 检测类别具体标签
+    "cls_names_list": the specific labels of detection categories
 
-    "strides": 每个输出branch步长
+    "strides": the stride of each output branch
 
-    "anchors_table": 预设anchors比例
+    "anchors_table": the preset anchor ratios
 
-    "score_threshold": 置信度阈值
+    "score_threshold": the confidence score threshold
 
-    "nms_threshold": NMS后处理IOU阈值
+    "nms_threshold": the IOU threshold for NMS post-processing
 
-    "nms_top_k": NMS后处理选取的框个数
+    "nms_top_k": the number of selected boxes for NMS post-processing
   }
 ```
 
-说明：实际每个预设anchors大小为 anchors_table x strides
+Note: The actual size of each preset anchor is anchors_table x strides.## User Guide
 
-## 使用介绍
-
-完整算法开发部署流程图：
+Complete algorithm development and deployment workflow diagram:
 
 ![](./image/mono2d_trash_detection/workflow.png)
 
-其中第一步Paddle模型训练、第二部工具链模型转换，将在下方链接中介绍，这里将主要介绍上板部署相关流程。
+The first step, Paddle model training, and the second step, toolchain model conversion, will be introduced in the links below. Here, we will mainly introduce the on-board deployment process.
 
-模型训练：[PPYOLO垃圾检测+地平线地平线RDK部署（上）](https://aistudio.baidu.com/aistudio/projectdetail/4606468?contributionType=1)
+Model training: [PPYOLO Trash Detection + Horizon RDK Deployment (Part 1)](https://aistudio.baidu.com/aistudio/projectdetail/4606468?contributionType=1)
 
-模型转换：[PPYOLO垃圾检测+地平线地平线RDK部署（下）](https://aistudio.baidu.com/aistudio/projectdetail/4754526?contributionType=1)
+Model conversion: [PPYOLO Trash Detection + Horizon RDK Deployment (Part 2)](https://aistudio.baidu.com/aistudio/projectdetail/4754526?contributionType=1)
 
-package对外发布包含语义分割和目标检测信息的算法msg，用户可以订阅发布的msg用于应用开发。
+The package publishes algorithm messages that include semantic segmentation and object detection information, which users can subscribe to for application development.
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-**使用MIPI摄像头发布图片**
+**Publish Images using MIPI camera**
 
 ```shell
-# 配置ROS2环境
+# Configure ROS2 environment
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the required configuration files from the tros installation path.
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 
-# 配置MIPI摄像头
+# Configure MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_msg_pub_topic_name:=ai_msg_mono2d_trash_detection dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-**使用usb摄像头发布图片**
+**Publish Images using USB camera**
 
 ```shell
-# 配置ROS2环境
+# Configure ROS2 environment
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the required configuration files from the tros installation path.
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 
-# 配置USB摄像头
+# Configure USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_msg_pub_topic_name:=ai_msg_mono2d_trash_detection dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-**使用单张回灌图片**
-
-```shell
-# 配置ROS2环境
+**Use a Single Feedback Image**# ROS2 Environment Configuration
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the configuration files needed for running the example from the installation path of tros.
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_image:=config/trashDet0028.jpg
 ```
 
-### X86平台
+### X86 Platform
 
-**使用单张回灌图片**
+**Using a Single Feedback Image**
 
 ```shell
-# 配置ROS2环境
+# ROS2 Environment Configuration
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the configuration files needed for running the example from the installation path of tros.
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 
-# 启动垃圾检测pkg，将渲染图片保存到本地
+# Start the garbage detection pkg and save the rendered image to the local directory
 ros2 run dnn_node_example example --ros-args -p feed_type:=0 -p image:=config/trashDet0028.jpg -p image_type:=0 -p dump_render_img:=1 -p dnn_example_config_file:=config/ppyoloworkconfig.json
 ```
 
-## 结果分析
+## Result Analysis
 
-**使用mipi摄像头发布图片**
+**Using mipi camera to publish images**
 
-package初始化后，在运行终端输出如下信息：
+After package initialization, the following information will be output to the terminal:
 
 ```shell
 [example-3] [WARN] [1665644838.299475772] [example]: This is dnn node example!
@@ -198,7 +190,7 @@ package初始化后，在运行终端输出如下信息：
 [example-3] [BPU_PLAT]BPU Platform Version(1.3.1)!
 [example-3] [HBRT] set log level as 0. version = 3.14.5
 [example-3] [DNN] Runtime version = 1.9.7_(3.14.5 HBRT)
-[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
+```[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
 [example-3] [WARN] [1665644838.688758775] [dnn]: Set output parser with default dnn node parser, you will get all output tensors and should parse output_tensors in PostProcess.
 [example-3] [WARN] [1665644838.691224728] [example]: Create ai msg publisher with topic_name: ai_msg_mono2d_trash_detection
 [example-3] [WARN] [1665644838.698936232] [example]: Create img hbmem_subscription with topic_name: /hbmem_img
@@ -208,37 +200,3 @@ package初始化后，在运行终端输出如下信息：
 [example-3] [WARN] [1665644842.972618649] [example]: Sub img fps: 29.94, Smart fps: 29.88, infer time ms: 36, post process time ms: 3
 [example-3] [WARN] [1665644843.982243911] [example]: Sub img fps: 29.62, Smart fps: 29.70, infer time ms: 36, post process time ms: 3
 [example-3] [WARN] [1665644844.995728928] [example]: Sub img fps: 29.79, Smart fps: 29.73, infer time ms: 36, post process time ms: 6
-```
-
-实时运行效果：
-
-![](./image/mono2d_trash_detection/realtime.gif)
-
-**使用单张回灌图片**
-
-package初始化后，在终端输出如下信息：
-
-```shell
-[example-1] [INFO] [1665646256.967568866] [dnn]: The model input 0 width is 416 and height is 416
-[example-1] [WARN] [1665646256.967698807] [dnn]: Run default SetOutputParser.
-[example-1] [WARN] [1665646256.967754550] [dnn]: Set output parser with default dnn node parser, you will get all output tensors and should parse output_tensors in PostProcess.
-[example-1] [INFO] [1665646256.967794962] [dnn impl]: Set default output parser
-[example-1] [INFO] [1665646256.967972439] [dnn]: Task init.
-[example-1] [INFO] [1665646256.970036756] [dnn]: Set task_num [4]
-[example-1] [INFO] [1665646256.970176988] [example]: The model input width is 416 and height is 416
-[example-1] [WARN] [1665646256.970260061] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
-[example-1] [INFO] [1665646256.977452592] [example]: Dnn node feed with local image: config/trashDet0028.jpg
-[example-1] [INFO] [1665646257.027170005] [dnn]: task id: 3 set bpu core: 2
-[example-1] [INFO] [1665646257.057492754] [example]: Output from frame_id: feedback, stamp: 0.0
-[example-1] [INFO] [1665646257.063816821] [PostProcessBase]: out box size: 1
-[example-1] [INFO] [1665646257.064070497] [PostProcessBase]: det rect: 216.061 223.173 317.97 282.748, det type: trash, score:0.80733
-[example-1] [INFO] [1665646257.064206479] [ClassificationPostProcess]: out cls size: 0
-[example-1] [INFO] [1665646257.068688365] [ImageUtils]: target size: 1
-[example-1] [INFO] [1665646257.068836554] [ImageUtils]: target type: trash, rois.size: 1
-[example-1] [INFO] [1665646257.068884048] [ImageUtils]: roi.type: , x_offset: 216 y_offset: 223 width: 101 height: 59
-[example-1] [WARN] [1665646257.071375688] [ImageUtils]: Draw result to file: render_feedback_0_0.jpeg
-```
-
-本地渲染效果：
-
-![](./image/mono2d_trash_detection/render.jpeg)

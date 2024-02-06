@@ -2,39 +2,37 @@
 sidebar_position: 1
 ---
 
-# 4.1 SLAM建图
+# 4.1 SLAM Mapping
 
-## 功能介绍
+## Function Introduction
 
-SLAM指即时定位与地图构建（Simultaneous Localization and Mapping，简称SLAM）。
-本章节使用ROS2的SLAM-Toolbox作为建图算法，在Gazebo中控制小车行驶建立地图，并通过Rviz2观察建图效果。
-其中SLAM-Toolbox运行在地平线RDK上，Gazebo和Rviz2运行在与地平线RDK同一网段的PC上。
+SLAM (Simultaneous Localization and Mapping) is a technique used to simultaneously estimate the location of a robot and create a map of its environment. In this chapter, we will use ROS2 SLAM-Toolbox to perform mapping on a simulated car in Gazebo, and observe the mapping results through Rviz2. The SLAM-Toolbox runs on the Horizon RDK, while Gazebo and Rviz2 run on a PC in the same network as the Horizon RDK.
 
-## 支持平台
+## Supported Platforms
 
-| 平台    | 运行方式     | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | PC端启动仿真环境，并在地平线RDK进行SLAM建图，最后通过Rviz2展示建图效果 |
+| Platform | Execution Method | Example Functionality |
+| -------- | ---------------- | -------------------- |
+| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | Start the simulation environment on the PC and perform SLAM mapping on the Horizon RDK, finally display the mapping results using Rviz2. |
 
-## 准备工作
+## Prerequisites
 
-### 地平线RDK平台
+### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04镜像。
+1. The Horizon RDK has been flashed with the Ubuntu 20.04 image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-3. tros.b成功安装后，安装SLAM-Toolbox
+3. After the successful installation of tros.b, install the SLAM-Toolbox:
 
     ```bash
     sudo apt-get install ros-foxy-slam-toolbox
     ```
 
-4. 和地平线RDK在同一网段的PC，PC已安装Ubuntu 20.04系统、ROS2 Foxy桌面版和仿真环境Gazebo，数据可视化工具Rviz2。
+4. The PC, which is in the same network as the Horizon RDK, has been installed with Ubuntu 20.04, ROS2 Foxy Desktop version, Gazebo simulation environment, and the data visualization tool Rviz2.
 
-    ROS2 Foxy安装参考：https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
+    Installation documentation for ROS2 Foxy: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
-    PC的ROS2安装成功后安装Gazebo和Turtlebot3相关的功能包，安装方法为：
+    After successful installation of ROS2 on the PC, install the Gazebo and Turtlebot3 related packages as follows:
 
     ```bash
     sudo apt-get install ros-foxy-gazebo-*
@@ -44,13 +42,11 @@ SLAM指即时定位与地图构建（Simultaneous Localization and Mapping，简
     sudo apt install ros-foxy-teleop-twist-keyboard
     ```
 
-## 使用介绍
+## User Guide
 
-### 地平线RDK平台
+### Horizon RDK PlatformThis section introduces how to use Horizon RDK to run SLAM algorithm and observe mapping effect using PC.
 
-本小节介绍如何使用地平线RDK运行SLAM算法，并使用PC观察建图效果。
-
-PC端启动仿真环境：
+Start the simulation environment on the PC:
 
 ```bash
 source /opt/ros/foxy/setup.bash
@@ -58,51 +54,50 @@ export TURTLEBOT3_MODEL=burger
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
 
-仿真环境如下图所示：
+The simulation environment is shown in the figure below:
 ![](./image/slam/gazebo.jpg)
 
-PC端开启另外一个控制台，启动Rviz2 用于观察建图效果：
+Open another console on the PC and start Rviz2 to observe the mapping effect:
 
 ```bash
 source /opt/ros/foxy/setup.bash
 ros2 launch turtlebot3_bringup rviz2.launch.py
 ```
 
-打开Rviz2后，需要添加“map”可视化选项，用于展示建立的地图，步骤如下所示：
+After opening Rviz2, the "map" visualization option needs to be added to display the built map. The steps are as follows:
 ![](./image/slam/rvizsetting.jpg)
 
-地平线RDK板端运行SLAM-Toolbox：
+Run SLAM-Toolbox on the Horizon RDK board:
 
 ```bash
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-#启动SLAM launch文件
+# Start the SLAM launch file
 ros2 launch slam_toolbox online_sync_launch.py
 ```
 
-PC端开启另外一个控制台，PC端启动控制工具，通过键盘控制小车运动，控制方法见控制台打印的log，在此不再赘述：
+Open another console on the PC and start the control tool to control the movement of the robot car with the keyboard. The control method can be found in the log printed on the console:
 
 ```bash
 source /opt/ros/foxy/setup.bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-控制小车行驶，随着小车雷达探测到更多的环境信息，SLAM算法也建立起环境地图，可以在Rviz2上观察到建图效果。
+Control the robot car to move. As the robot car detects more environmental information with the radar, the SLAM algorithm also builds the environmental map, which can be observed in Rviz2.
 ![](./image/slam/map.jpg)
 
-## 结果分析
+## Result Analysis
 
-在地平线RDK板端运行终端输出如下信息：
+The terminal output of running on the Horizon RDK board is as follows:
 
 ```text
 [INFO] [launch]: All log files can be found below /root/.ros/log/2022-06-10-06-40-34-204213-ubuntu-5390
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [sync_slam_toolbox_node-1]: process started with pid [5392]
+```[INFO] [sync_slam_toolbox_node-1]: process started with pid [5392]
 [sync_slam_toolbox_node-1] [INFO] [1654843239.403931058] [slam_toolbox]: Node using stack size 40000000
 [sync_slam_toolbox_node-1] [INFO] [1654843240.092340814] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver
 [sync_slam_toolbox_node-1] [INFO] [1654843240.096554433] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.
 [sync_slam_toolbox_node-1] Info: clipped range threshold to be within minimum and maximum range!
 [sync_slam_toolbox_node-1] [WARN] [1654843589.431524393] [slam_toolbox]: maximum laser range setting (20.0 m) exceeds the capabilities of the used Lidar (3.5 m)
 [sync_slam_toolbox_node-1] Registering sensor: [Custom Described Lidar]
-```

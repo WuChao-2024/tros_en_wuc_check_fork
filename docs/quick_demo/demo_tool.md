@@ -1,68 +1,63 @@
 ---
-sidebar_position: 7
+sidebar_position: 5
 ---
+# 2.7 Tools
 
-# 2.7 工具
+## Image Publishing Tool
 
-## 图像发布工具
+### Function Introduction
 
-### 功能介绍
+The Image Publishing Tool supports reading local image or video files in batches and publishing them in ROS message format, thereby improving algorithm debugging and deployment efficiency.
 
-图片发布工具支持批量读取本地图片或视频文件，并按照ROS消息格式发布，从而提高算法调试和部署效率。
+For image publishing, it supports reading JPEG/JPG/PNG/NV12 format images and publishing compressed images or converting compressed images to NV12 format for publishing.
 
-对于图片发布，支持读取JPEG/JPG/PNG/NV12格式的图片，发布压缩图片或者将压缩图片转换为NV12格式进行发布。
+For video publishing, it supports H264/H265/MP4 formats. After reading the video file, it extracts the relevant video stream for publishing.
 
-对于视频发布，支持H264/H265/MP4格式，读取视频文件后提取相关的视频流进行发布。
+Code repository: <https://github.com/HorizonRDK/hobot_image_publisher.git>
 
-代码仓库:<https://github.com/HorizonRDK/hobot_image_publisher.git>
+### Supported Platforms
 
-### 支持平台
+| Platform | Operating System |
+| ---------| ----------------|
+| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 |
+| X86      | Ubuntu 20.04 |
 
-| 平台    | 运行方式     |
-| ------- | ------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 |
-| X86     | Ubuntu 20.04 |
+***The X86 platform does not support decoding H.264 and H.265 videos into NV12 format, so the H.264 and H.265 video publishing functionality cannot be displayed on the X86 platform.***
 
-***X86平台不支持将H.264、H.265视频解码为NV12格式，因此H.264、H.265视频发布功能无法在X86平台展示。***
+***RDK Ultra does not support decoding H.264 videos into NV12 format, so the H.264 video publishing functionality cannot be displayed on the RDK Ultra platform.***
 
-***RDK Ultra不支持将H.264视频解码为NV12格式，因此H.264视频发布功能无法在RDK Ultra平台展示。***
+### Preparations
 
-### 准备工作
+#### Horizon RDK Platform
 
-#### 地平线RDK平台
+1. The Horizon RDK has been burned with the Ubuntu 20.04 system image provided by Horizon.
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像
+2. The Horizon RDK has successfully installed tros.b.
 
-2. 地平线RDK已成功安装tros.b
+3. The Horizon RDK can be accessed via network from a PC.
 
-3. 可以通过网络访问地平线RDK的PC
+#### X86 Platform
 
-#### X86平台
+1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
-1. X86环境已配置Ubuntu 20.04系统镜像
+2. The X86 environment has installed the X86 version of tros.b.
 
-2. X86环境已安装X86版本 tros.b
+### Instructions for Image Publishing
 
-### 图片发布使用介绍
+Read a local NV12 format image in a loop and publish it. Use the image codec module to compress the image and encode it into JPEG format, and display the image on the PC's web interface.
 
-循环读取本地的一张NV12格式图片并发布，使用图像编解码模块将图片压缩编码成JPEG格式，在PC的Web端展示图片。
-
-#### 地平线RDK/X86平台
-
-```shell
-# 配置tros.b环境
+#### Horizon RDK/X86 Platform# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的图片文件
+# Copy the image files needed for the example from the installation path of tros.b
 cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 
-# 启动launch文件
+# Start the launch file
 ros2 launch hobot_image_publisher hobot_image_publisher_demo.launch.py
-```
 
-### 图片发布结果分析
+### Analysis of Image Publishing Results
 
-在运行终端输出如下信息：
+The terminal output during runtime is as follows:
 
 ```text
 [INFO] [launch]: All log files can be found below /root/.ros/log/2022-08-19-12-58-02-288516-ubuntu-24492
@@ -73,206 +68,200 @@ webserver has launch
 [INFO] [websocket-3]: process started with pid [24519]
 ```
 
-输出log显示出webserver已启动，hobot_image_pub、hobot_codec_republish、websocket都正常运行
+The log output shows that the webserver has been started, and hobot_image_pub, hobot_codec_republish, and websocket are all running properly.
 
-在PC端的浏览器输入<http://IP:8000> 即可查看图像展示效果（IP为地平线RDK/X86设备的IP地址）：
+To view the image display effect, open a web browser on the PC and enter <http://IP:8000> (where IP is the IP address of the Horizon RDK/X86 device):
 
 ![hobot_img_pub](./image/demo_tool/show.png )
 
-### 视频发布使用介绍
+### Introduction to Video Publishing
 
-读取本地video.list文件，获取list文件中的视频文件路径，循环读取视频文件并发布，先使用图像编解码模块将视频流解码成NV12格式图片，再使用图像编解码模块将图片压缩编码成JPEG格式，在PC的Web端展示图片。
+Read the video.list file locally, obtain the paths of the video files in the list file, and publish them in a loop. First, use the image codec module to decode the video stream into NV12 format images, and then use the image codec module to compress and encode the images into JPEG format for display on the web end of the PC.
 
-#### 地平线RDK平台
+#### Horizon RDK Platform
 
 ```shell
-# 配置tros.b环境
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的图片文件
+# Copy the image files needed for the example from the installation path of tros.b
 cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 
-# 启动launch文件
+# Start the launch file
 ros2 launch hobot_image_publisher hobot_image_publisher_videolist_demo.launch.py
 ```
 
-#### X86平台
-
-```shell
-# 配置tros.b环境
+#### X86 Platform```shell
+# Configure the tros.b environment
 source /opt/tros/setup.bash
 
-# 从tros.b的安装路径中拷贝出运行示例需要的图片文件
+# Copy the required image files for running the demo from the installation path of tros.b
 cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 
-# 启动图片发布节点，使用本地MP4格式视频文件进行发布（可以根据自己的需求进行参数配置），暂不支持Web端显示
+# Start the image publisher node and publish using local MP4 format video files (parameters can be configured according to your needs), web display is currently not supported
 /opt/tros/lib/hobot_image_publisher/hobot_image_pub --ros-args -p image_source:=./config/video.list -p fps:=30 -p image_format:=mp4
 ```
 
-### 视频发布结果分析
+### Video Publishing Result Analysis
 
-在运行终端输出如下信息：
+The following information is displayed in the terminal output during execution:
 
 ```text
 [INFO] [launch]: All log files can be found below /root/.ros/log/2022-10-22-21-44-03-663907-ubuntu-702475
 [INFO] [launch]: Default logging verbosity is set to INFO
-webserver has launch
+webserver has launched
 [INFO] [hobot_image_pub-1]: process started with pid [702597]
 [INFO] [hobot_codec_republish-2]: process started with pid [702599]
 [INFO] [hobot_codec_republish-3]: process started with pid [702601]
 [INFO] [websocket-4]: process started with pid [702603]
 ```
 
-输出log显示出webserver已启动，hobot_image_pub、hobot_codec_republish、websocket都正常运行
+The output log shows that the webserver has started and hobot_image_pub, hobot_codec_republish, and websocket are all running normally.
 
-在PC端的浏览器输入<http://IP:8000> 即可查看图像展示效果（IP为地平线RDK/X86设备的IP地址）：
+To view the image display effect, enter `<http://IP:8000>` in the browser on the PC (where IP is the IP address of the Horizon RDK/X86 device):
 
 ![hobot_img_pub](./image/demo_tool/mp4show.jpg )
 
 
-## Trigger记录工具
+## Trigger Recording Tool
 
-### 功能介绍
+### Function Introduction
 
-所谓Trigger，是在设定好已有Trigger机制基础上，监测Trigger模块订阅的消息变化，例如检测框结果数量变化，小车控制信息变化等，触发对应Trigger事件，记录指定时间区间内的ROS2消息，从而帮助开发人员定位和复现机器人场景中的感知、规控等问题。
+Trigger, in the context of this tool, is a mechanism that detects changes in the subscribed messages of the Trigger module, such as changes in the number of detection boxes or changes in car control information. It triggers corresponding Trigger events to record the specified time interval of ROS2 messages, helping developers locate and reproduce perception, control, and other issues in robot scenes.
 
-trigger_node package 是地平线基于ROS2开发的Trigger基础模块，用于在触发Trigger事件后，获取指定rosbag数据的功能包。package支持直接订阅ai_msg/msg/PerceptionTargets类型的话题，在话题回调函数中，判断是否触发Trigger事件，并记录Trigger事件相关的rosbag包，最后将Trigger事件信息保存，并发布std_msg/msg/String类型的Trigger事件话题。
+The trigger_node package is a Trigger basic module developed by Horizon based on ROS2, which is used to obtain specified rosbag data after triggering Trigger events. The package supports direct subscription to ai_msg/msg/PerceptionTargets topics. In the topic callback function, Trigger events are triggered and rosbag packages related to the Trigger events are recorded. Finally, the Trigger event information is saved and published in std_msg/msg/String type Trigger event topics.
 
-本章节展示的示例，是地平线在自定义trigger基础模块基础上，开发的Trigger模块使用示例。本示例展示的功能，是订阅垃圾检测框信息，根据垃圾检测框的数量是否大于等于3，判断是否触发Trigger事件。若检测框数量大于等于3，则触发Trigger事件。
+This chapter provides an example of using the Trigger module developed by Horizon based on a custom Trigger basic module. The example demonstrates the functionality of subscribing to garbage detection box information and triggering a Trigger event based on whether the number of garbage detection boxes is greater than or equal to 3.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_trigger.git>
+Code Repository: <https://github.com/HorizonRDK/hobot_trigger.git>
 
-应用场景：机器人数据闭环链路，机器人Trigger事件上报场景，可配合感知、规控等任务，记录Trigger事件发生时的rosbag数据。
+Application Scenarios: Robot data closed-loop link, robot Trigger event reporting scenario, can be combined with perception, control, and other tasks to record rosbag data when Trigger events occur.
 
-### 支持平台
+### Supported Platforms
 
-| 平台    | 运行方式      | 示例功能                       |
-| ------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module| Ubuntu 20.04 | · 启动MIPI/USB摄像头，触发记录的rosbag数据记录在本地 |
+| Platform | Execution Method | Example Functionality |
+| --- | --- | --- |
+| RDK X3, RDK X3 Module| Ubuntu 20.04 | · Start MIPI/USB camera, trigger recording, and record rosbag data locally |
 
-### 使用说明
+### Usage Instructions
 
-#### Trigger初始化配置说明   
+#### Trigger Initialization Configuration Description  
 
-Trigger基础模块，定义了初始化配置需要的参数。
+The Trigger basic module defines the parameters required for initialization configuration.
 
-config_file配置文件格式为json格式，具体配置如下：
+The `config_file` is in json format, and the specific configuration is as follows:
 
 ```bash
 { 
-  "domain": Trigger事件domain。如扫地机、人型机等，Trigger类型不同，通过domain区分不同领域类型机器人Trigger。
+  "domain": Trigger event domain. For example, sweeping robot, humanoid robot, etc. Different Trigger types are differentiated by domain for different types of robots.
 
-  "desc": Trigger模块描述信息。
+  "desc": Trigger module description.
 
-  "duration_ts_back": 录制Trigger发生后持续时长。
+  "duration_ts_back": Duration after Trigger occurrence for recording.
 
-  "duration_ts_front": 录制Tirgger发生前持续时长。
+  "duration_ts_front": Duration before Trigger occurrence for recording.
   
-  "level": Trigger事件的优先级, 多个不同Trigger发生时, 可利用一个总节点，筛选一些高优或低优的Trigger事件。
+  "level": Priority of Trigger event. When multiple different Triggers occur, a central node can be used to filter high-priority or low-priority Trigger events.
   
-  "src_module_id": 发生Trigger的模块ID, 用于管理不同的Trigger模块, 满足业务不同Trigger模块管理需求。
+  "src_module_id": Module ID where Trigger occurred, used for managing different Trigger modules to meet different business requirements.
   
-  "status": Trigger状态, '0': 关闭, '1': 打开。
+  "status": Trigger status, '0': off, '1': on.
   
-  "strategy_version": Trigger模块策略的版本号。
+  "strategy_version": Version number of the Trigger module strategy.
   
-  "topics": 需要记录的话题list，包含话题名。
+  "topics": List of topics that need to be recorded, including topic names.
   
-  "trigger_type": Trigger类型ID。每个Trigger模块并不是只有一种触发情况，比如检测到2个垃圾触发是一种类型，检测到3个垃圾是一种类型。
+  "trigger_type": Trigger type ID. Each Trigger module may have more than one triggering condition, for example, detecting 2 pieces of garbage is one type, detecting 3 pieces of garbage is another type.
   
-  "unique_id": 设备唯一标识。
+  "unique_id": Unique device identifier.
   
-  "version": Trigger模块版本信息。
+  "version": Trigger module version information.
   
-  "extra_kv": 其他冗余扩展信息可记录在此。
+  "extra_kv": Other redundant extension information can be recorded here.
 }
   ```
 
-#### Trigger事件触发配置说明
+#### Trigger Event Triggering Configuration Description
 
-在trigger_node基类中，定义了Config结构体，其中部分配置与初始化时Trigger配置保持一致，剩下内容需由Trigger触发时根据实际情况填充。
+In the `trigger_node` base class, the `Config` structure is defined, in which some configurations are consistent with the Trigger configuration during initialization, while the remaining content needs to be filled according to the actual situation when the Trigger is triggered.
 
-用户基于Trigger_node进行二次开发时，仅需要在每次Trigger发生时，实例化一个结构体变量，将Trigger发生时的相关信息填入结构体变量，如 "timestamp"、"gps_pos"等，送入Trigger事件记录队列 "requests_"中。
+When users develop based on `Trigger_node`, they only need to instantiate a structure variable each time the Trigger occurs, fill in the relevant information when the Trigger occurs in the structure variable, such as "timestamp", "gps_pos", etc., and pass it to the Trigger event recording queue `requests_`.
 
-在此基础上，用户就可以开发自定义的Trigger模块，更多信息请在代码仓库中参考 trigger_node_example 的实现方式。
+Based on this, users can develop custom Trigger modules. For more information, please refer to the implementation method of `trigger_node_example` in the code repository.
 
-代码仓库：<https://github.com/HorizonRDK/hobot_trigger.git>
-
-结构体信息如下：
+Code repository: <https://github.com/HorizonRDK/hobot_trigger.git>The structure information is as follows:
 
 ```c++
 struct Config {
-  std::string domain;       // Trigger事件domain
-  std::string desc;         // Trigger描述信息
-  long duration_ts_back;    // 录制Trigger 发生后持续时长
-  long duration_ts_front;   // 录制tirgger 发生前持续时长
-  GPS_POS gps_pos;          // GPS定位
-  int level;                // 优先级
-  std::string rosbag_path;  // Trigger发生后rosbag本地文件路径
-  int src_module_id;        // 发生Trigger的模块
-  int status;               // Trigger状态
-  std::string strategy_version; // 策略版本号
-  long timestamp;           // Trigger发生时间戳
-  std::vector<std::string> topics;    // 需要记录的话题list，包含话题名和话题类型
-  int trigger_type;         // Trigger类型
-  std::string unique_id;    // 设备唯一标识
-  std::string version;      // Trigger版本信息
-  std::vector<EXTRA_KV> extra_kv;   // 额外信息
+  std::string domain;       // Trigger event domain
+  std::string desc;         // Trigger description information
+  long duration_ts_back;    // Duration of recording after Trigger occurs
+  long duration_ts_front;   // Duration of recording before Trigger occurs
+  GPS_POS gps_pos;          // GPS positioning
+  int level;                // Priority level
+  std::string rosbag_path;  // Local file path of rosbag after Trigger occurs
+  int src_module_id;        // Module that Trigger occurs
+  int status;               // Trigger status
+  std::string strategy_version; // Strategy version number
+  long timestamp;           // Trigger occurrence timestamp
+  std::vector<std::string> topics;    // List of topics to be recorded, including topic names and types
+  int trigger_type;         // Trigger type
+  std::string unique_id;    // Device unique identifier
+  std::string version;      // Trigger version information
+  std::vector<EXTRA_KV> extra_kv;   // Additional information
 };
 ```
 
-### 准备工作
+### Preparation
 
-#### 地平线RDK平台
+#### Horizon RDK Platform
 
-1. 地平线RDK已烧录好地平线提供的Ubuntu 20.04系统镜像。
+1. Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
 
-2. 地平线RDK已成功安装TogetheROS.Bot。
+2. Horizon RDK has successfully installed TogetheROS.Bot.
 
-### 使用介绍
+### User Guide
 
-#### 地平线RDK平台
+#### Horizon RDK Platform
 
-**使用MIPI摄像头发布图片**
+**Publish Images with MIPI Camera**
 
 ```shell
-# 配置ROS2环境
+# Configure ROS2 environment
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the necessary configuration files for the example to run from the installation path of tros
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 cp -r /opt/tros/lib/trigger_node_example/config/ .
 
-# 配置MIPI摄像头
+# Configure MIPI camera
 export CAM_TYPE=mipi
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch trigger_node_example hobot_trigger_example.launch.py
-```
-
-**使用usb摄像头发布图片**
+```**Publishing Images using a USB Camera**
 
 ```shell
-# 配置ROS2环境
+# Configure ROS2 environment
 source /opt/tros/setup.bash
 
-# 从tros的安装路径中拷贝出运行示例需要的配置文件。
+# Copy the necessary configuration files from the installation path of tros.
 cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 cp -r /opt/tros/lib/trigger_node_example/config/ .
 
-# 配置USB摄像头
+# Configure the USB camera
 export CAM_TYPE=usb
 
-# 启动launch文件
+# Launch the launch file
 ros2 launch trigger_node_example hobot_trigger_example.launch.py
 ```
 
 
-### 结果分析
+### Result Analysis
 
-**使用mipi摄像头发布图片**
+**Publishing Images using a MIPI Camera**
 
-package初始化后，在终端输出如下信息：
+After package initialization, the following information will be displayed in the terminal:
 
 ```shell
   [INFO] [launch]: All log files can be found below /root/.ros/log/2023-05-13-17-31-53-158704-ubuntu-2981490
@@ -296,55 +285,52 @@ package初始化后，在终端输出如下信息：
 
 ```
 
-运行后Trigger触发产生的rosbag数据，将记录在当前运行目录 "trigger" 目录下。记录的rosbag数据，可以在foxglove中播放。在foxglove中播放rosbag文件的方法，可以参考手册 2.2 数据展示——foxglove展示。
-
-foxglove中播放效果：
+The rosbag data generated by Trigger triggering will be recorded in the "trigger" directory of the current running directory. The recorded rosbag data can be played in foxglove. For instructions on how to play rosbag files in foxglove, refer to Section 2.2 Data Display - foxglove Display in the manual.Playing effect in foxglove:
 
 ![](./image/demo_tool/trigger_example_trash_det.gif)
 
-说明：该Trigger示例记录了事件发生前5s和事件发生后5s的数据。同时看到在事件中间时刻，记录了Trigger事件发生的原因：即在场景中丢入了一个垃圾,使得场景中垃圾达到三个，触发Trigger。
+Explanation: This Trigger example records data 5 seconds before and after an event. At the same time, you can see that the Trigger event occurred in the middle of the event, and the reason for the Trigger event was recorded: a piece of trash was thrown into the scene, causing the number of trash in the scene to reach three, triggering the Trigger.
 
 
-### 拓展功能
+### Additional Functionality
 
-#### 给Trigger模块下发任务
+#### Sending Tasks to Trigger Module
 
-Trigger模块支持由其他节点下发Trigger任务,控制Trigger配置。下发方式,通过发布std_msg的话题消息,消息数据为json格式的String数据。将任务协议发送到Trigger模块。
+The Trigger module supports receiving Trigger tasks from other nodes to control Trigger configuration. The tasks can be sent through publishing std_msgs topic messages, where the message data is in json format as a string. Send the task protocol to the Trigger module.
 
-##### Trigger任务协议
+##### Trigger Task Protocol
 ```json
 {
-   "version": "v0.0.1_20230421",       // Trigger模块版本信息。
-   "trigger_status": true,             // Trigger状态, 'false': 关闭, 'true': 打开。
+   "version": "v0.0.1_20230421",       // Trigger module version information.
+   "trigger_status": true,             // Trigger status, 'false': off, 'true': on.
    "strategy": [
       {
-            "src_module_id": 203,      // 发生Trigger的模块ID
-            "trigger_type": 1110,      // Trigger类型ID。
-            "level": 1,                // Trigger事件的优先级
-            "desc": "",                // Trigger模块描述信息。
-            "duration_ts_back": 5000,  // 录制Trigger发生后持续时长
-            "duration_ts_front": 3000  // 录制Tirgger 发生前持续时长
+            "src_module_id": 203,      // ID of the module where the Trigger occurs.
+            "trigger_type": 1110,      // Trigger type ID.
+            "level": 1,                // Priority of the Trigger event.
+            "desc": "",                // Description of the Trigger module.
+            "duration_ts_back": 5000,  // Duration of recording after Trigger occurred.
+            "duration_ts_front": 3000  // Duration of recording before Trigger occurred.
       }
    ]
 }
 ```
 
+##### Running
 
-##### 运行
-
-在前面启动Trigger节点基础上,在另一个终端,发布话题名为"/hobot_agent"的std_msg话题消息。
+Based on starting the Trigger node earlier, in another terminal, publish a topic message named "/hobot_agent" using std_msgs.
 ```shell
-# 配置tros.b环境
+# Set up tros.b environment
 source /opt/tros/setup.bash
 
-# 发布话题名为"/hobot_agent"的std_msg话题消息
+# Publish a topic message named "/hobot_agent" using std_msgs
 ros2 topic pub /hobot_agent std_msgs/String "data: '{\"version\":\"v0.0.1_20230421\",\"trigger_status\":true,\"strategy\":[{\"src_module_id\":203,\"trigger_type\":1110,\"status\":true,\"level\":1,\"desc\":\"test\",\"duration_ts_back\":5000,\"duration_ts_front\":3000}]}'"
 ```
 
-##### 日志信息
+##### Log Information
 ```shell
    [WARN] [1691670626.026737642] [hobot_trigger]: TriggerNode Init Succeed!
    [WARN] [1691670626.026859316] [example]: TriggerExampleNode Init.
    [INFO] [1691670626.517232775] [TriggerNode]: Updated Trigger Config: {"domain":"robot","desc":"trigger lane","duration_ts_back":5000,"duration_ts_front":3000,"gps_pos":{"latitude":-1,"longitude":-1},"level":1,"rosbag_path":"","src_module_id":203,"strategy_version":"Robot_sweeper_V1.0_20230526","timestamp":0,"topic":["/image_raw/compressed","/ai_msg_mono2d_trash_detection","/hobot_visualization"],"trigger_type":1110,"unique_id":"OriginBot002","version":"v0.0.1_20230421","extra_kv":[]}
 ```
-分析: 对Trigger模块下发配置任务的时候,可以成功更新Trigger节点的配置。（Trigger节点Log日志为INFO时可看到日志更新）
+Analysis: When sending configuration tasks to the Trigger module, the configuration of the Trigger node can be successfully updated (the log of the Trigger node shows INFO to see the log update).
