@@ -14,6 +14,8 @@ Prerequisites:
 
 ### Compile tros.b
 
+#### 1 using docker files
+
 All the following operations are performed within the Docker environment on the development machine.
 
 ```shell
@@ -30,7 +32,7 @@ sudo docker images
 sudo docker run -it --entrypoint="/bin/bash" -v PC local directory: Docker directory imageID, here is an example using sudo docker run -it --entrypoint="/bin/bash" -v /mnt/data/kairui.wang/test:/mnt/test 9c2ca340973e
 ```
 
-### Obtain the tros.b Source Code
+#### 2 Obtain the tros.b Source Code
 
 All the following operations are performed within the Docker environment on the development machine.
 
@@ -44,7 +46,8 @@ git clone https://github.com/HorizonRDK/robot_dev_config.git -b develop
 ## Use the "git reset --hard [tag number]" command to specify the release version. For detailed instructions, refer to the "Compile Specific Version tros.b" section on this page
 ## Pull the source code
 vcs-import src < ./robot_dev_config/ros2_release.repos
-```The directory structure of the entire project is as follows:
+```
+The directory structure of the entire project is as follows:
 
 ```text
 ├── cc_ws
@@ -147,6 +150,7 @@ echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sunrise.gpg] http://sunrise.
   python3-pip \
   python3-pytest-cov \
   ros-dev-tools
+```
 
 ### Obtain tros.b Source Code
 
@@ -260,6 +264,7 @@ sudo apt install --no-install-recommends -y \
   libboost-python-dev \
   python3-opencv \
   libboost-python1.71.0
+```
 
 ### Compilation
 

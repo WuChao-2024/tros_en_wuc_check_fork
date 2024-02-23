@@ -1,3 +1,7 @@
+---
+sidebar_position: 2
+---
+
 # Hand Keypoint Detection
 
 ## Introduction
@@ -45,7 +49,7 @@ The hand keypoint detection (hand_lmk_detection) package subscribes to images pu
 source /opt/tros/setup.bash
 
 # Copy the required configuration files from the installation path of tros.b
-```cp -r /opt/tros/lib/mono2d_body_detection/config/ .
+cp -r /opt/tros/lib/mono2d_body_detection/config/ .
 cp -r /opt/tros/lib/hand_lmk_detection/config/ .
 
 # Configure MIPI camera
@@ -98,6 +102,7 @@ The terminal output during execution is as follows:
 [hand_lmk_detection-4] [WARN] [1660269066.612778892] [hand_lmk_det]: input fps: 30.00, out fps: 30.00
 [hand_lmk_detection-4] [WARN] [1660269067.646101309] [hand_lmk_det]: input fps: 30.01, out fps: 30.01
 [hand_lmk_detection-4] [WARN] [1660269068.679036184] [hand_lmk_det]: input fps: 30.04, out fps: 30.04
+```
 
 The output log shows that the program runs successfully and the input and output frame rates of the algorithm are 30fps, refreshing the statistical frame rate once per second.
 

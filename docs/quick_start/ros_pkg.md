@@ -47,7 +47,7 @@ image_transport/theora
 
 Details:
 ----------
-```"image_transport/compressed"
+"image_transport/compressed"
  - Provided by package: compressed_image_transport
  - Publisher:
       This plugin publishes a CompressedImage using either JPEG or PNG compression.

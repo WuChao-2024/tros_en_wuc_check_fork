@@ -48,8 +48,8 @@ The usage method is the same for Horizon RDK and X86 platforms. Taking Horizon R
     # Configure tros.b environment:
     source /opt/tros/setup.bash
     # Start via launch:
-    ```ros2 launch hobot_usb_cam hobot_usb_cam.launch.py usb_video_device:=/dev/video8
-```
+    ros2 launch hobot_usb_cam hobot_usb_cam.launch.py usb_video_device:=/dev/video8
+    ```
 
 3. If the program outputs the following information, it means the node has been successfully launched.
 
@@ -98,7 +98,7 @@ The usage method for Horizon RDK and X86 platforms is the same. Here is an examp
     ```bash
     # Configure the tros.b environment:
     source /opt/tros/setup.bash
-    ```# Launch method:
+    # Launch method:
     ros2 launch hobot_usb_cam hobot_usb_cam.launch.py usb_video_device:=/dev/video8 usb_pixel_format:=yuyv2rgb usb_image_width:=640 usb_image_height:=480
     ```
 
@@ -146,7 +146,8 @@ The usage method for Horizon RDK and X86 platforms is the same. Here is an examp
     ```
 
 6. Open a browser on your PC (chrome/firefox/edge) and enter <http://IP:8000> (IP is the Horizon RDK IP address), click on the top left to display the web side to view the real-time image from the USB camera
-    ![image-usb-camera](./image/demo_sensor/usb_cam_pic.png)### Notes
+    ![image-usb-camera](./image/demo_sensor/usb_cam_pic.png)
+### Notes
 
 1. USB cameras need to be calibrated and the camera calibration file path needs to be set in order to publish camera parameters. However, this does not affect other functionalities.
 2. To set the camera calibration file path, follow the steps below:
@@ -155,10 +156,10 @@ The usage method for Horizon RDK and X86 platforms is the same. Here is an examp
    # Configure tros.b environment:
    source /opt/tros/setup.bash
    # Start with launch command
-   ros2 launch hobot_usb_cam hobot_usb_cam.launch.py usb_camera_calibration_file_path:=（actual calibration file absolute path）
+   ros2 launch hobot_usb_cam hobot_usb_cam.launch.py usb_camera_calibration_file_path:=(actual calibration file absolute path)
    ```
 
-3. For X86 platforms running Ubuntu 20.04 in a virtual machine, the USB controller's USB compatibility needs to be set to USB 3.1 in the "Virtual Machine Settings".
+3. For X86 platforms running Ubuntu 20.04 in a virtual machine, the `USB controller`'s `USB compatibility` needs to be set to `USB 3.1` in the "`Virtual Machine Settings`".
 4. Changes to the pixel_format configuration:
 
    hobot_usb_cam supports the following configurations:
@@ -184,7 +185,7 @@ The usage method for Horizon RDK and X86 platforms is the same. Here is an examp
    a. Query the image formats supported by the usb camera, as shown in the log above. The log shows support for mjpeg and YUYV.
    b. Only "mjpeg", "mjpeg-compressed", "mjpeg2rgb", "yuyv", and "yuyv2rgb" can be set; otherwise, the hobot_usb_cam program will exit.
 
-## MIPI Image Acquisition
+## MIPI Image Capture
 
 ### Introduction
 
@@ -194,7 +195,8 @@ To achieve environmental perception capabilities, robots often carry cameras, To
 | ------ | ------ | ------ | ------ |
 | Camera | F37 | 200W | RDK X3, RDK X3 Module |
 | Camera | GC4663 | 400W | RDK X3, RDK X3 Module |
-| Camera | IMX219 | 200W | RDK X3, RDK X3 Module, RDK Ultra || Camera | IMX477 | 200W | RDK X3, RDK X3 Module |
+| Camera | IMX219 | 200W | RDK X3, RDK X3 Module, RDK Ultra |
+| Camera | IMX477 | 200W | RDK X3, RDK X3 Module |
 | Camera | OV5647 | 200W | RDK X3, RDK X3 Module |
 
 Code repository: <https://github.com/HorizonRDK/hobot_mipi_cam.git>
@@ -243,7 +245,8 @@ Take the F37 as an example to introduce the method of acquiring and previewing c
     [INFO] [launch]: Default logging verbosity is set to INFO
     [INFO] [mipi_cam-1]: process started with pid [8854]
     ...
-    ```4. To view the F37 camera image on the web end, as raw data needs to be encoded into JPEG images, two terminals need to be launched separately: one for subscribing to MIPI data and encoding it into JPEG, and one for publishing with a webservice.
+    ```
+4. To view the F37 camera image on the web end, as raw data needs to be encoded into JPEG images, two terminals need to be launched separately: one for subscribing to MIPI data and encoding it into JPEG, and one for publishing with a webservice.
 
     ```shell
     # Launch a terminal for encoding
@@ -292,35 +295,35 @@ Take the F37 as an example to introduce the method of acquiring and previewing c
     r:
     - 1.0
     - 0.0- 0.0
-- 0.0
-- 1.0
-- 0.0
-- 0.0
-- 0.0
-- 1.0
-p:
-- 1685.497559
-- 0.0
-- 881.6396
-- 0.0
-- 0.0
-- 1756.460205
-- 526.781147
-- 0.0
-- 0.0
-- 0.0
-- 1.0
-- 0.0
-binning_x: 0
-binning_y: 0
-roi:
-x_offset: 0
-y_offset: 0
-height: 0
-width: 0
-do_rectify: false
+    - 0.0
+    - 1.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+    p:
+    - 1685.497559
+    - 0.0
+    - 881.6396
+    - 0.0
+    - 0.0
+    - 1756.460205
+    - 526.781147
+    - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+    - 0.0
+    binning_x: 0
+    binning_y: 0
+    roi:
+    x_offset: 0
+    y_offset: 0
+    height: 0
+    width: 0
+    do_rectify: false
 
-```
+    ```
 
 ### Caution
 
@@ -341,6 +344,8 @@ do_rectify: false
 	- Check the hardware connections.
 	- Make sure you have set up the tros.b environment.
 	- Verify the parameters are correct, for more details refer to the Hobot_Sensors README.md file.## RGBD Image Acquisition
+
+## RGBD Image Capture
 
 ### Function Introduction
 
@@ -387,104 +392,109 @@ Code Repository: <https://github.com/HorizonRDK/hobot_rgbd_cam.git>
 
 Taking CP3AM as an example, the method of acquiring and previewing camera data is introduced below:
 
-1. SSH into the Horizon RDK and start the hobot_sensor node with the following command:```shell
-# Configure tros.b environment:
-source /opt/tros/setup.bash
-cp -r /opt/tros/lib/rgbd_sensor/parameter .
-# Launch the node
-ros2 launch rgbd_sensor rgbd_sensor.launch.py
-```
+1. SSH into the Horizon RDK and start the hobot_sensor node with the following command:
+    ```shell
+    # Configure tros.b environment:
+    source /opt/tros/setup.bash
+    cp -r /opt/tros/lib/rgbd_sensor/parameter .
+    # Launch the node
+    ros2 launch rgbd_sensor rgbd_sensor.launch.py
+    ```
 
 2. If the program outputs the following information, it indicates that the node has been successfully launched:
 
-```text
-[WARN] [1654573498.706920307] [example]: [wuwl]->This is rgbd!
-sh: 1: echo: echo: I/O error
-pipeId[1], mipiIdx[1], vin_vps_mode[3]
-[ERROR]["LOG"][irs2381c_utility.c:192] 2381 enter sensor_init_setting
-[ERROR]["LOG"][irs2381c_utility.c:200] start write 2381c reg
-camera read reg: 0xa001 val:0x7
-...
-[ERROR]["LOG"][irs2381c_utility.c:207] end write 2381c reg
-HB_MIPI_InitSensor end
-HB_MIPI_SetDevAttr end
-pstHbVideoDev->vin_fd = 29
-sensorID: 634-2362-2676-68d0 
-find local calib_file
+    ```text
+    [WARN] [1654573498.706920307] [example]: [wuwl]->This is rgbd!
+    sh: 1: echo: echo: I/O error
+    pipeId[1], mipiIdx[1], vin_vps_mode[3]
+    [ERROR]["LOG"][irs2381c_utility.c:192] 2381 enter sensor_init_setting
+    [ERROR]["LOG"][irs2381c_utility.c:200] start write 2381c reg
+    camera read reg: 0xa001 val:0x7
+    ...
+    [ERROR]["LOG"][irs2381c_utility.c:207] end write 2381c reg
+    HB_MIPI_InitSensor end
+    HB_MIPI_SetDevAttr end
+    pstHbVideoDev->vin_fd = 29
+    sensorID: 634-2362-2676-68d0 
+    find local calib_file
 
-find local calib_file
+    find local calib_file
 
-SDK Version: V4.4.35 build 20220525 09:27:53.
-read file(./calib-0634-2362-2676-68d0.bin), ok, file_len=132096, read_len=132096.......
-module config file(user custom) is: ./parameter/T00P11A-17.ini.
-parse calib data, data len:132096...
-sunny_degzip2 decode_len=155575.
-calib data with crc.
-parse calib data, ok.
-max roi (firstly): (0, 224, 0, 128).
-cur roi (firstly): (0, 224, 0, 128).
-HB_MIPI_InitSensor end
-HB_MIPI_SetDevAttr end
-pstHbVideoDev->vin_fd = 55
-vencChnAttr.stRcAttr.enRcMode=11
-mmzAlloc paddr = 0x1a6e6000, vaddr = 0x917e1000
-camera read reg: 0x9400 val:0x1
-...
+    SDK Version: V4.4.35 build 20220525 09:27:53.
+    read file(./calib-0634-2362-2676-68d0.bin), ok, file_len=132096, read_len=132096.......
+    module config file(user custom) is: ./parameter/T00P11A-17.ini.
+    parse calib data, data len:132096...
+    sunny_degzip2 decode_len=155575.
+    calib data with crc.
+    parse calib data, ok.
+    max roi (firstly): (0, 224, 0, 128).
+    cur roi (firstly): (0, 224, 0, 128).
+    HB_MIPI_InitSensor end
+    HB_MIPI_SetDevAttr end
+    pstHbVideoDev->vin_fd = 55
+    vencChnAttr.stRcAttr.enRcMode=11
+    mmzAlloc paddr = 0x1a6e6000, vaddr = 0x917e1000
+    camera read reg: 0x9400 val:0x1
+    ...
 
-[wuwl-StartCamera]->camT=3, ret=0.
-camera read reg: 0x3e val:0x40
-[ERROR]["vio_devop"][utils/dev_ioctl.c:121] [499334.399304]dev_node_dqbuf_ispoll[121]: failed to ioctl: dq (14 - Bad address)
-[ERROR]["vio_devop"][utils/dev_ioctl.c:189] [499334.399355]entity_node_dqbuf_ispoll[189]: dev type(9) dq failed
+    [wuwl-StartCamera]->camT=3, ret=0.
+    camera read reg: 0x3e val:0x40
+    [ERROR]["vio_devop"][utils/dev_ioctl.c:121] [499334.399304]dev_node_dqbuf_ispoll[121]: failed to ioctl: dq (14 - Bad address)
+    [ERROR]["vio_devop"][utils/dev_ioctl.c:189] [499334.399355]entity_node_dqbuf_ispoll[189]: dev type(9) dq failed
 
-[ERROR]["vio_core"][commom_grp/binding_main.c:1034] [499334.399371]comm_dq_no_data[1034]: G1 MIPI_SIF_MODULE module chn0 dq failed! maybe framedrop error_detail -14
-```[wuwl-StartCamera]->camT=1, ret=0.
-[INFO] [1654573500.226606117] [rclcpp]: [childStart]-> ret=0 !
+    [ERROR]["vio_core"][commom_grp/binding_main.c:1034] [499334.399371]comm_dq_no_data[1034]: G1 MIPI_SIF_MODULE module chn0 dq failed! maybe framedrop error_detail -14
+    ```[wuwl-StartCamera]->camT=1, ret=0.
+    [INFO] [1654573500.226606117] [rclcpp]: [childStart]-> ret=0 !
 
-[INFO] [1654573500.226831567] [rclcpp]: [StartStream]->pthread create sucess
+    [INFO] [1654573500.226831567] [rclcpp]: [StartStream]->pthread create sucess
 
-[INFO] [1654573500.226963854] [rclcpp]: <========>[doCapStreamLoop]->Start.
+    [INFO] [1654573500.226963854] [rclcpp]: <========>[doCapStreamLoop]->Start.
 
-[WARN] [1654573500.226998103] [rgbd_node]: [RgbdNode]->mipinode init sucess.
+    [WARN] [1654573500.226998103] [rgbd_node]: [RgbdNode]->mipinode init sucess.
 
-[WARN] [1654573500.227352507] [example]: [wuwl]->rgbd init!
-[WARN] [1654573500.228502174] [example]: [wuwl]->rgbd add_node!
+    [WARN] [1654573500.227352507] [example]: [wuwl]->rgbd init!
+    [WARN] [1654573500.228502174] [example]: [wuwl]->rgbd add_node!
 
-[INFO] [1662723985.860666547] [rgbd_node]: publish camera info.
-[INFO] [1662723985.866077156] [rgbd_node]: [pub_ori_pcl]->pub pcl w:h=24192:1,nIdx-24192:sz=24192.
-[INFO] [1662723985.876428980] [rgbd_node]: [timer_ros_pub]->pub dep w:h=224:129,sz=982464, infra w:h=224:108, sz=24192.
+    [INFO] [1662723985.860666547] [rgbd_node]: publish camera info.
+    [INFO] [1662723985.866077156] [rgbd_node]: [pub_ori_pcl]->pub pcl w:h=24192:1,nIdx-24192:sz=24192.
+    [INFO] [1662723985.876428980] [rgbd_node]: [timer_ros_pub]->pub dep w:h=224:129,sz=982464, infra w:h=224:108, sz=24192.
 
-[INFO] [1662723985.946767230] [rgbd_node]: publish camera info.
-[INFO] [1662723985.951415418] [rgbd_node]: [pub_ori_pcl]->pub pcl w:h=24192:1,nIdx-24192:sz=24192.
-[INFO] [1662723985.960161280] [rgbd_node]: [timer_ros_pub]->pub dep w:h=224:129,sz=982464, infra w:h=224:108, sz=24192.
-...
+    [INFO] [1662723985.946767230] [rgbd_node]: publish camera info.
+    [INFO] [1662723985.951415418] [rgbd_node]: [pub_ori_pcl]->pub pcl w:h=24192:1,nIdx-24192:sz=24192.
+    [INFO] [1662723985.960161280] [rgbd_node]: [timer_ros_pub]->pub dep w:h=224:129,sz=982464, infra w:h=224:108, sz=24192.
+    ...
 
-```
-3. PC机上查询当前话题，查询命令及返回结果如下：
+    ```
 
-```bash
-source /opt/ros/foxy/setup.bash
-ros2 topic list
-```
+3. Query the current topic on the PC. The command output is as follows:
 
-输出：
+    ```bash
+    source /opt/ros/foxy/setup.bash
+    ros2 topic list
+    ```
 
-```text
-/rgbd_CP3AM/depth/image_rect_raw
+    The output result is as follows:
 
-/rgbd_CP3AM/depth/color/points
+    ```text
+    /rgbd_CP3AM/depth/image_rect_raw
 
-/rgbd_CP3AM/color/camera_info
+    /rgbd_CP3AM/depth/color/points
 
-/rgbd_CP3AM/aligned_depth_to_color/color/points
+    /rgbd_CP3AM/color/camera_info
 
-/rgbd_CP3AM/infra/image_rect_raw
+    /rgbd_CP3AM/aligned_depth_to_color/color/points
 
-/rgbd_CP3AM/color/image_rect_raw
+    /rgbd_CP3AM/infra/image_rect_raw
 
-/parameter_events
+    /rgbd_CP3AM/color/image_rect_raw
 
-/rosout
-```4. Subscribe to topics and preview camera data on a PC.
+    /parameter_events
+
+    /rosout
+
+    ```
+
+4. Subscribe to topics and preview camera data on a PC.
 
     ```bash
     source /opt/ros/foxy/setup.bash
@@ -533,34 +543,34 @@ ros2 topic list
     - 1.0
     - 0.0
     - 0.0```
-- 0.0
-- 1.0
-- 0.0
-- 0.0
-- 0.0
-- 1.0
-p:
-- 741.315308
-- 0.0
-- 968.865379
-- 0.0
-- 0.0
-- 969.43042
-- 546.524343
-- 0.0
-- 0.0
-- 0.0
-- 1.0
-- 0.0
-binning_x: 0
-binning_y: 0
-roi:
-x_offset: 0
-y_offset: 0
-height: 0
-width: 0
-do_rectify: false
-```
+    - 0.0
+    - 1.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+    p:
+    - 741.315308
+    - 0.0
+    - 968.865379
+    - 0.0
+    - 0.0
+    - 969.43042
+    - 546.524343
+    - 0.0
+    - 0.0
+    - 0.0
+    - 1.0
+    - 0.0
+    binning_x: 0
+    binning_y: 0
+    roi:
+    x_offset: 0
+    y_offset: 0
+    height: 0
+    width: 0
+    do_rectify: false
+    ```
 
 ### Instructions
 

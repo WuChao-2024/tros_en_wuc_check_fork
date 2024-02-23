@@ -1,3 +1,7 @@
+---
+sidebar_position: 6
+---
+
 # Intelligent Voice
 
 ## Introduction
@@ -91,7 +95,9 @@ The specific process is shown in the following diagram:
 
 ![hobot_audio](./image/box_adv/hobot_audio.jpg)
 
-The smart voice function supports ASR recognition after denoising the raw audio. The default wake word and command words are defined in the *config/hrsc/cmd_word.json* file under the root directory of the smart voice function module, which are set as:```json
+The smart voice function supports ASR recognition after denoising the raw audio. The default wake word and command words are defined in the *config/hrsc/cmd_word.json* file under the root directory of the smart voice function module, which are set as:
+
+```json
 {
     "cmd_word": [
         "Hello Horizon",
@@ -141,7 +147,7 @@ To run the hobot_audio package on the Horizon RDK board:
       "voip_mode": 0,
       "mic_type": 0,
       "asr_mode": 0,
-   ```"asr_channel": 3,
+      "asr_channel": 3,
       "save_audio": 0
    }
    ```
@@ -179,6 +185,7 @@ Periods = 4
 was set period_size = 512
 was set buffer_size = 2048
 alsa_device_init. hwparams(0x557d6e4fa0), swparams(0x557d6e5210)
+
 ```
 
 The above log shows that the audio device initialization is successful, and the audio device is opened for audio collection.
@@ -190,7 +197,7 @@ recv hrsc sdk event wakeup success, wkp count is 1
 [WARN] [1657869437.600230208] [hobot_audio]: recv event:0
 recv hrsc sdk doa data: 100
 recv hrsc sdk command data: Go forward
-```[WARN] [1657869443.870029101] [hobot_audio]: recv cmd word: Walk forward
+[WARN] [1657869443.870029101] [hobot_audio]: recv cmd word: Walk forward
 recv hrsc sdk doa data: 110
 recv hrsc sdk command data: Turn left
 [WARN] [1657869447.623147766] [hobot_audio]: recv cmd word: Turn left
@@ -200,6 +207,8 @@ recv hrsc sdk command data: Turn right
 recv hrsc sdk doa data: 110
 recv hrsc sdk command data: Move backward
 [WARN] [1657869452.313969277] [hobot_audio]: recv cmd word: Move backward
+```
+
 
 log shows that the voice commands "Walk forward", "Turn left", "Turn right" and "Move backward" are recognized, and the DOA angle information is output, e.g. "recv hrsc sdk doa data: 110" indicates that the DOA angle is 110 degrees.
 

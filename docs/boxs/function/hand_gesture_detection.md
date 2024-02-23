@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Gesture Recognition
 
 ## Introduction
@@ -120,7 +124,7 @@ The following information will be displayed in the terminal output:
 [hand_gesture_detection-5] [WARN] [1660268383.235230316] [hand_gesture_det]: Pub smart fps 30.00
 [hand_gesture_detection-5] [WARN] [1660268384.087152150] [hand_gesture_det]: Sub smart fps 30.10
 [hand_gesture_detection-5] [WARN] [1660268384.256141566] [hand_gesture_det]: Pub smart fps 30.39
-
+```
 
 The output log shows that the program runs successfully, with an input and output frame rate of 30fps during inference, and the statistics of frame rate are refreshed once per second.
 

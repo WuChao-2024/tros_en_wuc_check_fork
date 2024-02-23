@@ -90,7 +90,9 @@ The main content of the launch script `dnn_node_example_feedback.launch.py` is a
 def generate_launch_description():
     config_file_launch_arg = DeclareLaunchArgument(
         "dnn_example_config_file", default_value=TextSubstitution(text="config/fcosworkconfig.json")
-```img_file_launch_arg = DeclareLaunchArgument(
+    )
+
+    img_file_launch_arg = DeclareLaunchArgument(
         "dnn_example_image", default_value=TextSubstitution(text="config/test.jpg")
     )
 
@@ -121,11 +123,30 @@ def generate_launch_description():
             ],
             arguments=['--ros-args', '--log-level', 'info']
         )
-    ])# ls /opt/tros/lib/dnn_node_example
-config  example
+    ])
 ```
+**Launch Script Description**
 
-The executable program `example` can be found in the path `/opt/tros/lib/dnn_node_example`.
+  The launch script allows selecting the algorithm to run through the parameter `dnn_example_config_file`, which specifies the configuration file. The parameter `dnn_example_image` designates the image used for inference with the chosen algorithm. By default, a sample start-up uses the default configuration if these parameters are not explicitly specified.
+
+  In the launch script, the `package` parameter specifies that the package name to be launched is `dnn_node_example`. The `executable` parameter indicates the name of the executable program as `example`, and the `parameters` parameter defines the arguments passed to the executable program. For detailed usage instructions on `ros2 launch`, refer to the [ROS2 Manual](http://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Launch-Main.html).
+
+- **Package and Executable Path**
+
+  Within the installation path of `tros.b` on RDK X3 (`/opt/tros/`), look for:
+
+  ```shell
+  # find /opt/tros/ -name dnn_node_example -type d
+  /opt/tros/lib/dnn_node_example
+  /opt/tros/share/dnn_node_example
+
+  # ls /opt/tros/lib/dnn_node_example
+  config  example
+  ```
+
+This means that within `/opt/tros/`, the directory structure contains the `dnn_node_example` package where its source files can be found at `/opt/tros/lib/dnn_node_example/config` and the executable `example` resides in the same directory. The share resources for this package would be located at `/opt/tros/share/dnn_node_example`.
+
+
 
 - Running the executable program on the Linux image
 
@@ -159,28 +180,76 @@ To find the path of the launch script `dnn_node_example.launch.py`, use the foll
 
 Due to the large number of packages in tros.b, compiling the source code takes some time (approximately 20 minutes on an 8-core CPU with 32GB of memory). There are two methods to speed up the process:
 
-1. Minimal compilation
+1 Minimal compilation
 
 The compilation script provides two options: `all_build.sh` for complete compilation (the default compilation method in the cross-compilation section of the manual) and `minimal_build.sh` for minimal compilation. Minimal compilation does not compile algorithm examples and test cases, resulting in faster compilation speed.
 
 To use minimal compilation, replace the command `./robot_dev_config/all_build.sh` with `./robot_dev_config/minimal_build.sh` in the configuration compilation options in the cross-compilation section of the manual.
 
-2. Manually ignore unnecessary package compilation
+2 manually ignore the compilation of unnecessary packages:
 
-In the package source code directory, create a file named `COLCON_IGNORE`. During compilation, this package will be ignored.
+Create a `COLCON_IGNORE` file within the source directory of the package. During the build process, this will cause the package to be ignored.
 
-The downloaded package source code directory is specified in `robot_dev_config/ros2_release.repos`. For example, when downloading `google_benchmark_vendor`, configure it as follows:```shell
-# 更新系统软件包缓存
+The source directories for downloaded packages are specified in the `robot_dev_config/ros2_release.repos` file. For instance, when downloading the `google_benchmark_vendor` package, the configuration would appear as follows:
+
+```text
+  ament/google_benchmark_vendor:
+    type: git
+    url: https://github.com/ament/google_benchmark_vendor.git
+    version: 0.0.7
+```
+
+This indicates that the source code for the `google_benchmark_vendor` package is downloaded into the `src/ament/google_benchmark_vendor` path. Consequently, execute the command `touch src/ament/google_benchmark_vendor/COLCON_IGNORE` to ignore the compilation of the `google_benchmark_vendor` package.
+
+## Does it support installing and using other versions of ROS?
+
+Yes.
+
+After installing tros.b on the RDK X3, it is possible to install and use other versions of ROS, including ROS1.
+
+:::caution **Note**
+In a single terminal session, only one version of ROS can be sourced. For instance, after sourcing tros, you cannot source ROS2 Foxy or ROS1, and vice versa—after sourcing ROS2 Foxy or ROS1, you cannot source tros.
+:::
+
+Furthermore, tros.b is fully compatible with the interfaces of the ROS foxy distribution; thus, even without installing ROS foxy, you can still leverage the rich toolkits available in the ROS ecosystem.
+
+
+## colcon Build Error
+
+When building a package `pkg` using the `colcon build` command, encountering the following error:
+
+```shell
+root@ubuntu:~/hobot_cam# colcon build
+[4.933s] ERROR:colcon.colcon_core.package_identification:Exception in package identification extension 'ros' for 'hobot_cam': module 'pyparsing' has no attribute 'operatorPrecedence'
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/catkin_pkg/condition.py", line 23, in evaluate_condition
+    expr = _get_condition_expression()
+  File "/usr/lib/python3/dist-packages/catkin_pkg/condition.py", line 44, in _get_condition_expression
+    _condition_expression = pp.operatorPrecedence(
+AttributeError: module 'pyparsing' has no attribute 'operatorPrecedence'
+```
+This might be due to an outdated version of `python3-catkin-pkg`, which lacks complete support for condition evaluation features.
+
+**Solution**
+
+Upgrade the `python3-catkin-pkg` package by following these steps:
+
+```shell
+# Add ROS apt repository
+sudo apt update && sudo apt install curl gnupg2 lsb-release
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# Remove the old version
+sudo apt remove python3-catkin-pkg
+
+# Install the new version
 sudo apt update
-
-# 安装最新版本的python3-catkin-pkg
 sudo apt install python3-catkin-pkg
 ```
 
-安装完成后，重新执行`colcon build`命令进行编译。如果问题仍然存在，请检查其他可能的原因。# Installing new version
-sudo apt update
-sudo apt install python3-catkin-pkg
-```
+Please note that the above text is already in English and does not require translation. The provided solution outlines the process to resolve the issue by updating the `python3-catkin-pkg` package when facing a specific error during the `colcon build` process on a system running Ubuntu with ROS installed.
+
 
 ## How to check the tros.b version
 
@@ -224,7 +293,9 @@ Description: TogetherROS
 N: There are 7 additional records. Please use the '-a' switch to see them.
 root@ubuntu:~#
 
-```## Explanation of tros.b versions 1.x and 2.x
+```
+
+## Explanation of tros.b versions 1.x and 2.x
 
 **Corresponding relationship with system versions and RDK platform hardware**
 

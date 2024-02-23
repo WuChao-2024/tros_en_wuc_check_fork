@@ -50,7 +50,7 @@ Launch command:
 
 ```shell
 # Configure the tros.b environment
-```source /opt/tros/setup.bash
+source /opt/tros/setup.bash
 
 ros2 launch hobot_vio hobot_vio.launch.py 
 ```

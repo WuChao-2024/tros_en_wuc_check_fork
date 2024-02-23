@@ -139,44 +139,77 @@ ros2 run line_follower_model training
 
 ![](./image/line_follower/model_convert.png)
 
-If the floating-point model obtained by training with PyTorch is run directly on the Horizon RDK, the efficiency will be low. In order to improve the running efficiency and use the 5T computing power of BPU, it is necessary to convert the floating-point model to a fixed-point model.
+A floating-point model trained using PyTorch would run inefficiently on the Horizon RDK. To improve efficiency and leverage the 5TOPs computing power of BPU, a conversion from a floating-point model to a fixed-point model is necessary.
 
-1. Generate ONNX model from the PyTorch model
+1. **Converting PyTorch Model to ONNX**
+   Run the following command on your PC:
+     ```shell
+     ros2 run line_follower_model generate_onnx
+     ```
+   After execution, this generates the `best_line_follower_model_xy.onnx` model in the current directory.
 
-   Run on the PC:```shell
-   cd /opt/ddk/sample/ai_toolchain/03_classification
-   ./calibrate.sh --model /data/10_model_convert/best_line_follower_model_xy.om --input_image /opt/ddk/sample/ai_toolchain/03_classification/input/
-```
-
-   编译模型。在OE包根目录下执行命令：
+2. **Conversion from Floating-Point Model to Fixed-Point Model**
+   This functionality is implemented in the `line_follower/10_model_convert` directory.
    
-   ```shell
-   ../ddk/tools/post_build.sh /data/10_model_convert/best_line_follower_model_xy -c /opt/ddk/sample/ai_toolchain/horizon_model_convert_sample/03_classification/configs/best_line_follower_model_xy.config
-   ```
-
-   编译成功后，生成的定点模型位于`/data/10_model_convert/best_line_follower_model_xy_offline.om`
-
-   完成后将`best_line_follower_model_xy_offline.om`拷贝至算法工具链OE包ddk/samples/ai_toolchain/horizon_classification_cpp/目录下。
-   
-cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
-   sh 02_preprocess.sh
-   ```
-
-   Results are as follows:
-
-   ![](./image/line_follower/02.gif)
-
-   Model compilation, this step will generate fixed-point model files.
+   The OE package directory structure is as follows:
 
    ```shell
-   # Execute in the docker
-   cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
-   sh 03_build.sh
+   .
+   ├── bsp
+   │   └── X3J3-Img-PL2.2-V1.1.0-20220324.tgz
+   ├── ddk
+   │   ├── package
+   │   ├── samples
+   │   │   └── ai_toolchain
+   │   │       └── horizon_model_convert_sample
+   │   │           └── 03_classification
+   │   │               └── 10_model_convert (to be copied here)
+   │   ├── tools
+   │   ...
+   ├── doc
+   ├── release_note-CN.txt
+   ├── release_note-EN.txt
+   ├── run_docker.sh
+   └── tools
+       ├── 0A_CP210x_USB2UART_Driver.zip
+       ├── 0A_PL2302-USB-to-Serial-Comm-Port.zip
+       ├── 0A_PL2303-M_LogoDriver_Setup_v202_20200527.zip
+       ├── 0B_hbupdate_burn_secure-key1.zip
+       ├── 0B_hbupdate_linux_cli_v1.1.tgz
+       ├── 0B_hbupdate_linux_gui_v1.1.tgz
+       ├── 0B_hbupdate_mac_v1.0.5.app.tar.gz
+       └── 0B_hbupdate_win64_v1.1.zip
    ```
 
-   Results are as follows:
+   Copy the `10_model_convert` project to the `/ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/` directory within the Algorithm Toolchain OE package.
 
-   ![](./image/line_follower/03.gif)
+   Load the algorithm toolchain Docker by running the following command at the root directory of the OE package:
+     ```shell
+     sh run_docker.sh /data/
+     ```
+
+   Generate calibration data. This step produces calibration data primarily for use in the next step of model compilation. It can be created using a portion of the training dataset; there are no specific requirements, as long as the standards are correct. A quantity of around 100 images is suitable.
+
+     ```shell
+     # Run inside the Docker container
+     cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
+     sh 02_preprocess.sh
+     ```
+
+   The result of preprocessing looks like this:
+     ![](./image/line_follower/02.gif)
+
+   **Model Compilation**
+     This step generates the fixed-point model file.
+     
+     ```shell
+     # Run inside the Docker container
+     cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
+     sh 03_build.sh
+     ```
+
+   The outcome of model compilation appears as follows:
+     [./image/line_follower/03.gif](./image/line_follower/03.gif)
 
 #### Edge-side Deployment
 
@@ -207,7 +240,6 @@ ros2 run line_follower_perception line_follower_perception --ros-args -p model_p
 
 Run mipi_cam.
 
-```shellPlease translate the following parts into English, while preserving the original format and content:
 
 ```shell
 source /opt/tros/setup.bash

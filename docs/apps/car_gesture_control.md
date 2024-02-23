@@ -48,7 +48,8 @@ Code repository: <https://github.com/HorizonRDK/gesture_control>
     ```shell
     sudo apt-get install ros-foxy-gazebo-*
     sudo apt install ros-foxy-turtlebot3
-sudo apt install ros-foxy-turtlebot3-simulations
+    sudo apt install ros-foxy-turtlebot3-simulations
+    ```
 
 ## Instructions
 
@@ -161,6 +162,7 @@ angular:
   y: 0.0
   z: -0.5
 ---
+```
 
 The car moves according to the gestures in the PC simulation environment, and the simulated car movement is as follows:
 

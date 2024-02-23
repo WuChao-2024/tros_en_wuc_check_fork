@@ -48,21 +48,22 @@ Code Repository: <https://github.com/HorizonRDK/hobot_websocket>
 
     ros2 launch mipi_cam mipi_cam.launch.py mipi_video_device:=F37
     ```
-b. Launch encoding
 
-```shell
-source /opt/tros/setup.bash
+   b. Launch encoding
 
-ros2 launch hobot_codec hobot_codec_encode.launch.py
-```
+   ```shell
+   source /opt/tros/setup.bash
 
-c. Launch WebSocket
+   ros2 launch hobot_codec hobot_codec_encode.launch.py
+   ```
 
-```shell
-source /opt/tros/setup.bash
+   c. Launch WebSocket
 
-ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
-```
+   ```shell
+   source /opt/tros/setup.bash
+
+   ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
+   ```
 
 2. Open a PC browser (Chrome/Firefox/Edge) and enter <http://IP:8000> to view the image and algorithm effects. IP refers to the Horizon RDK IP address.
 
@@ -95,7 +96,9 @@ ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg web
 
    - Use the command `lsof -i:8000` to check the processes that are occupying port 8000, and use `kill <PID>` to close the process, and then relaunch WebSocket.
 
-   - If the user does not want to stop the service that is currently using port 8000, you can modify the `listen` port number in the configuration file */opt/tros/lib/websocket/webservice/conf/nginx.conf* to a port number that is greater than 1024 and not being used. After modifying the port number, the URL used in the browser also needs to be modified accordingly.## HDMI Display
+   - If the user does not want to stop the service that is currently using port 8000, you can modify the `listen` port number in the configuration file */opt/tros/lib/websocket/webservice/conf/nginx.conf* to a port number that is greater than 1024 and not being used. After modifying the port number, the URL used in the browser also needs to be modified accordingly.
+
+## HDMI Display
 
 ### Function Introduction
 
@@ -144,7 +147,10 @@ The following information is displayed in the running terminal:
 [INFO] [hobot_hdmi-2]: process started with pid [13436]
 ```
 
-The monitor displays the image as follows:## RViz2 Display
+The monitor displays the image as follows:
+![websocket](./image/demo_render/hdmi.png "Preview Image")
+
+## RViz2 Display
 
 ### Function Introduction
 
@@ -191,7 +197,9 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
    [INFO] [launch]: All log files can be found below /root/.ros/log/2022-08-19-03-53-54-778203-ubuntu-2881662
    [INFO] [launch]: Default logging verbosity is set to INFO
    [INFO] [mipi_cam-1]: process started with pid [2881781]
-   ```3. A new window is created in the Horizon RDK to execute the topic query command and the results are as follows:
+   ```
+   
+3. A new window is created in the Horizon RDK to execute the topic query command and the results are as follows:
 
    ```shell
    # Configure the tros.b environment
@@ -238,7 +246,9 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
 
    ![rviz2-config](./image/demo_render/rviz2-config.png)
 
-   The image result is as follows:### Attention
+   The image result is as follows:
+
+### Attention
 
 1. If the PC terminal's `ros2 topic list` does not recognize the camera topic, please check the following:
 
@@ -285,7 +295,9 @@ TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed f
 
    ROS2 Foxy installation reference: <https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html>
 
-   Installation method for `rqt-image-view` on PC terminal: `sudo apt install ros-foxy-rqt-image-view ros-foxy-rqt`### Usage
+   Installation method for `rqt-image-view` on PC terminal: `sudo apt install ros-foxy-rqt-image-view ros-foxy-rqt`
+
+### Usage
 
 #### Horizon RDK Platform
 
@@ -333,7 +345,9 @@ TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed f
 
    ![](./image/demo_render/rqt-result.png)
 
-### Notes1. If the PC side ros2 topic list does not recognize the camera topic, perform the following troubleshooting steps:
+### Notes
+
+1. If the PC side ros2 topic list does not recognize the camera topic, perform the following troubleshooting steps:
 
    - Check if the horizon RDK is publishing images correctly
 

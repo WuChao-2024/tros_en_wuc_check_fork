@@ -146,7 +146,6 @@ After the package is initialized, the following information will be displayed in
 [parking_perception-3]  is_sync_mode_: 1
 [parking_perception-3]  model_file_name_: config/parking_perception_640x320.bin
 [parking_perception-3] feed_image:
-```
 [parking_perception-3] [INFO] [1659394017.194695288] [dnn]: Node init.
 [parking_perception-3] [INFO] [1659394017.194784038] [parking_perception]: Set node para.
 [parking_perception-3] [INFO] [1659394017.194845413] [dnn]: Model init.
@@ -165,6 +164,9 @@ After the package is initialized, the following information will be displayed in
 [parking_perception-3] [WARN] [1662036456.219133588] [parking_perception]: input fps: 29.73, out fps: 29.79
 [parking_perception-3] [WARN] [1662036457.228303881] [parking_perception]: input fps: 29.73, out fps: 29.73
 [parking_perception-3] [WARN] [1662036458.237841548] [parking_perception]: input fps: 29.73, out fps: 29.73
+
+```
+
 **Using single re-injection image**
 
 The result of inference reading a local image in the example will be rendered on the image. On the PC-side browser, you can view the image and algorithm rendering effect by entering http://IP:8000 (IP is the IP address of the Horizon RDK), and open the settings in the upper right corner of the interface.

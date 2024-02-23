@@ -46,7 +46,10 @@ tar -zxvf hobot_bev_data.tar.gz -C hobot_bev_data
 # After extraction, the dataset will be located at hobot_bev_data/data
 ```
 
-***Replaying the dataset***# Configure tros.b environment
+***Replaying the dataset***
+
+```shell
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
 # Start websocket service
@@ -54,6 +57,7 @@ ros2 launch websocket websocket_service.launch.py
 
 # Start running script and specify dataset path
 ros2 launch hobot_bev hobot_bev.launch.py image_pre_path:=hobot_bev_data/data
+```
 
 ## Result analysis
 

@@ -47,7 +47,9 @@ Code repository: <https://github.com/HorizonRDK/audio_control.git>
 
 ## User Guide
 
-Start the simulation environment on the PC side:```shell
+Start the simulation environment on the PC side:
+
+```shell
 source /opt/ros/foxy/setup.bash
 export TURTLEBOT3_MODEL=burger
 ros2 launch turtlebot3_gazebo empty_world.launch.py
@@ -96,7 +98,9 @@ Wake up device is "Hello Horizon".
 Audio control command word definitions are:
         "go forward": move front.
         "go backward": move back.
-```The above log snippet captures the output from the audio control package after its launch. The log content indicates that the wake-up word configured for this voice control module is "Hello Horizon", and the command words for controlling the movement of the robot are: "move forward", "move backward", "rotate left", "rotate right".
+```
+
+The above log snippet captures the output from the audio control package after its launch. The log content indicates that the wake-up word configured for this voice control module is "Hello Horizon", and the command words for controlling the movement of the robot are: "move forward", "move backward", "rotate left", "rotate right".
 
 On the PC side, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK:
 
@@ -138,6 +142,8 @@ angular:
   y: 0.0
   z: 0.5
 ---
-```The simulation car on the PC follows the instructions of voice control commands to move. The motion effect of the simulated car is as follows:
+```
+
+The simulation car on the PC follows the instructions of voice control commands to move. The motion effect of the simulated car is as follows:
 
 ![](./image/car_audio_control/move.gif)

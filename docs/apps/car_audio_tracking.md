@@ -95,7 +95,9 @@ Startup program for the Horizon RDK platform:
 
     # Start the launch file and specify the voice DOA angle corresponding to the front of the car, taking 90 as an example
     ros2 launch audio_tracking audio_tracking.launch.py car_front_audio_angle:=90
-    ```## Result Analysis
+    ```
+
+## Result Analysis
 
 The following information is the output of the Horizon RDK running on the terminal:
 
@@ -143,13 +145,16 @@ rotate_step: 0.348
 
 The above logs capture a segment of the output after the audio control package is launched. The log shows that the wake-up word configured for the intelligent voice recognition module is "Horizon Hello". After receiving the wake-up event, the audio tracking control module receives DOA angle information. As shown in the log above, the DOA is 80 degrees. At this time, the audio tracking control module publishes a command to make the car turn left by 20 degrees. After the rotation, the car moves forward, and later the car stops moving.
 
-On the PC side, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK.$ ros2 topic list
+On the PC side, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK.
+```shell
+$ ros2 topic list
 /audio_smart
 /cmd_vel
+```
 
-The topic "/audio_smart" is the algorithm perception message published by X3, which contains intelligent voice results. The topic "/cmd_vel" is the motion control command published by Horizon RDK.
+The topic "`/audio_smart`" is the algorithm perception message published by X3, which contains intelligent voice results. The topic "`/cmd_vel`" is the motion control command published by Horizon RDK.
 
-On the PC side, the command "ros2 topic echo /cmd_vel" can be used in the terminal to view the motion control command published by Horizon RDK:
+On the PC side, the command "`ros2 topic echo /cmd_vel`" can be used in the terminal to view the motion control command published by Horizon RDK:
 
 ```text
 linear:

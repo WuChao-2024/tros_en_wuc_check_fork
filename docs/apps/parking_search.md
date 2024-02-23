@@ -46,7 +46,9 @@ Note: In actual detection, due to the fact that the detection accuracy of the al
 
 4. Algorithm flow:
 
-![](./image/parking_search/workflow.png)## Preparation
+![](./image/parking_search/workflow.png)
+
+## Preparation
 
 ### Horizon RDK Platform
 
@@ -95,7 +97,7 @@ Loading parameters:
 ```shell
 # Configure the tros.b environment
 source /opt/tros/setup.bash
-```# Copy the configuration files needed to run the example from the installation path of tros.b.
+# Copy the configuration files needed to run the example from the installation path of tros.b.
 cp -r /opt/tros/lib/parking_perception/config/ .
 
 # Configure the MIPI camera
@@ -144,7 +146,10 @@ ros2 launch parking_search parking_search.launch.py
 [parking_search-4] [WARN] [1662539779.522690915] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_search-4] [WARN] [1662539779.563660873] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_perception-3] [WARN] [1662539779.595755290] [parking_perception]: input fps: 29.87, out fps: 29.63
-[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000![](./image/parking_search/cap2.gif)
+[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
+```
+
+![](./image/parking_search/cap2.gif)
 
 3. When the car determines the parking space and moves forward to stop, the Horizon RDK terminal outputs log information:
 

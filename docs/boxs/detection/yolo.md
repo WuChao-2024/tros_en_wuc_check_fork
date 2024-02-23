@@ -143,7 +143,9 @@ source /opt/tros/setup.bash
 
 # Launching the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/yolov2workconfig.json dnn_example_image:=config/target.jpg
-```In addition to the YOLOv2 algorithm, the YOLOv3 algorithm is also supported, but the YOLOv5 algorithm is not supported for now. The algorithm can be switched by using the parameter "config_file" in the startup command. For example, the startup configuration for using the YOLOv3 algorithm is `dnn_example_config_file:="config/yolov3workconfig.json"`.
+```
+
+In addition to the YOLOv2 algorithm, the YOLOv3 algorithm is also supported, but the YOLOv5 algorithm is not supported for now. The algorithm can be switched by using the parameter "config_file" in the startup command. For example, the startup configuration for using the YOLOv3 algorithm is `dnn_example_config_file:="config/yolov3workconfig.json"`.
 
 ## Result Analysis
 

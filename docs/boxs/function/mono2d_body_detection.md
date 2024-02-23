@@ -47,7 +47,9 @@ Game Character Control Example based on Human Pose Analysis and Gesture Recognit
 
 3. Horizon RDK has installed the MIPI or USB camera.
 
-4. Confirm that the PC is able to access the Horizon RDK via the network.### X86 Platform
+4. Confirm that the PC is able to access the Horizon RDK via the network.
+
+### X86 Platform
 
 1. X86 environment has been configured with Ubuntu 20.04 system image.
 
@@ -165,6 +167,7 @@ The following information is outputted in the terminal:
 [mono2d_body_detection-3] [WARN] [1660219826.922075496] [mono2d_body_det]: input fps: 30.16, out fps: 30.00
 [mono2d_body_detection-3] [WARN] [1660219827.955463330] [mono2d_body_det]: input fps: 30.01, out fps: 30.01
 [mono2d_body_detection-3] [WARN] [1660219828.955764872] [mono2d_body_det]: input fps: 30.01, out fps: 30.00
+```
 
 The log output shows that the program runs successfully. The input and output frame rates of the algorithm during inference are 30fps, and the statistics are refreshed every second.
 

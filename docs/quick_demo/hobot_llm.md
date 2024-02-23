@@ -48,7 +48,9 @@ After restarting, set the CPU maximum frequency to 1.5GHz and the scheduling mod
 
 ```bash
 sudo bash -c 'echo 1 > /sys/devices/system/cpu/cpufreq/boost'
-```sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'
+sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'
+```
+
 
 Currently, there are two ways to experience it. One is to directly input text in the terminal for chat interaction, and the other is to subscribe to text messages and then publish the results in text format.
 

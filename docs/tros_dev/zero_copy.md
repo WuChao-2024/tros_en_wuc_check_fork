@@ -9,10 +9,11 @@ Communication is a fundamental function of the robot development engine. When us
 
 ## Prerequisites
 
-1. tros.b has been successfully installed following the guide [Installation](../quick_start/install_tros.md).
-2. Familiarity with ROS2 nodes, topics, QoS, as well as creating packages and using custom messages. For detailed tutorials, please refer to the [official ROS2 documentation](https://docs.ros.org/en/foxy/Tutorials.html).
-3. The ROS2 package build system ament_cmake has been installed. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`.
-4. The ROS2 build tool colcon has been installed. Installation command: `pip3 install -U colcon-common-extensions`.
+Your tros.b has been successfully installed following the guide [Installation](../quick_start/install_tros.md). Familiarity with ROS2 nodes, topic, qos, as well as creating packages and using custom messages. For detailed tutorials, please refer to the [official ROS2 documentation](https://docs.ros.org/en/foxy/Tutorials.html).
+
+The ROS2 package build system ament_cmake has been installed. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`.
+
+The ROS2 build tool colcon has been installed. Installation command: `pip3 install -U colcon-common-extensions`.
 
 ## Task Content
 
@@ -46,7 +47,9 @@ Run the following command to create a `msg` directory to store the custom messag
 ```shell
 cd ~/dev_ws/src/hbmem_pubsub
 mkdir msg
-```In the `msg` directory, create a new file named `SampleMessage.msg` with the following content:
+```
+
+In the `msg` directory, create a new file named `SampleMessage.msg` with the following content:
 
 ```idl
 int32 index
@@ -431,7 +434,7 @@ On the terminal, the following prints will appear, indicating that the subscribe
 
 You can use `Ctrl+C` to end the execution of each node.
 
-Summary of this section:
+### Summary of this section
 
 If you have learned how to use ROS2 publishers and subscribers, it is easy to switch to using hbmem publishers and subscribers. You just need to make the following changes:
 
