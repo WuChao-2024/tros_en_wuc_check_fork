@@ -45,7 +45,11 @@ cp -r /opt/tros/lib/dnn_node_example/config/ .
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image:=config/target.jpg
 ```
 
-After a successful run, the rendered image will be automatically saved in the execution path, named as render_feedback_0_0.jpeg. Use Ctrl+C to exit the program.## Analysis of Results
+After a successful run, the rendered image will be automatically saved in the execution path, named as render_feedback_0_0.jpeg. Use Ctrl+C to exit the program.
+
+See `README.md` in the `dnn_node_example` package source for instructions on the parameters in the run command and how to subscribe to and use the images published from the camera for algorithmic reasoning.
+
+## Analysis of Results
 
 The terminal output during the execution of the command provides the following information:
 

@@ -141,7 +141,10 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_msg_pub_topic_name:=ai_msg_mono2d_trash_detection dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-**Use a Single Feedback Image**# ROS2 Environment Configuration
+**Use a Single Feedback Image**
+
+```shell
+# ROS2 Environment Configuration
 source /opt/tros/setup.bash
 
 # Copy the configuration files needed for running the example from the installation path of tros.
@@ -190,7 +193,7 @@ After package initialization, the following information will be output to the te
 [example-3] [BPU_PLAT]BPU Platform Version(1.3.1)!
 [example-3] [HBRT] set log level as 0. version = 3.14.5
 [example-3] [DNN] Runtime version = 1.9.7_(3.14.5 HBRT)
-```[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
+[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
 [example-3] [WARN] [1665644838.688758775] [dnn]: Set output parser with default dnn node parser, you will get all output tensors and should parse output_tensors in PostProcess.
 [example-3] [WARN] [1665644838.691224728] [example]: Create ai msg publisher with topic_name: ai_msg_mono2d_trash_detection
 [example-3] [WARN] [1665644838.698936232] [example]: Create img hbmem_subscription with topic_name: /hbmem_img
@@ -200,3 +203,37 @@ After package initialization, the following information will be output to the te
 [example-3] [WARN] [1665644842.972618649] [example]: Sub img fps: 29.94, Smart fps: 29.88, infer time ms: 36, post process time ms: 3
 [example-3] [WARN] [1665644843.982243911] [example]: Sub img fps: 29.62, Smart fps: 29.70, infer time ms: 36, post process time ms: 3
 [example-3] [WARN] [1665644844.995728928] [example]: Sub img fps: 29.79, Smart fps: 29.73, infer time ms: 36, post process time ms: 6
+```
+
+Real-time running effect:
+
+![](./image/mono2d_trash_detection/realtime.gif)
+
+**Using a single backpropagated image**
+
+After package initialization, the following information is output in the terminal:
+
+```shell
+[example-1] [INFO] [1665646256.967568866] [dnn]: The model input 0 width is 416 and height is 416
+[example-1] [WARN] [1665646256.967698807] [dnn]: Running default SetOutputParser.
+[example-1] [WARN] [1665646256.967754550] [dnn]: Setting output parser with the default dnn node parser; you will receive all output tensors and should parse the 'output_tensors' in PostProcess.
+[example-1] [INFO] [1665646256.967794962] [dnn impl]: Setting the default output parser
+[example-1] [INFO] [1665646256.967972439] [dnn]: Task initialized.
+[example-1] [INFO] [1665646256.970036756] [dnn]: Setting task_num to [4]
+[example-1] [INFO] [1665646256.970176988] [example]: The model input width is 416 and height is 416
+[example-1] [WARN] [1665646256.970260061] [example]: Creating an AI message publisher with topic_name: hobot_dnn_detection
+[example-1] [INFO] [1665646256.977452592] [example]: DNN node fed with local image: config/trashDet0028.jpg
+[example-1] [INFO] [1665646257.027170005] [dnn]: Task id: 3 set to BPU core: 2
+[example-1] [INFO] [1665646257.057492754] [example]: Output from frame_id: feedback, stamp: 0.0
+[example-1] [INFO] [1665646257.063816821] [PostProcessBase]: out box size: 1
+[example-1] [INFO] [1665646257.064070497] [PostProcessBase]: Detection rect: 216.061 223.173 317.97 282.748, detection type: trash, score: 0.80733
+[example-1] [INFO] [1665646257.064206479] [ClassificationPostProcess]: out cls size: 0
+[example-1] [INFO] [1665646257.068688365] [ImageUtils]: Target size: 1
+[example-1] [INFO] [1665646257.068836554] [ImageUtils]: Target type: trash, rois.size: 1
+[example-1] [INFO] [1665646257.068884048] [ImageUtils]: roi.type: (empty), x_offset: 216 y_offset: 223 width: 101 height: 59
+[example-1] [WARN] [1665646257.071375688] [ImageUtils]: Drawing result to file: render_feedback_0_0.jpeg
+```
+
+Local rendering effect:
+
+![](./image/mono2d_trash_detection/render.jpeg)

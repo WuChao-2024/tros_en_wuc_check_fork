@@ -44,7 +44,8 @@ SLAM (Simultaneous Localization and Mapping) is a technique used to simultaneous
 
 ## User Guide
 
-### Horizon RDK PlatformThis section introduces how to use Horizon RDK to run SLAM algorithm and observe mapping effect using PC.
+### Horizon RDK Platform
+This section introduces how to use Horizon RDK to run SLAM algorithm and observe mapping effect using PC.
 
 Start the simulation environment on the PC:
 

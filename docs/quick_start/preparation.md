@@ -46,7 +46,9 @@ PING www.a.shifen.com (180.101.49.11) 56(84) bytes of data.
 --- www.a.shifen.com ping statistics ---
 6 packets transmitted, 6 received, 0% packet loss, time 5008ms
 rtt min/avg/max/mdev = 4.100/4.348/4.978/0.291 ms
-```The normal return of the "ping" command indicates that both internet access and DNS configuration are correct.
+
+```
+The normal return of the "ping" command indicates that both internet access and DNS configuration are correct.
 
 Upgrade the system image and source information: `sudo apt update` `sudo apt upgrade`
 

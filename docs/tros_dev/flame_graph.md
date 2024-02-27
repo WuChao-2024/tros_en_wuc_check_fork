@@ -48,11 +48,12 @@ Code repository: [https://github.com/brendangregg/FlameGraph.git](https://github
 
     ```shell
     ./stackcollapse-perf.pl out.perf > out.folded
-    ```4. Generate an SVG flame graph using flamegraph.pl:
+    ```
+4. Generate an SVG flame graph using flamegraph.pl:
 
-```shell
-./flamegraph.pl out.folded > flame.svg
-```
+    ```shell
+    ./flamegraph.pl out.folded > flame.svg
+    ```
 
 Steps 1 and 2 are completed on the Horizon RDK, while steps 3 and 4 are completed on either a PC or the Horizon RDK.
 

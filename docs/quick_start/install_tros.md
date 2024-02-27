@@ -45,7 +45,9 @@ After the installation is complete, check the files in the /opt directory
 
 ```bash
 root@ubuntu:/userdata# ls /opt/
-hobot  trosThe tros.b is installed in the /opt directory.
+hobot  tros
+```
+The tros.b is installed in the /opt directory.
 
 ### Upgrade tros.b
 
@@ -91,8 +93,8 @@ Prerequisites:
 
 1. Set locale and enable the universe software repository:
 
-   ```bash
-   sudo apt update && sudo apt install localessudo locale-gen en_US en_US.UTF-8
+```bash
+sudo apt update && sudo apt install localessudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 

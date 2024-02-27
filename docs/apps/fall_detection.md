@@ -52,6 +52,7 @@ export CAM_TYPE=mipi
 
 # Launch the launch file
 ros2 launch hobot_falldown_detection hobot_falldown_detection.launch.py
+```
 
 **Publish images using USB camera**
 

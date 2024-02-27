@@ -1,3 +1,7 @@
+---
+sidebar_position: 7
+---
+
 # Visual SLAM Algorithm
 
 ## Function Introduction
@@ -44,7 +48,9 @@ SLAM Mapping Example: [4.1 SLAM Mapping](../../apps/slam)
 
 ## User Guide
 
-ORB-SLAM3 project itself integrates various types of test programs, such as mono/stereo and mono/stereo+IMU, and also classifies them according to different benchmark datasets and sensors.### Using EuRoC Dataset
+ORB-SLAM3 project itself integrates various types of test programs, such as mono/stereo and mono/stereo+IMU, and also classifies them according to different benchmark datasets and sensors.
+
+### Using EuRoC Dataset
 
 Dataset URL: <http://robotics.ethz.ch/~asl-datasets/ijrr_euroc_mav_dataset/vicon_room2/V2_01_easy/V2_01_easy.zip>. After downloading the dataset, go to the ORB-SLAM3 project directory. Extract the dataset and the bag-of-words library to your local machine, and run the test program. If you want to achieve a higher frame rate, you can overclock the X3 CPU, but this will also increase power consumption.
 
@@ -90,7 +96,9 @@ sudo apt-get install ros-$ROS_DISTRO-realsense2-description -y
 
 After installation, we start the Realsense camera as an image publishing node and the visual SLAM node as an image subscriber. It subscribes to the image topic and publishes pose and point cloud information.
 
-Next, we log in to RDK using the root account (password: root) and start the Realsense D435i camera. Otherwise, insufficient permissions will prevent the camera from starting correctly.```bash
+Next, we log in to RDK using the root account (password: root) and start the Realsense D435i camera. Otherwise, insufficient permissions will prevent the camera from starting correctly.
+
+```bash
 source /opt/tros/setup.bash
 
 # Start D435i and publish image data

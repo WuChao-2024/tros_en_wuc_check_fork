@@ -1,3 +1,6 @@
+---
+sidebar_position: 4
+---
 # Monocular 3D Indoor Detection
 
 ## Introduction
@@ -93,11 +96,13 @@ After processing one frame of image data, the mono3d_indoor_detection package ou
 [mono3d_indoor_detection-1] [INFO] [1662612553.868842610] [mono3d_detection]: target type: height, value: 0.282349
 [mono3d_indoor_detection-1] [INFO] [1662612553.868885191] [mono3d_detection]: target type: length, value: 0.257935
 [mono3d_indoor_detection-1] [INFO] [1662612553.868929273] [mono3d_detection]: target type: rotation, value: -1.542728
-```[mono3d_indoor_detection-1] [INFO] [1662612553.868968855] [mono3d_detection]: target type: x, value: 0.552460
+[mono3d_indoor_detection-1] [INFO] [1662612553.868968855] [mono3d_detection]: target type: x, value: 0.552460
 [mono3d_indoor_detection-1] [INFO] [1662612553.869010645] [mono3d_detection]: target type: y, value: -0.164073
 [mono3d_indoor_detection-1] [INFO] [1662612553.869050018] [mono3d_detection]: target type: z, value: 1.088358
 [mono3d_indoor_detection-1] [INFO] [1662612553.869088767] [mono3d_detection]: target type: depth, value: 1.088358
 [mono3d_indoor_detection-1] [INFO] [1662612553.869126765] [mono3d_detection]: target type: score, value: 0.875521
+```
+
 
 The log excerpt displays the processing result of a frame. The result shows that the target type in the subscribed algorithm message is trash_can, and it also provides the 3D coordinates, distance, and rotation angle information of the trash_can.
 

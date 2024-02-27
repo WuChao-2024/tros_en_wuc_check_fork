@@ -44,7 +44,9 @@ Nav2 (Navigation2) is a built-in navigation framework in ROS2, aimed at finding 
    
    sudo apt install ros-foxy-navigation2
    sudo apt install ros-foxy-nav2-bringup
-   ```## User Guide
+   ```
+
+## User Guide
 
 ### Horizon RDK Platform
 

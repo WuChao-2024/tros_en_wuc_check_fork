@@ -95,6 +95,7 @@ ros2 launch body_tracking body_tracking_without_gesture.launch.py
 
 ## Result Analysis
 
+```bash
 The following information is outputted in the terminal when running on the Horizon RDK board.[body_tracking-7] [WARN] [1653430533.523069034] [ParametersClass]: TrackCfg param are
 [body_tracking-7] activate_wakeup_gesture: 0
 [body_tracking-7] track_serial_lost_num_thr: 100
@@ -110,6 +111,7 @@ The following information is outputted in the terminal when running on the Horiz
 [body_tracking-7] [WARN] [1653430535.018442618] [TrackingManager]: Do move! body_rect_width: 353, thr: 864, move_step_ratio: 1, body_rect_to_top: 20, img_height: 544, move_step: 0.3
 [body_tracking-7] [WARN] [1653430535.220268535] [TrackingManager]: Do rotate move, ts sec: 3397, nanosec: 387800000
 [body_tracking-7] [WARN] [1653430535.220408576] [RobotCmdVelNode]: RobotCtl, angular: 0 0 0, linear: 0.3 0 0, pub twist ts: 1653430535220394
+```
 
 以上log截取了一段App启动后的输出。启动后先打印相关配置（TrackCfg param）。检测到人体后小车就开始进入跟随状态（tracking_sta值为1），并以0.3m/s的速度前进运动（RobotCtl, angular: 0 0 0, linear: 0.3 0 0）靠近人体。
 

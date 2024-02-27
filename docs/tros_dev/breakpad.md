@@ -133,3 +133,12 @@ fp = 0x0000007ffb82b700
 sp = 0x0000007ffb82b700
 pc = 0x0000007fb68f3d50
 Found by: call frame info
+```
+
+## Summary of this Section
+
+This section elucidates the process of using the Breakpad framework to generate crash files and analyze stack information. The application initializes Breakpad by specifying the directory for generating dump files and registering a callback function to be executed upon a crash.
+
+Subsequently, the `dump_syms` tool provided by Breakpad is utilized to generate symbol files, accompanied by the creation of a directory for storing these symbols. Finally, the `minidump_stackwalk` utility is employed to parse the contents of the dump files and conduct an analysis of the stack information.
+
+For more comprehensive details, refer to the official Breakpad website: https://chromium.googlesource.com/breakpad/breakpad/

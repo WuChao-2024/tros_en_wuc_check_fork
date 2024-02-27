@@ -47,7 +47,9 @@ wget http://sunrise.horizon.cc/TogetheROS/data/hobot_centerpoint_data.tar.gz
 mkdir config
 tar -zxvf hobot_centerpoint_data.tar.gz -C config
 # After unzipping, the data is located in the config/hobot_centerpoint_data directory
-```Algorithm Example:
+```
+
+Algorithm Example:
 
 ```shell
 # Configure tros.b environment
@@ -95,7 +97,9 @@ After launching the algorithm example, the following information will be printed
 [hobot_centerpoint-1] [WARN] [0948485763.661555807] [CenterPoint_Node]: input fps: 2.39, out fps: 2.39, infer time ms: 27, post process time ms: 57
 [hobot_centerpoint-1] [WARN] [0948485764.084410183] [CenterPoint_Node]: input fps: 2.39, out fps: 2.39, infer time ms: 27, post process time ms: 57
 [hobot_centerpoint-1] [WARN] [0948485764.502788849] [CenterPoint_Node]: input fps: 2.37, out fps: 2.37, infer time ms: 27, post process time ms: 55
-```The log output shows that the topic for publishing algorithm inference results is `/hobot_centerpoint`, and 81 point cloud files are obtained for feedback. The algorithm goes through inference and post-processing (including rendering and publishing of inference results), with a frame rate of approximately 2.4fps.
+```
+
+The log output shows that the topic for publishing algorithm inference results is `/hobot_centerpoint`, and 81 point cloud files are obtained for feedback. The algorithm goes through inference and post-processing (including rendering and publishing of inference results), with a frame rate of approximately 2.4fps.
 
 To view the image and algorithm rendering effect, please enter http://IP:8000 in the browser on the PC side (IP refers to the IP address of RDK):
 

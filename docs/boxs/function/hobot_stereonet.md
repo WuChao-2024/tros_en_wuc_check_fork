@@ -1,3 +1,7 @@
+---
+sidebar_position: 11
+---
+
 # Stereo Depth Estimation Algorithm
 
 ## Function Introduction
@@ -44,6 +48,7 @@ ros2 launch hobot_stereonet hobot_stereonet_demo.launch.py
 
 ## Result Analysis
 
+```bash
 The following information is outputted in the running terminal:[INFO] [launch]: All log files can be found below /root/.ros/log/2023-07-05-18-23-51-350999-hobot-2628272
 [INFO] [launch]: Default logging verbosity is set to INFO
 webserver has launch
@@ -79,7 +84,7 @@ webserver has launch
 [hobot_stereo_usb_cam-1] camera sn: 38085162[/dev/video0]
 [hobot_stereonet-4] [WARN] [1688581434.992634291] [stereonet_node]: input fps: 1.60, out fps: 1.60, preprocess time ms: 1191, infer time ms: 48, msg preparation for pub time cost ms: 8
 [hobot_stereonet-4] [WARN] [1688581436.203778417] [stereonet_node]: input fps: 0.82, out fps: 0.82, preprocess time ms: 1157, infer time ms: 47, msg preparation for pub time cost ms: 2
-
+```
 To view the image and algorithm rendering effects, enter http://IP:8000 in a PC browser (IP is the IP address of the RDK):
 
 ![stereonet_rdk](./image/box_adv/stereonet_rdk.png)

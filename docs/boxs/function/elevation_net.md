@@ -1,3 +1,7 @@
+---
+sidebar_position: 5
+---
+
 # Monocular Elevation Network Detection
 
 ## Function Introduction
@@ -44,7 +48,9 @@ cp -r /opt/tros/lib/elevation_net/config/ .
 
 # Start the launch file
 ros2 launch elevation_net elevation_net.launch.py
-```### X86 Platform
+```
+
+### X86 Platform
 
 ```shell
 # Configure ROS2 environment

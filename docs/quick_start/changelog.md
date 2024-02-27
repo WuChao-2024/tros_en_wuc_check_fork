@@ -9,40 +9,40 @@ sidebar_position: 6
 New features:
 
 - Refactored hobot_usb_cam to support more format configurations and transcoding.
-- Updated hobot_audio to support both 2-mic and 4-mic microphone boards; added microphone_name configuration for device ID.
+- Updated `hobot_audio` to support both 2-mic and 4-mic microphone boards; added microphone_name configuration for device ID.
 
 Bug fixes:
 
-- Fixed an issue in the hobot_rgbd_cam node where the step field of the data message was set incorrectly.
-- Updated the audio playback function call in hobot_tts to fix playback failure on the new version of the system.
-- Deleted the config device tree file in hobot_llm, and updated README; the new version of the system can now set the size of ION memory through command tools.
+- Fixed an issue in the `hobot_rgbd_cam` node where the step field of the data message was set incorrectly.
+- Updated the audio playback function call in `hobot_tts` to fix playback failure on the new version of the system.
+- Deleted the config device tree file in `hobot_llm`, and updated README; the new version of the system can now set the size of ION memory through command tools.
 
 ## Version: 2.1.1
 
 New features:
 
-- Added hobot_chatbot node, which calls intelligent speech, large language model, and text-to-speech modules to implement on-board voice chatting.
+- Added `hobot_chatbot` node, which calls intelligent speech, large language model, and text-to-speech modules to implement on-board voice chatting.
 
 Bug fixes:
 
-- Fixed an issue in the text-to-speech hobot_tts node where certain characters caused the application to exit.
+- Fixed an issue in the text-to-speech `hobot_tts` node where certain characters caused the application to exit.
 
 ## Version: 2.1.0
 
 Functionality changes:
 
-- Updated tros-ros-base to the latest ROS2 foxy source code, making it compatible with the latest ROS2 foxy packages.
+- Updated `tros-ros-base` to the latest ROS2 foxy source code, making it compatible with the latest ROS2 foxy packages.
 - To use the ROS2 foxy packages, simply run `source /opt/tros/setup.bash`. There is no longer a need to use the script to create symbolic links.
 
 New features:
 
-- Added a parameter to the text-to-speech hobot_tts node to specify the audio playback device.
-- Added a new large language model hobot_llm node for on-device LLM experience.
-- Added the "jpeg-compressed" configuration option to the in_format parameter of the hobot_codec node for image encoding and decoding. The data type of the subscribed topics is now selected based on the configuration option.
+- Added a parameter to the text-to-speech `hobot_tts` node to specify the audio playback device.
+- Added a new large language model `hobot_llm` node for on-device LLM experience.
+- Added the "`jpeg-compressed`" configuration option to the `in_format` parameter of the `hobot_codec` node for image encoding and decoding. The data type of the subscribed topics is now selected based on the configuration option.
 
 Bug fixes:
 
-- Fixed an issue in the MIPI image acquisition hobot_mipi_cam node where the step field of the RGB format data message was set incorrectly.
+- Fixed an issue in the MIPI image acquisition `hobot_mipi_cam` node where the step field of the RGB format data message was set incorrectly.
 
 ## Version: 2.0.2
 
@@ -81,7 +81,7 @@ New features:
 
 Bug fixes:
 
-- Upgraded easydnn (version 1.6.1) and dnn (version 1.18.4) for RDK X3, fixing operator crash issues and supporting more operators.
+- Upgraded easydnn (version 1.6.1) and dnn (version 1.18.4) for `RDK X3`, fixing operator crash issues and supporting more operators.
 - Fixed the issue where the depth data published by the RGBD image acquisition node was incorrect.
 
 Other updates:

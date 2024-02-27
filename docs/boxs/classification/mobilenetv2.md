@@ -57,7 +57,6 @@ export CAM_TYPE=mipi
 
 # Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
-
 ```
 #### Publish Images using USB Camera
 
@@ -96,7 +95,9 @@ source /opt/tros/setup.bash
 
 # Launch the launch file
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image:=config/target_class.jpg
-```## Result Analysis
+```
+
+## Result Analysis
 
 ### Publishing Images Using a Camera
 

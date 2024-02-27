@@ -1,5 +1,5 @@
 ---
-sidebar_position: 5
+sidebar_position: 7
 ---
 # 2.7 Tools
 
@@ -46,7 +46,10 @@ Code repository: <https://github.com/HorizonRDK/hobot_image_publisher.git>
 
 Read a local NV12 format image in a loop and publish it. Use the image codec module to compress the image and encode it into JPEG format, and display the image on the PC's web interface.
 
-#### Horizon RDK/X86 Platform# Configure tros.b environment
+#### Horizon RDK/X86 Platform
+
+```bash
+# Configure tros.b environment
 source /opt/tros/setup.bash
 
 # Copy the image files needed for the example from the installation path of tros.b
@@ -54,6 +57,7 @@ cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 
 # Start the launch file
 ros2 launch hobot_image_publisher hobot_image_publisher_demo.launch.py
+```
 
 ### Analysis of Image Publishing Results
 
@@ -91,7 +95,9 @@ cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 ros2 launch hobot_image_publisher hobot_image_publisher_videolist_demo.launch.py
 ```
 
-#### X86 Platform```shell
+#### X86 Platform
+
+```shell
 # Configure the tros.b environment
 source /opt/tros/setup.bash
 
@@ -179,7 +185,7 @@ The `config_file` is in json format, and the specific configuration is as follow
   
   "extra_kv": Other redundant extension information can be recorded here.
 }
-  ```
+```
 
 #### Trigger Event Triggering Configuration Description
 
@@ -239,7 +245,9 @@ export CAM_TYPE=mipi
 
 # Launch the launch file
 ros2 launch trigger_node_example hobot_trigger_example.launch.py
-```**Publishing Images using a USB Camera**
+```
+
+**Publishing Images using a USB Camera**
 
 ```shell
 # Configure ROS2 environment

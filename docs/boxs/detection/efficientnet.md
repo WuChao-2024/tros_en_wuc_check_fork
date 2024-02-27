@@ -94,7 +94,9 @@ The terminal output during the execution is as follows:
 [example-3] [WARN] [1655093201.175239677] [example]: Smart fps 6.88
 [example-3] [WARN] [1655093202.011887441] [img_sub]: Sub img fps 7.14
 [example-3] [WARN] [1655093202.302124315] [example]: Smart fps 7.10
-```The log output shows that the topic for publishing the inference results of the algorithm is `hobot_dnn_detection`, and the topic for subscribing to the image is `/hbmem_img`.
+```
+
+The log output shows that the topic for publishing the inference results of the algorithm is `hobot_dnn_detection`, and the topic for subscribing to the image is `/hbmem_img`.
 
 To view the image and the rendering effect of the algorithm, enter http://IP:8000 in the browser on the PC (where IP is the IP address of the Horizon RDK):
 
