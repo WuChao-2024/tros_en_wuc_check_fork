@@ -4,7 +4,7 @@ sidebar_position: 8
 
 # 4.8 Car Parking Space Search
 
-## Function Introduction
+## Introduction
 
 The Car Parking Space Search control app guides the robot to move to a parking space using parking detection algorithms, including left and right rotation and forward and backward translation. The app consists of MIPI image acquisition, parking detection algorithm, parking search control strategy, image encoding and decoding, and web display end. The process is shown in the following image:
 
@@ -16,7 +16,7 @@ Code repository: <https://github.com/HorizonRDK/parking_search.git>
 
 ## Supported Platforms
 
-| Platform         | Running Method | Example Function                            |
+| Platform         | System | Function                            |
 | ---------------- | -------------- | ------------------------------------------- |
 | RDK X3, RDK X3 Module | Ubuntu 20.04   | Start MIPI/USB camera to capture images, and perform parking area detection and parking space search, finally demonstrating the search effect through the motion of the actual car. |
 
@@ -50,7 +50,7 @@ Note: In actual detection, due to the fact that the detection accuracy of the al
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -58,21 +58,21 @@ Note: In actual detection, due to the fact that the detection accuracy of the al
 
 3. The Horizon RDK has installed a MIPI or USB camera.
 
-4. A Gu Yue Ju car is used as the control device.
+4. The car is used as the control device:
 
 ![](./image/parking_search/car.jpg)
 
-## Instructions
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
 Place the car on a level surface, adjust the camera angle to be horizontal, and run the Parking Search App. The car will automatically make decisions and control its movement based on the results of the parking area detection algorithm until it finds a parking space and stops.
 
 After the app is launched, you can view the images published by the sensors and the corresponding algorithm results on the PC browser (enter http://IP:8000 in the browser, where IP is the IP address of the Horizon RDK).
 
-Open the Web interface and click on the settings in the upper right corner of the page. Select the "Full Image Segmentation" option to display the rendered effect (refer to Section 4.2 Boxs Application Algorithm - Outdoor Parking Area Detection).
+Open the Web interface and click on the settings in the upper right corner of the page. Select the "Full Image Segmentation" option to display the rendered effect.
 
-Start the Gu Yue Ju car and run the control node on the Horizon RDK:
+Start the car and run the control node on the Horizon RDK:
 
 ```shell
 source /opt/tros/setup.bash
@@ -97,7 +97,7 @@ Loading parameters:
 ```shell
 # Configure the tros.b environment
 source /opt/tros/setup.bash
-# Copy the configuration files needed to run the example from the installation path of tros.b.
+```# Copy the configuration files needed to run the example from the installation path of tros.b.
 cp -r /opt/tros/lib/parking_perception/config/ .
 
 # Configure the MIPI camera
@@ -146,10 +146,7 @@ ros2 launch parking_search parking_search.launch.py
 [parking_search-4] [WARN] [1662539779.522690915] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_search-4] [WARN] [1662539779.563660873] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
 [parking_perception-3] [WARN] [1662539779.595755290] [parking_perception]: input fps: 29.87, out fps: 29.63
-[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000
-```
-
-![](./image/parking_search/cap2.gif)
+[parking_search-4] [WARN] [1662539779.604272498] [ParkingSearchEngine]: do rotate, direction: 2, step: 0.100000![](./image/parking_search/cap2.gif)
 
 3. When the car determines the parking space and moves forward to stop, the Horizon RDK terminal outputs log information:
 

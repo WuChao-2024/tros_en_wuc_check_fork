@@ -1,7 +1,7 @@
 ---
 sidebar_position: 5
 ---
-# 2.5 Data Communication
+# 2.5 Communication
 
 ## Zero-copy
 
@@ -12,17 +12,17 @@ TogetheROS.Bot provides a flexible and efficient zero-copy function that can sig
 - Latency: The time it takes for a message to be transmitted from pub to sub.
 - CPU usage: The percentage of CPU usage by communication activities.
 - Resident memory: Includes heap allocated memory, shared memory, and stack memory used for system internals.
-- Sample statistics: Includes the number of messages sent, received, and lost in each experiment.
+- Sample statistics: Includes the number of messages sent, received, and lost.
 
 Code repositories: [https://github.com/HorizonRDK/rclcpp](https://github.com/HorizonRDK/rclcpp), [https://github.com/HorizonRDK/rcl_interfaces](https://github.com/HorizonRDK/rcl_interfaces)
 
 ### Supported Platforms
 
-| Platform    | Running Method      | Example Functionality                       |
+| Platform    | System      | Function                       |
 | ------- | ------------ | ------------------------------ |
 | RDK X3, RDK X3 Module | Ubuntu 20.04 | Show zero-copy performance test results |
 
-***RDK Ultra platform supports zero-copy data communication but does not provide an installation package for zero-copy performance metrics testing.***
+***RDK Ultra supports zero-copy communication but does not provide an installation package for zero-copy performance testing.***
 
 ### Preparation
 
@@ -47,7 +47,6 @@ Code repositories: [https://github.com/HorizonRDK/rclcpp](https://github.com/Hor
     source /opt/tros/setup.bash
     ros2 run performance_test perf_test --reliable --keep-last --history-depth 10 -s 1 -m Array4m -r 100 --max-runtime 30
     ```
-    
     **Test results are shown below**:
 
     ```dotnetcli
@@ -96,58 +95,53 @@ Code repositories: [https://github.com/HorizonRDK/rclcpp](https://github.com/Hor
       ```
 
     **Test results are shown below**:
-    ```dotnetcli
-    run time
+```dotnetcli
+run time
 
-    +--------------+-----------+--------+----------+
-    | T_experiment | 30.554773 | T_loop | 1.000084 |
-    +--------------+-----------+--------+----------+
++--------------+-----------+--------+----------+
+| T_experiment | 30.554773 | T_loop | 1.000084 |
++--------------+-----------+--------+----------+
 
-    samples                                              latency
+samples                                              latency
 
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
-    | recv | sent | lost | data_recv | relative_loss |   | min      | max      | mean     | variance |
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
-    | 99   | 99   | 0    | 418701472 | 0.000000      |   | 0.000146 | 0.000381 | 0.000195 | 0.000000 |
-    +------+------+------+-----------+---------------+   +----------+----------+----------+----------+
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
+| recv | sent | lost | data_recv | relative_loss |   | min      | max      | mean     | variance |
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
+| 99   | 99   | 0    | 418701472 | 0.000000      |   | 0.000146 | 0.000381 | 0.000195 | 0.000000 |
++------+------+------+-----------+---------------+   +----------+----------+----------+----------+
 
-    publisher loop                                       subscriber loop
+publisher loop                                       subscriber loop
 
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
-    | min      | max      | mean     | variance |        | min      | max      | mean     | variance |
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
-    | 0.009812 | 0.009895 | 0.009877 | 0.000000 |        | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
-    +----------+----------+----------+----------+        +----------+----------+----------+----------+
++----------+----------+----------+----------+        +----------+----------+----------+----------+
+| min      | max      | mean     | variance |        | min      | max      | mean     | variance |
++----------+----------+----------+----------+        +----------+----------+----------+----------+
+| 0.009812 | 0.009895 | 0.009877 | 0.000000 |        | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
++----------+----------+----------+----------+        +----------+----------+----------+----------+
 
-    system usage
+system usage
 
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | utime      | stime     | maxrss  | ixrss  | idrss  | isrss    | minflt | majflt |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | 8727113000 | 307920000 | 46224   | 0      | 0      | 0        | 6440   | 0      |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | nswap      | inblock   | oublock | msgsnd | msgrcv | nsignals | nvcsw  | nivcsw |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
-    | 0          | 0         | 0       | 0      | 0      | 0        | 9734   | 2544   |
-    +------------+-----------+---------+--------+--------+----------+--------+--------+
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| utime      | stime     | maxrss  | ixrss  | idrss  | isrss    | minflt | majflt |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| 8727113000 | 307920000 | 46224   | 0      | 0      | 0        | 6440   | 0      |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| nswap      | inblock   | oublock | msgsnd | msgrcv | nsignals | nvcsw  | nivcsw |
++------------+-----------+---------+--------+--------+----------+--------+--------+
+| 0          | 0         | 0       | 0      | 0      | 0        | 9734   | 2544   |
++------------+-----------+---------+--------+--------+----------+--------+--------+
 
-    Maximum runtime reached. Exiting.
-    ```
-
+Maximum runtime reached. Exiting.
+```
 
 ### Result Analysis
 
-The performance_test tool can output various types of statistical results. Below we mainly compare the differences in latency and system usage:
+The performance_test tool can output various types of statistical results. We mainly compare the differences in latency and system usage:
 
 **latency**
+
 The mean latency for communication with "zero-copy" enabled and disabled are 4.546ms and 0.195ms, respectively. It can be seen that "zero-copy" significantly reduces communication latency.
 
 **system usage**
-
-```dotnetcli
-+------------------+---------------+-------------------+--------+--------+----------+------------------+---------------------+
-| utime            | stime         | maxrss            | ixrss  | idrss  | isrss    | minflt           | majflt              |
-```
 
 | Communication Method     | Latency     | utime+stime | maxrss | minflt | majflt | nvcsw | nivcsw |
 | ------------------------ | ----------- | ----------- | ------ | ------ | ------ | ------| ------ |

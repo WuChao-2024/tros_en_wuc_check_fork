@@ -2,27 +2,27 @@
 sidebar_position: 4
 ---
 
-# 4.4 Car Body Tracking
+# 4.4 Robot Follows the Human Body
 
 ## Introduction
 
-The Car Body Tracking app is used to control the robot to follow the movement of the human body. The app consists of MIPI image acquisition, body detection and tracking, body tracking strategy, image coding and decoding, and a web display interface. The workflow is shown in the following diagram:
+The app is used to control the robot to follow the movement of the human body. The app consists of MIPI image acquisition, body detection and tracking, body tracking strategy, image coding and decoding, and a web display interface. The workflow is shown in the following diagram:
 
 ![](./image/car_tracking/body_tracking_workflow.jpg)
 
-The app is demonstrated using a virtual car in the PC-side Gazebo simulation environment, but the control commands can also be directly used to control a physical car.
+The app is demonstrated using a virtual car in the PC-side Gazebo simulation environment, but the control commands can also be directly used to control a physical robot.
 
 Code Repository: <https://github.com/HorizonRDK/body_tracking>
 
 ## Supported Platforms
 
-| Platform | Operating System | Example Functionality                  |
+| Platform | System | Function                  |
 | ---------| ---------------- | ------------------------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04  | Start MIPI/USB camera to capture images, perform body keypoints detection and body tracking, and display the tracking effect in Gazebo |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -42,11 +42,11 @@ Code Repository: <https://github.com/HorizonRDK/body_tracking>
     sudo apt install ros-foxy-turtlebot3-simulations
     ```
 
-## User Guide
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-After running the Car Body Tracking app, the car motion control package will select the human body closest to the front of the car (with the largest width of the body detection box) as the tracking target. When the human body is far from the car, the car starts to move forward to approach the body and keeps it in front of the car.After the APP is launched, the sensor will publish images and corresponding algorithm results, which can be rendered and displayed on the PC browser. (Enter http://IP:8000 in the browser, where IP is the IP address of the Horizon RDK).
+After running the app, the car motion control package will select the human body closest to the front of the car (with the largest width of the body detection box) as the tracking target. When the human body is far from the car, the car starts to move forward to approach the body and keeps it in front of the car.After the app is launched, the sensor will publish images and corresponding algorithm results, which can be rendered and displayed on the PC browser. (Enter http://IP:8000 in the browser, where IP is the IP address of the Horizon RDK).
 
 Launch the simulation environment on the PC side:
 
@@ -95,8 +95,11 @@ ros2 launch body_tracking body_tracking_without_gesture.launch.py
 
 ## Result Analysis
 
-```bash
-The following information is outputted in the terminal when running on the Horizon RDK board.[body_tracking-7] [WARN] [1653430533.523069034] [ParametersClass]: TrackCfg param are
+
+The following information is outputted in the terminal when running on the Horizon RDK.
+
+```text
+[body_tracking-7] [WARN] [1653430533.523069034] [ParametersClass]: TrackCfg param are
 [body_tracking-7] activate_wakeup_gesture: 0
 [body_tracking-7] track_serial_lost_num_thr: 100
 [body_tracking-7] activate_robot_rotate_thr: 45
@@ -113,9 +116,9 @@ The following information is outputted in the terminal when running on the Horiz
 [body_tracking-7] [WARN] [1653430535.220408576] [RobotCmdVelNode]: RobotCtl, angular: 0 0 0, linear: 0.3 0 0, pub twist ts: 1653430535220394
 ```
 
-以上log截取了一段App启动后的输出。启动后先打印相关配置（TrackCfg param）。检测到人体后小车就开始进入跟随状态（tracking_sta值为1），并以0.3m/s的速度前进运动（RobotCtl, angular: 0 0 0, linear: 0.3 0 0）靠近人体。
+The above log captures a section of the output after the app is launched. Print the relevant configuration (TrackCfg param) first after startup. After detecting the human body, the car starts to enter a following state (tracking_sta value is 1) and moves forward at a speed of 0.3m/s (RobotCtl, angular: 0 0 0, linear: 0.3 0 0) to approach the human body.
 
-PC端在终端使用`ros2 topic list`命令可以查询到地平线RDK的topic信息：
+Use the command `ros2 topic list`on PC,the topic is as below：
 
 ```shell
 $ ros2 topic list
@@ -129,7 +132,7 @@ $ ros2 topic list
 ```
 Among them, `/image` is the image captured by the Horizon RDK from the MIPI sensor and encoded in JPEG format, `/hobot_mono2d_body_detection` is the algorithm message published by the Horizon RDK which contains the human body detection results, and `/cmd_vel` is the motion control command published by the Horizon RDK.
 
-PC端在终端使用`ros2 topic echo /cmd_vel`命令可以查看到地平线RDK发布的运动控制指令：
+On the PC, using the `ros2 topic echo /cmd_vel` command on the terminal can view the motion control commands issued by Horizon RDK:
 
 ```shell
 linear:

@@ -5,48 +5,46 @@ sidebar_position: 1
 
 ## Introduction
 
-The FCOS target detection algorithm example uses images as input and utilizes BPU for algorithm inference, resulting in the publication of intelligent messages containing target categories and detection boxes.
+The FCOS detection algorithm example uses images as input and utilizes BPU for inference.The result in the messages contain target categories and detection boxes.
 
 FCOS is an open-source Onnx model developed by Horizon, trained using the [COCO dataset](http://cocodataset.org/). It supports various types of object detection, including humans, animals, fruits, and vehicles, totaling 80 types.
 
 Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
-Application scenarios: Released in 2019, FCOS is a one-stage object detection algorithm capable of pedestrian and vehicle detection. It is mainly used in autonomous driving and smart home fields.
-
-Multispectral object detection example: <https://github.com/hdjsjyl/Multispectral-FCOS>
+Application scenarios: FCOS is a one-stage object detection algorithm capable of pedestrian and vehicle detection. It is mainly used in autonomous driving and smart home fields.
 
 ## Supported Platforms
 
-| Platform          | Operating System | Example Functionality                                       |
+| Platform          | System | Function                                       |
 | ----------------- | ---------------- | ----------------------------------------------------------- |
-| RDK X3, RDK X3 Module | Ubuntu 20.04       | - Launch MIPI/USB camera and display inference rendering via web interface<br/>- Use local feedback to save rendering results locally |
-| X86               | Ubuntu 20.04       | - Use local feedback to save rendering results locally         |
+| RDK X3, RDK X3 Module | Ubuntu 20.04       | - Launch MIPI/USB camera and display via web interface<br/>- Use local data to save results offline |
+| X86               | Ubuntu 20.04       | - Use local data to save results offline         |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK platform is flashed with the Ubuntu 20.04 system image provided by Horizon.
 
 2. TogetheROS.Bot has been successfully installed on the Horizon RDK platform.
 
-3. A MIPI or USB camera has been installed on the Horizon RDK platform. If no camera is available, the algorithm effects can be experienced through local feedback using JPEG/PNG format images or MP4, H.264, and H.265 video.
+3. A MIPI or USB camera has been installed on the Horizon RDK platform. If no camera is available, the algorithm effects can be experienced through local data using JPEG/PNG format or MP4, H.264, and H.265 video.
 
 4. Ensure that the PC can access the Horizon RDK platform via the network.
 
-### X86 Platform
+### X86
 
-1. The X86 environment has been configured with the Ubuntu 20.04 system image.
+1. The X86 has been configured with the Ubuntu 20.04 system image.
 
-2. The X86 environment has successfully installed tros.b.
+2. The X86 has successfully installed tros.b.
 
-## User Guide
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-#### Publishing Images Using a MIPI Camera
+#### Use a MIPI camera to publish images
 
-The FCOS target detection algorithm example subscribes to images published by the sensor package, performs inference, and publishes algorithm messages. The WebSocket package is used to render and display the published images and their corresponding algorithm results on a PC web browser.
+The FCOS target detection algorithm example subscribes to images published by the sensor package, performs inference, and publishes algorithm messages. The WebSocket package is used to display the published images and corresponding algorithm results on a PC web browser.
 
 ```shell
 # Configure tros.b environment
@@ -59,7 +57,7 @@ export CAM_TYPE=mipi
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Use USB camera to publish images
+#### Use a USB camera to publish images
 
 ```shell
 # Configure tros.b environment
@@ -72,9 +70,9 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Use local images for feedback
+#### Use local data offline
 
-The FCOS object detection algorithm example uses local JPEG/PNG format images for feedback. The inferred images with algorithm results are stored in the running path.
+The FCOS object detection algorithm example uses local JPEG/PNG format images. The inferred images with algorithm results are stored in the running path.
 
 ```shell
 # Configure tros.b environment
@@ -84,11 +82,11 @@ source /opt/tros/setup.bash
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/fcosworkconfig.json dnn_example_image:=config/target.jpg
 ```
 
-### X86 Platform
+### X86
 
-#### Use local images for feedback
+#### Use local data offline
 
-The FCOS object detection algorithm example uses local JPEG/PNG format images for feedback. The inferred images with algorithm results are stored in the local running path.
+The FCOS object detection algorithm example uses local JPEG/PNG format images. The inferred images with algorithm results are stored in the running path.
 
 ```shell
 # Configure tros.b environment
@@ -122,13 +120,13 @@ The terminal output shows the following information:
 
 ```
 
-The log output shows that the topic for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate of the subscribed images and algorithm inference output is approximately 30fps.
+The log output shows that the topic for publishing the inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate of the subscribed images and algorithm inference output is approximately 30fps.
 
 To view the image and algorithm rendering effect on the PC browser, enter http://IP:8000 (where IP is the IP address of the Horizon RDK):
 
 ![](./image/box_basic/fcos_render_web.jpeg)
 
-### Feedback Using Local Images
+### Use local data offline
 
 The terminal output shows the following information:
 
@@ -142,6 +140,6 @@ The terminal output shows the following information:
 [example-1] [INFO] [1654766336.839823755] [PostProcessBase]: det rect: 165.691 339.25 237.475 366.896, det type: book, score:0.500648
 ```
 
-The log output shows that the algorithm infers 6 targets from the input image and outputs the coordinates of the detection boxes (the coordinates are in the order of the top left x and y coordinates of the bounding box, and the bottom right x and y coordinates) and their corresponding classes. The rendered image file is named render_feedback_0_0.jpeg, and the rendered image effect is as follows:
+The log output shows that the algorithm infers 6 targets from the input image and outputs the coordinates of the detection boxes (the coordinates are in the order of the top left x and y coordinates of the bounding box, and the bottom right x and y coordinates) and their corresponding classes. The image is named render_feedback_0_0.jpeg, and the sample is as follows:
 
 ![](./image/box_basic/fcos_render_feedback.jpeg)

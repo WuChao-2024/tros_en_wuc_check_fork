@@ -1,10 +1,6 @@
----
-sidebar_position: 5
----
+# Monocular Elevation Network
 
-# Monocular Elevation Network Detection
-
-## Function Introduction
+## Introduction
 
 elevation_net is a monocular elevation network detection algorithm example developed based on the hobot_dnn package. It uses an elevation network model and indoor data with BPU for model inference on the horizon RDK to obtain algorithm inference results.
 
@@ -14,30 +10,30 @@ Application Scenarios: The monocular elevation network detection algorithm parse
 
 ## Supported Platforms
 
-| Platform                | Execution    | Example Features                        |
+| Platform                | System    | Function                        |
 | ----------------------- | ------------ | --------------------------------------- |
-| RDK X3, RDK X3 Module   | Ubuntu 20.04 | · Start local backflow and save inference rendering results locally |
-| X86                      | Ubuntu 20.04 | · Start local backflow and save inference rendering results locally |
+| RDK X3, RDK X3 Module   | Ubuntu 20.04 | · Start local data offline and save inference rendering results locally |
+| X86                      | Ubuntu 20.04 | · Start local data offline and save inference rendering results locally |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
 
 2. TogetheROS.Bot has been successfully installed on Horizon RDK.
 
-### X86 Platform
+### X86
 
 1. X86 environment has configured Ubuntu 20.04 system image.
 
-2. tros.b has been successfully installed in X86 environment.
+2. The tros.b has been successfully installed in X86.
 
-## User Guide
+## Usage
 
 The monocular elevation network detection algorithm example package uses the form of reading local images. After algorithm inference, it detects depth and height information based on pixels of the Image. At the same time, the package processes the depth and height information and publishes PointCloud2 topic data. Users can subscribe to PointCloud2 data for application development.
 
-### Horizon RDK Platform
+### Horizon RDK
 
 ```shell
 # Configure ROS2 environment
@@ -50,7 +46,7 @@ cp -r /opt/tros/lib/elevation_net/config/ .
 ros2 launch elevation_net elevation_net.launch.py
 ```
 
-### X86 Platform
+### X86
 
 ```shell
 # Configure ROS2 environment
@@ -65,7 +61,7 @@ ros2 launch elevation_net elevation_net.launch.py
 
 ## Result Analysis
 
-The package outputs the following information in the running terminal:
+The package outputs the following information:
  
 ```shell
 [16:15:17:520]root@ubuntu:/userdata# ros2 run elevation_net elevation_net
@@ -140,4 +136,4 @@ The package outputs the following information in the running terminal:
 [16:15:19:417][INFO] [1655108119.810410741] [elevation_net_parser]: depth: 998.000000
 ```
 
-log显示，读取本地图片推理之后输出image基于像素的深度和高度信息。
+The log displays the depth and height information of the image.

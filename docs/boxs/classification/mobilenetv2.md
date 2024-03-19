@@ -5,48 +5,46 @@ sidebar_position: 1
 
 ## Introduction
 
-The mobilenetv2 image classification algorithm example uses images as input and utilizes the BPU for algorithm inference. It publishes algorithm messages containing object categories.
+The mobilenetv2 image classification algorithm example uses images as input and utilizes the BPU for inference. It publishes messages containing object categories.
 
-mobilenetv2 is a caffe model trained on the [ImageNet data](http://www.image-net.org/) dataset. The model source can be found at: <https://github.com/shicai/MobileNet-Caffe>. Supported target types include people, animals, fruits, vehicles, and other 1000 categories. For specific supported categories, please refer to the file /opt/tros/lib/dnn_node_example/config/imagenet.list on the Horizon RDK board (TogatherROS.Bot installed).
+The mobilenetv2 is a caffe model trained on the [ImageNet data](http://www.image-net.org/) dataset. The model source can be found at: <https://github.com/shicai/MobileNet-Caffe>. Supported target types include people, animals, fruits, vehicles, and other 1000 categories. For specific supported categories, please refer to the file /opt/tros/lib/dnn_node_example/config/imagenet.list on the Horizon RDK (TogatherROS.Bot installed).
 
 Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
 Applications: mobilenetv2 is capable of predicting the category of a given image, and can be used for tasks such as digit recognition and object recognition. It is mainly applied in fields such as text recognition and image retrieval.
 
-Food type recognition case: <https://github.com/frotms/Chinese-and-Western-Food-Classification>
-
 ## Supported Platforms
 
-| Platform   | Execution Method | Example Functionality                   |
+| Platform   | System | Function                   |
 | ---------- | ---------------- | --------------------------------------- |
-| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | · Start MIPI/USB camera and display inference rendering results on the web<br/>· Use local backfilling to save rendering results locally |
-| X86        | Ubuntu 20.04 | · Use local backfilling to save rendering results locally |
+| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | · Start MIPI/USB camera and display inference results on the web<br/>· Use local data to save rendering results offline |
+| X86        | Ubuntu 20.04 | · Use local data to save rendering results offline |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has been flashed with the provided Ubuntu 20.04 system image.
 
-2. Tros.b has been successfully installed on Horizon RDK.
+2. The tros.b has been successfully installed on Horizon RDK.
 
-3. MIPI or USB camera has been installed on Horizon RDK. In the absence of a camera, algorithm effects can be experienced by backfilling local JPEG/PNG format images or MP4, H.264, and H.265 videos.
+3. MIPI or USB camera has been installed on Horizon RDK. If there is no camera available, algorithm effects can be experienced by local JPEG/PNG images or MP4, H.264, and H.265 videos offline.
 
 4. Ensure the PC can access Horizon RDK through the network.
 
-### X86 Platform
+### X86
 
 1. The X86 environment has been configured with Ubuntu 20.04 system image.
 
-2. Tros.b has been successfully installed on the X86 environment system.
+2. The tros.b has been successfully installed on the X86.
 
-## Usage Introduction
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-Subscribe to the images published by the sensor package for mobilenetv2 image classification. After inference, the algorithm message will be published, and the rendered image and corresponding algorithm result will be displayed on the PC browser through the websocket package.
+Subscribe to the images published by the sensor package for mobilenetv2 image classification. After inference, the algorithm message will be published, and the image with corresponding algorithm result will be displayed on the PC browser through the websocket package.
 
-#### Publish Images using MIPI Camera
+#### Use MIPI Camera to Publish Images
 
 ```shell
 # Configure TogetheROS environment
@@ -57,8 +55,9 @@ export CAM_TYPE=mipi
 
 # Launch the launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
+
 ```
-#### Publish Images using USB Camera
+#### Use USB Camera to Publish Images
 
 ```shell
 # Configure TogetheROS environment
@@ -71,9 +70,9 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Feedback with Local Images
+#### Use Local Images Offline
 
-The mobilenetv2 image classification algorithm example feeds back with local JPEG/PNG format images. After inference, the algorithm renders the resulting image and saves it in the local runtime path.
+The mobilenetv2 image classification algorithm example can use local JPEG/PNG format images offline. After inference, the algorithm renders the resulting image and saves it in the local path.
 
 ```shell
 # Configure TogetheROS environment
@@ -83,11 +82,11 @@ source /opt/tros/setup.bash
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/mobilenetv2workconfig.json dnn_example_image:=config/target_class.jpg
 ```
 
-### X86 Platform
+### X86
 
-#### Feedback with Local Images
+#### Use Local Images Offline
 
-The mobilenetv2 image classification algorithm example feeds back with local JPEG/PNG format images. After inference, the algorithm renders the resulting image and saves it in the local runtime path.
+The mobilenetv2 image classification algorithm example use local JPEG/PNG images. After inference, the algorithm renders the resulting image and saves it in the local path.
 
 ```shell
 # Configure TogetheROS environment
@@ -99,7 +98,7 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 
 ## Result Analysis
 
-### Publishing Images Using a Camera
+### Use a Camera to Publish Images 
 
 The following information is outputted in the terminal:
 
@@ -114,13 +113,13 @@ The following information is outputted in the terminal:
 [example-3] [WARN] [1655095486.057854228] [example]: Smart fps 30.07
 ```
 
-The output log shows that the topic for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate for the subscribed images and algorithm inference outputs is approximately 30fps.
+The log shows that the topic for publishing the algorithm inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`. The frame rate for the subscribed images and algorithm inference outputs is approximately 30fps.
 
 On the PC side, enter http://IP:8000 in the browser to view the image and the rendering effect of the algorithm (where IP is the IP address of the Horizon RDK):
 
 ![render_web](./image/mobilenetv2/mobilenetv2_render_web.jpeg)
 
-### Feedback with Local Images
+### Use Local Images Offline
 
 The following information is outputted in the terminal:
 
@@ -138,6 +137,6 @@ The following information is outputted in the terminal:
 [example-1] [WARN] [1654767648.947563731] [ImageUtils]: Draw result to file: render_feedback_0_0.jpeg
 ```
 
-The output log shows that the algorithm infers that the image `config/target_class.jpg` is classified as a window-shade with a confidence score of 0.776356 (the algorithm only outputs the highest confidence classification result). The rendered image is stored with the file name `render_feedback_0_0.jpeg`, and the rendered image looks like this:
+The log shows that the algorithm infers that the image `config/target_class.jpg` is classified as a window-shade with a confidence score of 0.776356 (the algorithm only outputs the highest confidence classification result). The rendered image is stored with the file name `render_feedback_0_0.jpeg`, and the rendered image looks like this:
 
 ![render_feedback](./image/mobilenetv2/mobilenetv2_render_feedback.jpeg)

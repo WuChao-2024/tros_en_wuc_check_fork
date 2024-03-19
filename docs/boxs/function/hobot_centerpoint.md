@@ -5,7 +5,7 @@ sidebar_position: 9
 
 ## Introduction
 
-The LiDAR target detection algorithm is a `CenterPoint` algorithm model trained on the [nuscenes](https://www.nuscenes.org/nuscenes) dataset using the Horizon [OpenExplorer](https://developer.horizon.cc/api/v1/fileData/horizon_j5_open_explorer_cn_doc/hat/source/examples/centerpoint.html) platform.
+The LiDAR target detection algorithm is a `CenterPoint` algorithm model trained on the [nuscenes](https://www.nuscenes.org/nuscenes) dataset.
 
 The algorithm takes 32-line LiDAR point cloud data as input and outputs information including the 3D detection box, confidence, and category of the detected targets. The supported target detection types include car, truck, bus, barrier, motorcycle, and pedestrian, totaling six categories.
 
@@ -15,13 +15,13 @@ Code repository: <https://github.com/HorizonRDK/hobot_centerpoint>
 
 ## Supported Platforms
 
-| Platform  | Execution Method | Example Functionality                  |
+| Platform  | System | Function                  |
 | --------- | ------------ | --------------------------------------- |
-| RDK Ultra | Ubuntu 20.04 | Local playback and web rendering of algorithm results |
+| RDK Ultra | Ubuntu 20.04 | Local data and web rendering of algorithm results |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK with pre-installed Ubuntu 20.04 system image.
 
@@ -29,13 +29,13 @@ Code repository: <https://github.com/HorizonRDK/hobot_centerpoint>
 
 3. Confirm that the PC can access the Horizon RDK through the network.
 
-## Usage Guide
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-### Local Point Cloud File Playback
+### Local Point Cloud data offline
 
-The LiDAR target detection algorithm example uses local LiDAR point cloud file playback. After inference, the algorithm results are rendered as images and published along with the corresponding algorithm results for display on a PC browser using the WebSocket package.
+The LiDAR target detection algorithm example uses local LiDAR point cloud file. After inference, the algorithm results are rendered as images and published along with the corresponding algorithm results for display on a PC browser using the WebSocket package.
 
 Prepare the LiDAR point cloud files:
 
@@ -47,9 +47,7 @@ wget http://sunrise.horizon.cc/TogetheROS/data/hobot_centerpoint_data.tar.gz
 mkdir config
 tar -zxvf hobot_centerpoint_data.tar.gz -C config
 # After unzipping, the data is located in the config/hobot_centerpoint_data directory
-```
-
-Algorithm Example:
+```Algorithm Example:
 
 ```shell
 # Configure tros.b environment
@@ -99,7 +97,7 @@ After launching the algorithm example, the following information will be printed
 [hobot_centerpoint-1] [WARN] [0948485764.502788849] [CenterPoint_Node]: input fps: 2.37, out fps: 2.37, infer time ms: 27, post process time ms: 55
 ```
 
-The log output shows that the topic for publishing algorithm inference results is `/hobot_centerpoint`, and 81 point cloud files are obtained for feedback. The algorithm goes through inference and post-processing (including rendering and publishing of inference results), with a frame rate of approximately 2.4fps.
+The log output shows that the topic for publishing algorithm inference results is `/hobot_centerpoint`, and 81 point cloud files are obtained offline. The algorithm goes through inference and post-processing (including rendering and publishing of inference results), with a frame rate of approximately 2.4fps.
 
 To view the image and algorithm rendering effect, please enter http://IP:8000 in the browser on the PC side (IP refers to the IP address of RDK):
 

@@ -1,12 +1,8 @@
----
-sidebar_position: 2
----
-
 # Hand Keypoint Detection
 
 ## Introduction
 
-The hand keypoint detection algorithm example subscribes to images and intelligent messages containing hand bounding box information. It uses BPU for algorithm inference and publishes algorithm messages containing hand keypoint information.
+The hand keypoint detection example subscribes to images and algorithm messages containing hand bounding box information. It uses BPU for inference and publishes messages containing hand keypoint.
 
 The index of hand keypoints is shown in the following figure:
 
@@ -18,17 +14,17 @@ Code repository:
 
 <https://github.com/HorizonRDK/mono2d_body_detection>
 
-Application scenarios: The hand keypoint detection algorithm is mainly used to capture skeletal keypoints of the hand, enabling functions such as custom gesture recognition. It is mainly applied in areas such as smart homes, virtual reality, and gaming entertainment.
+Application scenarios: The hand keypoint detection algorithm is mainly used to capture keypoints of the hand, enabling functions such as custom gesture recognition. It is mainly applied in areas such as smart homes, virtual reality, and gaming entertainment.
 
 ## Supported Platforms
 
-| Platform                        | Running Mode | Example Functionality                           |
+| Platform                        | System | Function                           |
 | ------------------------------- | ------------ | ----------------------------------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | · Start MIPI/USB camera and display inference results on the web |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -38,11 +34,11 @@ Application scenarios: The hand keypoint detection algorithm is mainly used to c
 
 4. Confirm that the PC can access the Horizon RDK through the network.
 
-## Usage Instructions
+## Usage
 
 The hand keypoint detection (hand_lmk_detection) package subscribes to images published by the sensor package and hand bounding box detection results published by the human body detection and tracking package. After inference, it publishes algorithm messages. The websocket package is used to render and display the published images and corresponding algorithm results on a PC browser.
 
-**Publishing Images from a MIPI Camera**
+**Use MIPI Camera to Publish Images**
 
 ```shell
 # Configure the tros.b environment
@@ -59,7 +55,7 @@ export CAM_TYPE=mipi
 ros2 launch hand_lmk_detection hand_lmk_detection.launch.py
 ```
 
-**Publish pictures using a USB camera**
+**Use USB Camera to Publish Images**
 
 ```shell
 # Configure tros.b environment
@@ -78,7 +74,7 @@ ros2 launch hand_lmk_detection hand_lmk_detection.launch.py
 
 ## Result Analysis
 
-The terminal output during execution is as follows:
+The log during execution is as follows:
 
 ```shell
 [mono2d_body_detection-3] (MOTMethod.cpp:39): MOTMethod::Init config/iou2_euclid_method_param.json
@@ -104,7 +100,7 @@ The terminal output during execution is as follows:
 [hand_lmk_detection-4] [WARN] [1660269068.679036184] [hand_lmk_det]: input fps: 30.04, out fps: 30.04
 ```
 
-The output log shows that the program runs successfully and the input and output frame rates of the algorithm are 30fps, refreshing the statistical frame rate once per second.
+The log shows that the program runs successfully and the input and output frame rates of the algorithm are 30fps, refreshing the statistical frame rate once per second.
 
 On the PC browser, enter http://IP:8000 to view the image and algorithm rendering effect (where IP is the IP address of the Horizon RDK):
 

@@ -13,38 +13,36 @@ Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
 Applications: mobilenet_unet, composed of MobileNet and UNet, can segment images at the pixel level. It can be used for road recognition, remote sensing map analysis, medical image diagnosis, and other functions. It is mainly applied in the fields of autonomous driving, geological detection, and medical image analysis.
 
-Background blurring example: <https://github.com/rusito-23/mobile_unet_segmentation>
-
 ## Supported Platforms
 
-| Platform | Running Mode | Example Functionality                     |
+| Platform | System | Function                     |
 | -------- | ------------ | ---------------------------------------- |
-| RDK X3, RDK X3 Module | Ubuntu 20.04 | - Start MIPI/USB cameras/local image playback and save the rendered results locally. |
-| X86      | Ubuntu 20.04 | - Use local image playback and save the rendered results locally. |
+| RDK X3, RDK X3 Module | Ubuntu 20.04 | - Start MIPI/USB cameras or local image and save the rendered results offline. |
+| X86      | Ubuntu 20.04 | - Use local image and save the rendered results offline. |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK platform has been flashed with the provided Ubuntu 20.04 system image.
 
 2. TogetheROS.Bot has been successfully installed on the Horizon RDK platform.
 
-3. A MIPI or USB camera has been installed on the Horizon RDK platform. If there is no camera available, the algorithm's effects can be experienced by playing back local JPEG/PNG format images.
+3. A MIPI or USB camera has been installed on the Horizon RDK platform. If there is no camera available, the algorithm's effects can be experienced by using local JPEG/PNG images offline.
 
-### X86 Platform
+### X86
 
 1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
 2. The tros.b has been successfully installed on the X86 environment.
 
-## Usage Guide
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-#### Publishing Images Using the Camera
+#### Use the Camera to Publish Images 
 
-##### Publishing Images Using a MIPI Camera
+##### Use a MIPI Camera to Publish Images 
 
 The mobilenet_unet segmentation example subscribes to images published by the sensor package. After inference, it publishes algorithm messages and saves the rendered images automatically in the running directory. The saved images are named in the format of `render_frameid_timestampInSeconds_timestampInNanoseconds.jpg`.
 
@@ -59,7 +57,7 @@ export CAM_TYPE=mipi
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_dump_render_img:=1 dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-##### Publish images using USB camera
+##### Use a USB Camera to Publish Images 
 
 ```shell
 # Configure tros.b environment
@@ -72,7 +70,7 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_dump_render_img:=1 dnn_example_config_file:=config/mobilenet_unet_workconfig.json dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-#### Use local images for feedback
+#### Use local images offline
 
 The mobilenet_unet segmentation example uses local JPEG/PNG format images for feedback. After inference, the rendered images of the algorithm results are stored in the local running path.
 
@@ -88,7 +86,7 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 
 #### Use local images for feedback
 
-The mobilenet_unet segmentation example uses local JPEG/PNG format images for feedback. After inference, the rendered images of the algorithm results are stored in the local running path.
+The mobilenet_unet segmentation example uses local JPEG/PNG images. After inference, the rendered images of the algorithm results are stored in the local path.
 
 ```shell
 # Configure tros.b environment
@@ -100,9 +98,9 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 
 ## Analysis of Results
 
-### Publishing Images Using a Camera
+### Use a Camera to Publishing Images 
 
-The terminal output shows the following information:
+The output shows the following information:
 
 ```shell
 [example-3] [WARN] [1655095719.035374293] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
@@ -126,9 +124,9 @@ Original image:
 Rendered image:
 ![render_web](./image/mobilenet_unet/mobilenet_unet_render_web.jpeg)
 
-### Injecting Local Images for Feedback
+### Use Local Images Offline
 
-The terminal output shows the following information:
+The output shows the following information:
 
 ```shell
 [example-1] [INFO] [1654769881.171005839] [dnn]: The model input 0 width is 2048 and height is 1024
@@ -144,6 +142,6 @@ The terminal output shows the following information:
 [example-1] [INFO] [1654769881.995920396] [UnetPostProcess]: Draw result to file: render_unet_feedback_0_0.jpeg
 ```
 
-The log output shows that the algorithm performs inference using the input image `config/raw_unet.jpeg`, and the rendered image is stored with the file name `render_unet_feedback_0_0.jpeg`. The rendered image looks like this:
+The log shows that the algorithm performs inference using the input image `config/raw_unet.jpeg`, and the rendered image is stored with the file `render_unet_feedback_0_0.jpeg`. The rendered image looks like this:
 
 ![render_feedback](./image/mobilenet_unet/mobilenet_unet_render_feedback.jpeg)

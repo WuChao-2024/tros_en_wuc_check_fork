@@ -18,19 +18,19 @@ Code repository: [https://github.com/brendangregg/FlameGraph.git](https://github
 
 ## Supported Platforms
 
-| Platform       | Running     | Example Functionality |
+| Platform       | System     | Function |
 | -------------- | ----------- | --------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | Demonstrating how to generate a flame graph |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The flamegraph tool consists of two parts. The first part is the executable program "perf". Perf is a software performance analysis tool used to collect and output function call information in the system or a specific process. Perf is already included in the Horizon RDK operating system, so it can be used directly.
 
 2. The second part of the flamegraph tool is a script used to parse the text output of perf and generate an SVG-formatted flame graph for easy observation and analysis.
 
-## User Guide
+## Usage
 
 1. Use the perf record tool to sample the function calls in the Horizon RDK system and generate a perf.data file.
 
@@ -51,9 +51,9 @@ Code repository: [https://github.com/brendangregg/FlameGraph.git](https://github
     ```
 4. Generate an SVG flame graph using flamegraph.pl:
 
-    ```shell
-    ./flamegraph.pl out.folded > flame.svg
-    ```
+```shell
+./flamegraph.pl out.folded > flame.svg
+```
 
 Steps 1 and 2 are completed on the Horizon RDK, while steps 3 and 4 are completed on either a PC or the Horizon RDK.
 

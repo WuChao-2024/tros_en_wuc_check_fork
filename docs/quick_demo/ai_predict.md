@@ -3,7 +3,7 @@ sidebar_position: 6
 ---
 # 2.6 Model Inference
 
-## Function Introduction
+## Introduction
 
 This section introduces the usage of the model inference function. You can input a local image for inference, and get the rendered image saved locally.
 
@@ -11,7 +11,7 @@ Code repository: [https://github.com/HorizonRDK/hobot_dnn](https://github.com/Ho
 
 ## Supported Platforms
 
-| Platform    | Running Mode     |
+| Platform    | System     |
 | ------------ | ---------------- |
 | RDK X3, RDK X3 Module| Ubuntu 20.04 |
 | X86     | Ubuntu 20.04 |
@@ -20,19 +20,19 @@ Code repository: [https://github.com/HorizonRDK/hobot_dnn](https://github.com/Ho
 
 ## Prerequisites
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK is already burned with the provided Ubuntu 20.04 system image.
 
 2. The TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-### X86 Platform
+### X86
 
 1. Confirm that the X86 platform system is Ubuntu 20.04, and TogetheROS.Bot has been successfully installed.
 
-## Usage Introduction
+## Usage
 
-Use the local JPEG format image and model in the hobot_dnn configuration file (FCOS object detection model, supporting 80 types of object detection including human, animal, fruit, and transportation, etc.), perform inference through feedback, and save the rendered image.
+Use the local JPEG image and model in the hobot_dnn configuration file (FCOS object detection model, supporting 80 types of object detection including human, animal, fruit, and transportation, etc.), perform inference through offline, and save the rendered image.
 
 ```shell
 # Configure the tros.b environment
@@ -46,8 +46,6 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 ```
 
 After a successful run, the rendered image will be automatically saved in the execution path, named as render_feedback_0_0.jpeg. Use Ctrl+C to exit the program.
-
-See `README.md` in the `dnn_node_example` package source for instructions on the parameters in the run command and how to subscribe to and use the images published from the camera for algorithmic reasoning.
 
 ## Analysis of Results
 

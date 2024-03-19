@@ -9,7 +9,7 @@ For more details, please refer to the [Frequently Asked Questions](https://devel
 
 ## What is Horizon Robotics Developer Kit (RDK)?
 
-Horizon Robotics Developer Kit (RDK), also known as [地平线RDK套件](https://developer.horizon.cc/documents_rdk/), is a developer kit for robotics based on Horizon's intelligent chips, including **RDK X3**, **RDK X3 Module**, and **RDK Ultra**.
+Horizon Robotics Developer Kit [RDK](https://developer.horizon.cc/documents_rdk/), is a developer kit for robotics based on Horizon's intelligent chips, including **RDK X3**, **RDK X3 Module**, and **RDK Ultra**.
 
 ## How to check the system version number?
 
@@ -44,6 +44,7 @@ root@ubuntu:~#
 root@ubuntu:~# cat /etc/version
 2.0.0
 root@ubuntu:~#
+
 ```
 
 The system information for version x (using version 1.1.6 as an example) is as follows:
@@ -88,7 +89,7 @@ System version explanation:
 
 - **The 2.x version of tros.b only supports the 2.x version system, and the 1.x version of tros.b only supports the 1.x version system.**
 
-Considerations for plugging and unplugging the camera:
+## Considerations for plugging and unplugging the camera:
 
 **It is strictly prohibited to plug or unplug the camera while the development board is powered on, as it can easily damage the camera module.**
 
@@ -104,7 +105,7 @@ RDK X3 is powered through a USB Type C interface and is compatible with QC and P
 
 **Note: Please do not use the USB interface of a PC to power the development board, as it may cause abnormal operation of the board due to insufficient power supply (such as no HDMI output (completely black screen) after RDK X3 is powered on, the green light is not off, after connecting the serial port, the system keeps rebooting repeatedly and cannot enter the operating system)**.
 
-##Does RDK X3 have a recommended SD card?
+## Does RDK X3 have a recommended SD card?
 
 It is recommended to use a high-speed C10 SD card with a capacity of at least 16GB. Older cards may have issues with booting the image.
 
@@ -130,7 +131,7 @@ The HDMI output of the algorithm rendering result is shown in the following imag
 ![](./image/hardware_and_system/image-20220511181747071.png)
 
 ```text
-输入命令：i2cdetect -y -r 1   
+Enter the command: i2cdetect -y -r 1   
 F37：
      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
 00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
@@ -153,8 +154,6 @@ GC4663：
 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
 70: -- -- -- -- -- -- -- --                         
 ```
-
-
 
 ## How to view the CPU, BPU, and other running statuses of RDK X3?
 

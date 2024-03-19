@@ -2,26 +2,26 @@
 sidebar_position: 2
 ---
 
-# 2.2 Data Display
+# 2.2 Display
 
-## Web Display
+## Web
 
-### Function Introduction
+### Introduction
 
-Web display is used to preview camera images (JPEG format) and algorithm results. The images and algorithm results are transmitted to a PC browser through the network and rendered for display. The display interface also supports displaying only the video without rendering the intelligent results.
+Web is used to preview camera images (JPEG format) and algorithm results. The images and algorithm results are transmitted to the PC browser through the network and rendered for display. The display interface also supports displaying only the video without rendering the intelligent results.
 
 Code Repository: <https://github.com/HorizonRDK/hobot_websocket>
 
 ### Supported Platforms
 
-| Platform    | Operating System      | Example Functionality                       |
+| Platform    | System      | Function                       |
 | ------- | ------------- | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04  | Start MIPI camera human detection and display images and algorithm results through web display |
-| X86     | Ubuntu 20.04  | Start USB camera and display images through web display |
+| RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04  | Start MIPI camera human detection and display images and algorithm results through web|
+| X86     | Ubuntu 20.04  | Start USB camera and display images through web|
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Confirm that the camera F37 is correctly connected to the Horizon RDK.
 
@@ -29,17 +29,17 @@ Code Repository: <https://github.com/HorizonRDK/hobot_websocket>
 
 3. Confirm that TogetheROS.Bot has been successfully installed.
 
-#### X86 Platform
+#### X86
 
-1. Confirm that the X86 platform is running Ubuntu 20.04 and TROS.B has been successfully installed.
+1. Confirm that the X86 platform is running Ubuntu 20.04 and TogetheROS.Bot has been successfully installed.
 
 2. Confirm that the USB camera is connected to the USB port of the host and can be recognized normally.
 
 ### Usage
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
-1. Log in to the Horizon RDK through SSH and start the relevant programs on the board.
+1. Log in to the Horizon RDK through SSH and start the programs on the board.
 
     a. Launch mipi_cam
 
@@ -48,28 +48,27 @@ Code Repository: <https://github.com/HorizonRDK/hobot_websocket>
 
     ros2 launch mipi_cam mipi_cam.launch.py mipi_video_device:=F37
     ```
+    b. Launch encoding
 
-   b. Launch encoding
+    ```shell
+    source /opt/tros/setup.bash
 
-   ```shell
-   source /opt/tros/setup.bash
+    ros2 launch hobot_codec hobot_codec_encode.launch.py
+    ```
 
-   ros2 launch hobot_codec hobot_codec_encode.launch.py
-   ```
+    c. Launch WebSocket
 
-   c. Launch WebSocket
+    ```shell
+    source /opt/tros/setup.bash
 
-   ```shell
-   source /opt/tros/setup.bash
-
-   ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
-   ```
+    ros2 launch websocket websocket.launch.py websocket_image_topic:=/image_jpeg websocket_only_show_image:=true
+    ```
 
 2. Open a PC browser (Chrome/Firefox/Edge) and enter <http://IP:8000> to view the image and algorithm effects. IP refers to the Horizon RDK IP address.
 
    ![websocket](./image/demo_render/websocket.png "Preview Image")
 
-#### X86 Platform
+#### X86
 
 1. Launch the hobot_usb_cam node
 
@@ -97,10 +96,10 @@ Code Repository: <https://github.com/HorizonRDK/hobot_websocket>
    - Use the command `lsof -i:8000` to check the processes that are occupying port 8000, and use `kill <PID>` to close the process, and then relaunch WebSocket.
 
    - If the user does not want to stop the service that is currently using port 8000, you can modify the `listen` port number in the configuration file */opt/tros/lib/websocket/webservice/conf/nginx.conf* to a port number that is greater than 1024 and not being used. After modifying the port number, the URL used in the browser also needs to be modified accordingly.
+   
+## HDMI
 
-## HDMI Display
-
-### Function Introduction
+### Introduction
 
 This chapter introduces the use of displaying camera nv12 images through HDMI. Horizon RDK can display real-time image effects by connecting to a monitor via HDMI, corresponding to the hobot_hdmi package.
 
@@ -108,13 +107,13 @@ Code Repository: <https://github.com/HorizonRDK/hobot_hdmi>
 
 ### Supported Platforms
 
-| Platform | Running Mode | Example Function                    |
+| Platform | System | Function                    |
 | -------- | ------------ | ----------------------------------- |
 | RDK X3, RDK X3 Module | Ubuntu 20.04 | Start MIPI camera and display image through HDMI |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -124,7 +123,7 @@ Code Repository: <https://github.com/HorizonRDK/hobot_hdmi>
 
 ### Instructions
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 Log in to the development board via SSH and start the relevant programs on the board:
 
@@ -148,23 +147,23 @@ The following information is displayed in the running terminal:
 ```
 
 The monitor displays the image as follows:
-![websocket](./image/demo_render/hdmi.png "Preview Image")
+![hdmi](./image/demo_render/hdmi.png)
 
-## RViz2 Display
+## RViz2
 
-### Function Introduction
+### Introduction
 
 TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview image effects, you can use RViz2 to get images.
 
 ### Supported Platforms
 
-| Platform | Running Method | Sample Function                                        |
+| Platform | System | Sample Function                                        |
 | -------- | -------------- | ------------------------------------------------------ |
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | Start the MIPI camera to capture images and use RViz2 to preview on PC |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -174,11 +173,11 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
 
    Reference for ROS2 Foxy installation: <https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html>
 
-   On the PC side, install RViz2 with the command: `sudo apt install ros-foxy-rviz-common ros-foxy-rviz-default-plugins ros-foxy-rviz2`
+   On the PC, install RViz2 with the command: `sudo apt install ros-foxy-rviz-common ros-foxy-rviz-default-plugins ros-foxy-rviz2`
 
 ### Usage
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. SSH into the development board and start the corresponding program on the board
 
@@ -198,7 +197,6 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
    [INFO] [launch]: Default logging verbosity is set to INFO
    [INFO] [mipi_cam-1]: process started with pid [2881781]
    ```
-   
 3. A new window is created in the Horizon RDK to execute the topic query command and the results are as follows:
 
    ```shell
@@ -248,6 +246,7 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
 
    The image result is as follows:
 
+   ![rviz2-result](./image/demo_render/rviz2-result.png)   
 ### Attention
 
 1. If the PC terminal's `ros2 topic list` does not recognize the camera topic, please check the following:
@@ -271,21 +270,21 @@ TogetheROS.Bot is compatible with ROS2 Foxy version. To conveniently preview ima
    - Check if the PC and Horizon RDK networks can ping each other;
    - Check if the IP addresses of the PC and Horizon RDK have the same first three digits;
 
-## RQt Display
+## RQt
 
-### Feature Introduction
+### Introduction
 
 TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed format images through RQt, greatly reducing network bandwidth consumption.
 
 ### Supported Platforms
 
-| Platform       | Running Mode | Example Functionality           |
+| Platform       | System | Function           |
 | -------------- | ------------ | ------------------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | Start MIPI camera to capture images and use RQt to preview on PC |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has been flashed with the provided Ubuntu 20.04 system image.
 
@@ -296,13 +295,14 @@ TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed f
    ROS2 Foxy installation reference: <https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html>
 
    Installation method for `rqt-image-view` on PC terminal: `sudo apt install ros-foxy-rqt-image-view ros-foxy-rqt`
-
+   
 ### Usage
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. SSH into the development board and start relevant programs on the board:
-    a. Start F37 camera
+
+   a. Start F37 camera
 
    ```shell
    source /opt/tros/setup.bash
@@ -341,13 +341,13 @@ TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed f
    ros2 run rqt_image_view rqt_image_view
    ```
 
-   Select the topic `/image_raw/compressed`, and the image result is as follows:
+   Select the topic `/image_raw/compressed`, and the image is as follows:
 
    ![](./image/demo_render/rqt-result.png)
 
 ### Notes
 
-1. If the PC side ros2 topic list does not recognize the camera topic, perform the following troubleshooting steps:
+1. If ros2 topic list does not recognize the camera topic on the PC, perform the following troubleshooting steps:
 
    - Check if the horizon RDK is publishing images correctly
 
@@ -367,10 +367,10 @@ TogetheROS.Bot is compatible with ROS2 Foxy and supports previewing compressed f
       /rosout
       ```
 
-   - Check if the PC and horizon RDK can ping each other
-   - Check if the PC and horizon RDK have the same first three segments of IP address
+   - Check if the PC and horizon RDK can ping each other;
+   - Check if the PC and horizon RDK have the same first three segments of IP address;
 
-## Foxglove Showcase
+## Foxglove
 
 ### Introduction
 
@@ -378,24 +378,24 @@ Foxglove is an open-source toolkit that includes both online and offline version
 
 In this section, we will primarily use the data recording and playback feature of Foxglove: Foxglove allows recording the data of ROS2 topics into files for subsequent playback and analysis. This is very useful for system troubleshooting, performance optimization, and algorithm debugging.
 
-In the demonstration, we will use the hobot_visualization package developed by TogetheROS to convert intelligent inference results into ROS2-rendered topic information.
+In the demonstration, we will use the hobot_visualization package developed by TogetheROS.Bot to convert intelligent inference results into ROS2 rendered topic information.
 
 Code repository: <https://github.com/HorizonRDK/hobot_visualization>
 
 ### Supported Platforms
 
-| Platform | Execution Mode | Example Functionality                                     |
+| Platform | System | Function                                     |
 | -------- | -------------- | -------------------------------------------------------- |
-| RDK X3, RDK X3 Module      | Ubuntu 20.04   | Start local replay, general object detection, and display images and algorithm effects using Foxglove |
-| X86      | Ubuntu 20.04   | Start local replay, general object detection, and display images and algorithm effects using Foxglove |
+| RDK X3, RDK X3 Module      | Ubuntu 20.04   | Offline object detection, and display images and algorithm effects using Foxglove |
+| X86      | Ubuntu 20.04   | Offline object detection, and display images and algorithm effects using Foxglove |
 
-### Prerequisites
+### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
-1. Confirm that the F37 camera is correctly connected to the X3 board
+1. Confirm that TogetheROS.Bot has been successfully installed.
 
-2. Confirm that the PC can access the X3 board via the network3. Confirm that TogetheROS.Bot has been successfully installed.
+2. Confirm that the PC can access the X3 board via the network3. 
 
 #### X86 platform
 
@@ -403,9 +403,9 @@ Code repository: <https://github.com/HorizonRDK/hobot_visualization>
 
 ### Usage
 
-#### Horizon RDK Platform / X86 Platform
+#### Horizon RDK / X86
 
-1. Log in to the Horizon RDK Platform via SSH and start the relevant programs on the board side:
+1. Log in to the Horizon RDK or X86 via SSH and start the relevant programs on the board side:
 
 ```shell
 source /opt/tros/setup.bash
@@ -442,7 +442,10 @@ ros2 bag record -a
 
    ![foxglove](./image/demo_render/foxglove_guide_3.png "Foxglove guide 3")
 
-4) Open the layout interface. In the top right corner of the layout interface, click on the settings, select the icon, and open the play marker rendering message function.5) Click Play
+4) Open the layout interface. In the top right corner of the layout interface, click on the settings, select the icon, and open the play marker rendering message function.
+   ![foxglove](./image/demo_render/foxglove_guide_4.png "Foxglove User Guide 4")
+   
+5) Click Play
    ![foxglove](./image/demo_render/foxglove_guide_5.png "Foxglove User Guide 5")
 
 6) View Data

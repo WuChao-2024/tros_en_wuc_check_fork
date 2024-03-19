@@ -12,9 +12,9 @@ Prerequisites:
 - The development machine can access the Horizon Robotics organization on [GitHub](https://github.com/HorizonRDK).
 - Docker is installed on the development machine.
 
-### Compile tros.b
+### Compile
 
-#### 1 using docker files
+#### 1 Load docker image
 
 All the following operations are performed within the Docker environment on the development machine.
 
@@ -29,10 +29,12 @@ sudo docker load --input pc_tros_v1.0.5.tar.gz
 ## Check the corresponding image ID for pc_tros
 sudo docker images
 ## Launch Docker and mount the directory
-sudo docker run -it --entrypoint="/bin/bash" -v PC local directory: Docker directory imageID, here is an example using sudo docker run -it --entrypoint="/bin/bash" -v /mnt/data/kairui.wang/test:/mnt/test 9c2ca340973e
+sudo docker run -it --entrypoint="/bin/bash" -v PC local directory: Docker directory imageID, 
+here is an example using:
+sudo docker run -it --entrypoint="/bin/bash" -v /mnt/data/kairui.wang/test:/mnt/test 9c2ca340973e
 ```
 
-#### 2 Obtain the tros.b Source Code
+#### 2 Obtain the Code
 
 All the following operations are performed within the Docker environment on the development machine.
 
@@ -61,13 +63,13 @@ The directory structure of the entire project is as follows:
 │       └── src
 ```
 
-The `tros_ws/robot_dev_config` path contains the configuration and script files needed for code fetching, compilation, and packaging. The `tros_ws/src` path stores the fetched code. The `sysroot_docker` path contains the header files and libraries required for cross-compilation, corresponding to the `root` directory of the Horizon RDK. For example, the path for the media library in `sysroot_docker` is `sysroot_docker/usr/lib/hbmedia/`, while the path in the Horizon RDK is `/usr/lib/hbmedia/`.
+The `tros_ws/robot_dev_config` path contains the configuration and script files needed for code fetching, compilation, and packaging. The `tros_ws/src` path stores the fetched code. The `sysroot_docker` path contains the header files and libraries required for cross-compilation, corresponding to the `/` directory of the Horizon RDK. For example, the path for the media library in `sysroot_docker` is `sysroot_docker/usr/lib/hbmedia/`, while the path in the Horizon RDK is `/usr/lib/hbmedia/`.
 
 During compilation, the installation path of `sysroot_docker` is specified through the `CMAKE_SYSROOT` macro in the `robot_dev_config/aarch64_toolchainfile.cmake` compilation script.
 
 #### 3 Cross-Compilation
 
-All of these operations are performed inside a docker on the development machine.
+All of these operations are performed inside the docker on the development machine.
 
 ```shell
 ## Compile tros.b version X3 using build.sh
@@ -81,13 +83,13 @@ After successful compilation, a message will prompt: N packages compiled and pas
 
 If using minimal_build.sh for minimal compilation, you can further compress the deployment package size by executing `./minimal_deploy.sh -d "install_path"`.
 
-### Install tros.b
+### Install
 
-Copy the compiled install directory to the Horizon RDK and rename it as tros. Here, we place the deployment package in the /opt/tros directory to be consistent with the deb installation directory.
+Copy the compiled directory to the Horizon RDK and rename it as tros. Here, we place the deployment package in the /opt/tros directory to be consistent with the deb installation directory.
 
-### Compile a specific version of tros.b
+### Compile a specific version
 
-In the section **Compile tros.b**, in the step 2 **Get tros.b source code**, the default is to fetch the latest version of tros.b source code. If you need to get a specific release version of the source code, you need to make the following modifications:
+In the section **Compile**, in the step 2 **Obtain the Code**, the default is to fetch the latest version of tros.b source code. If you need to get a specific release version of the source code, you need to make the following modifications:
 
 ```bash
 ## Get the configuration file
@@ -96,19 +98,19 @@ cd robot_dev_config
 ## View available release versions
 git tag --list
 ## Switch to the specified version number, here we take tros.b 2.0.0 as an example
-```git reset --hard tros_2.0.0
+git reset --hard tros_2.0.0
 cd ..
 ## Pull code
 vcs-import src < ./robot_dev_config/ros2_release.repos
 ```
 
-## X86 Platform
+## X86
 
 ### System Requirements
 
 Required: Ubuntu 20.04 64-bit system. Alternatively, you can use X3 platform cross-compiling Docker images, but both compilation and execution must be performed within Docker.
 
-### System Configuration
+### Configuration
 
 #### Set local
 
@@ -145,14 +147,15 @@ echo "deb [arch=amd64 signed-by=/usr/share/keyrings/sunrise.gpg] http://sunrise.
 
 #### Install ROS tool packages
 
-```shellsudo apt update && sudo apt install -y \
+```shell
+sudo apt update && sudo apt install -y \
   libbullet-dev \
   python3-pip \
   python3-pytest-cov \
   ros-dev-tools
 ```
 
-### Obtain tros.b Source Code
+### Obtain the Code
 
 ```shell
 git config --global credential.helper store
@@ -166,7 +169,7 @@ vcs-import src < ./robot_dev_config/ros2_release.repos
 
 ### Install Dependencies
 
-Install the necessary packages for source code compilation
+Install the necessary packages for code compilation
 
 ```shell
 # install some pip packages needed for testing
@@ -275,11 +278,11 @@ bash ./robot_dev_config/build.sh -p X86
 
 After successful compilation, there will be an output showing N packages compiled.
 
-### Install tros.b
+### Installation
 
 Copy the install directory generated during compilation to /opt directory and rename it as tros, in accordance with the deb installation directory.
 
-## Frequently Asked Questions
+## FAQ
 
 Q1: How to determine if VCS successfully pulled the code?
 

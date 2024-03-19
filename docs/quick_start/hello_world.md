@@ -1,7 +1,7 @@
 ---
 sidebar_position: 4
 ---
-# 1.4 Running "Hello World"
+# 1.4 Hello World
 
 Prerequisite: TogetheROS.Bot has been successfully installed via deb package or source code.
 

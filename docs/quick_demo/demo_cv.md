@@ -5,7 +5,7 @@ sidebar_position: 4
 
 ## Gaussian Filtering
 
-### Function Introduction
+### Introduction
 
 Realize the function of Gaussian filtering. The acceleration types are BPU acceleration and NEON acceleration. BPU acceleration currently only supports the int16 format, and NEON acceleration currently only supports the int16 and uint16 formats.
 
@@ -13,19 +13,19 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Supported Platforms
 
-| Platform               | Running Method | Example Function                |
+| Platform               | System | Function                |
 | ---------------------- | -------------- | ------------------------------- |
 | RDK X3, RDK X3 Module   | Ubuntu 20.04   | Read ToF images and perform Gaussian filtering |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has burned Horizon's provided Ubuntu 20.04 system image.
 
 2. Horizon RDK has successfully installed TogetheROS.Bot.
 
-### Usage Instructions
+### Usage
 
 #### BPU Acceleration
 
@@ -57,7 +57,7 @@ The current version supports the following parameter ranges:
 
 The package provides a simple test program that takes a local ToF image and uses the interface in hobot_cv to implement Gaussian filtering. For more detailed interface information, please refer to the README.md file in the hobot_cv package.
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
 # Configure the tros.b environment
@@ -75,7 +75,7 @@ ros2 launch hobot_cv hobot_cv_neon_blur.launch.py
 
 ### Result Analysis
 
-#### BPU Acceleration
+#### BPU
 
 ```text
 Output:
@@ -103,12 +103,7 @@ mat_diff max,x:110,y:14
 error sum:8.46524e+06,max:2,mean_error:0.439232
 analyse_result,time_used_ms_end:2
 analyse_result end 
-
-------------------------- 
 ```
-
-
-其中：
 
 infe cost time:1314 // Indicates the time cost of Gaussian filtering accelerated by hobotcv, 1314 microseconds.
  
@@ -124,12 +119,12 @@ Average error = sum / (width * height) = 8.46524e+06 / (320 * 240)
 
 The performance comparison results between hobot_cv Gaussian filtering accelerated by BPU and OpenCV Gaussian filtering are as follows:
 
-| Interface type     | Filter kernel size | Time cost (ms) | Single core CPU occupation (%) |
+| Interface type     | Kernel| Time cost (ms) | Single core CPU occupation (%) |
 | ------------------ | ----------------- | -------------- | ----------------------------- |
 | Hobotcv gaussian   | Size(3,3)         | 1.10435        | 15.9                          |
 | Opencv gaussian    | Size(3,3)         | 2.41861        | 49.7                          |
 
-#### NEON acceleration
+#### NEON
 
 ```text
 Output:
@@ -160,7 +155,7 @@ From the above comparison, after the acceleration of hobotcv, the performance of
 
 The comparison results between hobot_cv Gaussian filtering with NEON acceleration and opencv Gaussian filtering are as follows:
 
-| Interface Type       | Filter Kernel Size | Time(ms)   | Single Core CPU Usage (%) |
+| Interface Type       | Kernel | Time(ms)   | Single Core CPU Usage (%) |
 | -------------------- | ----------------- | -----------|--------------------------|
 | Hobotcv Gaussian     | Size(3,3)         | 0.430284   |        27.1  |
 | Opencv Gaussian      | Size(3,3)         | 2.42225    |        47    |
@@ -170,7 +165,7 @@ The comparison results between hobot_cv Gaussian filtering with NEON acceleratio
 
 ## Mean Filtering
 
-### Function Introduction
+### Introduction
 
 Implementation of Mean Filtering using NEON acceleration, currently only supporting int16 and uint16 formats.
 
@@ -178,13 +173,13 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Supported Platforms
 
-| Platform            | Execution Mode | Sample Functionality           |
+| Platform            | System | Function          |
 | ------------------- | -------------- | ------------------------------ |
 | RDK X3, RDK X3 Module | Ubuntu 20.04   | Read ToF images, perform Mean Filtering |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has flashed the Ubuntu 20.04 system image provided by Horizon.
 
@@ -192,18 +187,18 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Usage Guide
 
-The current version supports the following parameter range:
+The mean filtering supports the following parameter range:
 
-- Filter Type: Mean Filtering- Supported data types: int16, uint16
+- Data Type: int16, uint16
 
-- Filter kernel: 3x3, 5x5
+- Kernel: 3x3, 5x5
 
-The package provides a simple test program. The input is a local ToF image, and the hobot_cv interface is called to perform mean filtering. For detailed interface information, please refer to README.md in the hobot_cv package for further understanding.
+The package provides a simple test program. The input is a offline ToF image, and the hobot_cv interface is called to perform mean filtering. For detailed interface information, please refer to README.md in the hobot_cv package for further understanding.
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
-# Configure TogetheROS environment
+# Configure TogetheROS.Bot environment
 source /opt/tros/setup.bash
 
 # Copy the required configuration files from the installation path of TogetheROS.
@@ -230,9 +225,7 @@ Output:
 [neon_example-1] -------------------------
 ```
 
-Where:
-
-hobotcv mean cost time:674 // The hobot_cv mean filtering with neon acceleration interface took 674 microseconds.
+Mean filtering cost time:674 // The hobot_cv mean filtering with neon acceleration interface took 674 microseconds.
 opencv mean cost time:1025 // Indicates the mean filtering time of opencv is 1025 microseconds.
 hobotcv mean save rate = (opencv cost time - hobotcv cost time) / opencv cost time = 0.342439
 From the above comparison, the mean filtering performance is improved by 34% after acceleration by hobot_cv.
@@ -242,7 +235,7 @@ Mean filtering average error = sum / (width x height) = 8.43744e+06 / (320 x 240
 
 #### Comparison of hobot_cv and opencv processing performance
 
-| Interface Type | Filter Kernel Size | Time Consumption (ms) | CPU Usage (%) |
+| Interface Type | Kernel | Time Consumption (ms) | CPU Usage (%) |
 | ------------------ | ------------- | ----------- | --------------|
 | Hobotcv mean       | Size(3,3)     | 0.466397    |       31.8   |
 | Opencv mean        | Size(3,3)     | 0.676677    |       40.2   |
@@ -251,7 +244,7 @@ Mean filtering average error = sum / (width x height) = 8.43744e+06 / (320 x 240
 
 ## crop
 
-### Function Description
+### Introduction
 
 Implement the image cropping function, currently only supports NV12 format.
 
@@ -259,7 +252,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Platform Support
 
-| Platform    | Operation System      | Example Function                       |
+| Platform    | System      | Function                       |
 | ------- | ------------- | ------------------------------ |
 | RDK X3, RDK X3 Module| Ubuntu 20.04  | Read an image and crop it  |
 
@@ -273,7 +266,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Instruction
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
 # Configure the tros.b environment
@@ -307,7 +300,7 @@ The original image is 1920x1080, and the top left corner of the image is cropped
 
 ## Resize
 
-### Function Introduction
+### Introduction
 
 Implement image scaling function, currently only supports NV12 format.
 
@@ -315,39 +308,41 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Platform Support
 
-| Platform  | Execution Mode | Example Function              |
+| Platform  | System | Function              |
 | --------- | -------------- | ----------------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04  | Read image and resize |
 | X86       | Ubuntu 20.04   | Read image and resize |
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. The Horizon RDK has been burned with the Ubuntu 20.04 system image provided by Horizon.
 
 2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-#### X86 Platform
+#### X86
 
 1. Confirm that the X86 platform system is Ubuntu 20.04 and TogetheROS.Bot has been successfully installed.
 
-### Usage Guide
+### Usage
 
 #### Horizon RDK / X86
 
 ```shell
-# Configure the TogetheROS environment
+# Configure the TogetheROS.Bot environment
 source /opt/tros/setup.bash
 
 # Copy the required models and configuration files from the TogetheROS installation path.
-cp -r /opt/tros/lib/hobot_cv/config/ .# Launch the launch file 
+cp -r /opt/tros/lib/hobot_cv/config/ .
+
+# Launch the file 
 ros2 launch hobot_cv hobot_cv_resize.launch.py
 ```
 
 ### Result Analysis
 
-#### Horizon RDK X3 platform resizing
+#### Horizon RDK
 
 ```shell
 [INFO] [launch]: Default logging verbosity is set to INFO
@@ -365,13 +360,13 @@ According to the log, the test program has completed the resize processing of a 
 | -------------------------------------- | ---------------------- | ------------------------ |
 | 1920x1080 resized to 960x540           | 297 ms                 | 15 ms                    |
 
-The first run requires configuration of the VPS hardware, so it takes more time. If there are no changes to the hardware configuration properties and the hardware directly processes the image, the time cost will be significantly reduced.
+The first run requires configuration of the hardware, so it takes more time. If there are no changes to the hardware configuration properties and the hardware directly processes the image, the time cost will be significantly reduced.
 
 The original image (1920x1080) and the resized image (960x540) are shown below:
 
 ![](./image/demo_cv/ori-resize.png)
 
-#### Horizon RDK X3 platform performance comparison
+#### Horizon RDK performance comparison
 
 Use the `top` command to check CPU usage, which represents the CPU percentage used by the test process.
 The time cost is in milliseconds, and the average value is taken after looping 1000 times.
@@ -381,7 +376,7 @@ CPU frequency is locked during testing:
 sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'
 ```
 
-| src wxh  | dst wxh   | VPS Time Cost | VPS Interface<br/>CPU Usage | BPU Time Cost | BPU Interface<br/>CPU Usage | OpenCV Time Cost | OpenCV Processing<br/>CPU Usage |
+| src wxh  | dst wxh   | Configuration of<br/> Hardware Cost | Configuration of <br/>Hardware CPU Usage | BPU Time Cost | BPU Interface<br/>CPU Usage | OpenCV Time Cost | OpenCV Processing<br/>CPU Usage |
 | -------- | --------- | ------------ | --------------------------- | ------------- | --------------------------- | ---------------- | ------------------------------- |
 | 512x512  | 128x128   | 1.53789      | 25.9                        | 1.11054       | 89                          | 1.71119          | 100.3                           |
 | 640x640  | 320x320   | 2.48536      | 28.5                        | 1.82232       | 88                          | 1.82384          | 338.9                           |
@@ -392,7 +387,7 @@ sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling
 
 ## rotate
 
-### Function Introduction
+### Introduction
 
 The rotate function implements image rotation, currently only supporting images in NV12 format. The supported rotation angles are 90, 180, and 270.
 
@@ -400,7 +395,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Supported Platforms
 
-| Platform    | Execution Method      | Example Function                       |
+| Platform    | System      | Function                       |
 | ------- | ------------- | ------------------------------ |
 | RDK X3, RDK X3 Module| Ubuntu 20.04  | Read and rotate images |
 
@@ -414,7 +409,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### User Guide
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
 # Configure the tros.b environment
@@ -445,7 +440,7 @@ According to the log, the test program has completed the rotation of a local ima
 | ------------------------------------- | -------------- | --------------- |
 | 1920x1080 Rotate 180 degrees           | 415ms          | 40ms            |
 
-The first run takes longer because the VPS hardware needs to be configured. If there are no further changes to the hardware configuration, the hardware will process the images directly and the processing time will be significantly reduced.
+The first run takes longer because the hardware needs to be configured. If there are no further changes to the hardware configuration, the hardware will process the images directly and the processing time will be significantly reduced.
 
 The original image size is 1920x1080, and the size after rotation is also 1920x1080:
 
@@ -453,7 +448,7 @@ The original image size is 1920x1080, and the size after rotation is also 1920x1
 
 ![Rotated Image](./image/demo_cv/rotate.jpg)
 
-#### Comparison of hobot_cv and OpenCV performance
+#### Performance comparison of hobot_cv and OpenCV
 
 CPU usage is measured using the top command and represents the percentage of CPU usage by the test process.
 The processing time is measured in milliseconds, with an average value taken from 1000 iterations.
@@ -471,7 +466,7 @@ sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling
 
 ## Pyramid
 
-### Function Introduction
+### Introduction
 
 This function implements image pyramid scaling and currently supports NV12 format.
 
@@ -479,7 +474,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 ### Supported Platforms
 
-| Platform      | Execution Mode | Example Functionality        |
+| Platform      | System | Function        |
 | ------------- | -------------- | --------------------------- |
 | RDK X3, RDK X3 Module| Ubuntu 20.04  | Read image and perform image pyramid scaling |
 
@@ -491,7 +486,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_cv>
 
 2. TogetheROS.Bot has been successfully installed on the Horizon RDK.### User Guide
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
 # Configure the tros.b environment
@@ -522,7 +517,7 @@ According to the log, the test program has completed the pyramid scaling process
 | --------------------------------------- | ---------------------- | ----------------------- |
 | 1920x1080 six-layer base layer output    | 299ms                  | 19ms                     |
 
-Because the first run requires hardware configuration for the VPS, it takes more time. If the hardware configuration attributes are not changed and the hardware is used directly for processing, the time will be significantly reduced.
+Because the first run requires hardware configuration, it takes more time. If the hardware configuration attributes are not changed and the hardware is used directly for processing, the time will be significantly reduced.
 
 The original 1920x1080 image and the pyramid-scaled image are as follows:
 
@@ -534,8 +529,9 @@ Outputting six base layers, each layer's size is half of the previous layer's si
 
 With an input image of 1920x1080, we obtain output images with resolutions of 960x540, 480x270, 240x134, 120x66, 60x32 by generating 5 layers. We compare the efficiency between OpenCV and HobotCV, with the following results:
 
-VPS interface time cost, CPU usage as a percentage (single-core), and time statistics in ms for OpenCV.
-
-| HobotCV Interface Time | HobotCV CPU Usage | OpenCV Time | OpenCV CPU Usage |
+| HobotCV Cost | HobotCV CPU Usage | OpenCV Cost | OpenCV CPU Usage |
 | ---------------------- | ----------------- | ----------- | ---------------- |
 |    19ms    |      42.5     |      56     |       100     |
+|    19ms    |     42.5     |      56     |       100     |
+
+CPU usage as a percentage (single-core), and time statistics in ms.

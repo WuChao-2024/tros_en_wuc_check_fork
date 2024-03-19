@@ -5,9 +5,9 @@ sidebar_position: 1
 
 ## Introduction
 
-The human detection and tracking algorithm example subscribes to images and utilizes BPU for algorithm inference. It publishes messages containing detection results for human bodies, heads, faces, hand boxes, and body keypoints, and achieves tracking of detection boxes through the multi-target tracking (MOT) function. The X86 version does not currently support multi-target tracking and web-based display functions.
+The human detection and tracking algorithm example subscribes to images and utilizes BPU for inference. It publishes messages containing detection results for human bodies, heads, faces, hand boxes, and body keypoints, and achieves tracking of detection boxes through the multi-target tracking (MOT). The X86 does not currently support multi-target tracking and web-based display.
 
-The supported detection categories and their corresponding data types in the algorithm message are as follows:
+The supported detection categories and their corresponding data types in the algorithm are as follows:
 
 | Category  | Description     | Data Type |
 | --------- | --------------- | --------- |
@@ -32,14 +32,14 @@ Game Character Control Example based on Human Pose Analysis and Gesture Recognit
 
 ## Supported Platforms
 
-| Platform                            | Execution Mode | Example Functionality                                     |
+| Platform                            | System | Function                                     |
 | ----------------------------------- | -------------- | -------------------------------------------------------- |
-| RDK X3, RDK X3 Module, RDK Ultra    | Ubuntu 20.04   | · Start MIPI/USB camera/local video playback and display inference rendering results via web      |
-| X86                                 | Ubuntu 20.04   | · Start local video playback and display inference rendering results via web                |
+| RDK X3, RDK X3 Module, RDK Ultra    | Ubuntu 20.04   | · Start MIPI/USB camera/local video and display inference rendering results via web      |
+| X86                                 | Ubuntu 20.04   | · Start local video offline and display inference rendering results via web                |
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has flashed the Ubuntu 20.04 system image provided by Horizon.
 
@@ -53,15 +53,15 @@ Game Character Control Example based on Human Pose Analysis and Gesture Recognit
 
 1. X86 environment has been configured with Ubuntu 20.04 system image.
 
-2. Tros.b has been successfully installed in X86 environment.
+2. The tros.b has been successfully installed in X86.
 
-## User Guide
+## Usage
 
 The mono2d_body_detection package for human detection and tracking subscribes to images published by the sensor package, performs inference, and publishes algorithm messages. The websocket package is used to render and display the images and corresponding algorithm results on a PC browser.
 
 ### Horizon RDK Platform
 
-**Publishing Images Using MIPI Camera**
+**Use MIPI Camera to Publish Images**
 
 ```shell
 # Configure the tros.b environment
@@ -77,7 +77,7 @@ export CAM_TYPE=mipi
 ros2 launch mono2d_body_detection mono2d_body_detection.launch.py
 ```
 
-**Publishing Images Using USB Camera**
+**Use USB Camera to Publish Images**
 
 ```shell
 # Configure the tros.b environment
@@ -93,7 +93,7 @@ export CAM_TYPE=usb
 ros2 launch mono2d_body_detection mono2d_body_detection.launch.py
 ```
 
-**Using Local Image Playback**
+**Use Local Image Offline**
 
 ```shell
 # Configure the tros.b environment
@@ -107,13 +107,13 @@ export CAM_TYPE=fb
 # Start the launch file.
 ros2 launch mono2d_body_detection mono2d_body_detection.launch.py
 
-# For RDK Ultra platform, specify the playback image, for example:
+# For RDK Ultra, specify the playback image, for example:
 # ros2 launch mono2d_body_detection mono2d_body_detection.launch.py picture:=./config/target.jpg
 ```
 
-### X86 platform
+### X86
 
-**Using local playback image**
+**Use Local Image Offline**
 
 ```shell
 # Configure the tros.b environment
@@ -146,7 +146,7 @@ The following information is outputted in the terminal:
 [mono2d_body_detection-3] [HBRT] set log level as 0. version = 3.14.5
 [mono2d_body_detection-3] [DNN] Runtime version = 1.9.7_(3.14.5 HBRT)
 [mono2d_body_detection-3] [WARN] [1660219823.545293244] [mono2d_body_det]: Create hbmem_subscription with topic_name: /hbmem_img
-```[mono2d_body_detection-3] (MOTMethod.cpp:39): MOTMethod::Init config/iou2_euclid_method_param.json
+[mono2d_body_detection-3] (MOTMethod.cpp:39): MOTMethod::Init config/iou2_euclid_method_param.json
 [mono2d_body_detection-3] 
 [mono2d_body_detection-3] (IOU2.cpp:34): IOU2 Mot::Init config/iou2_euclid_method_param.json
 [mono2d_body_detection-3] 
@@ -169,7 +169,7 @@ The following information is outputted in the terminal:
 [mono2d_body_detection-3] [WARN] [1660219828.955764872] [mono2d_body_det]: input fps: 30.01, out fps: 30.00
 ```
 
-The log output shows that the program runs successfully. The input and output frame rates of the algorithm during inference are 30fps, and the statistics are refreshed every second.
+The log shows that frame rates of the algorithm during inference are 30fps, and the statistics are refreshed every second.
 
 On the PC browser, enter http://IP:8000 to view the rendering effect of the image and the algorithm (body, head, face, and hand detection boxes, detection box type and target tracking ID, and human body keypoints) (IP is the IP address of the Horizon RDK/X86 device):
 

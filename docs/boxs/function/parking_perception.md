@@ -3,10 +3,10 @@ sidebar_position: 8
 ---
 # Road Structuring
 
-## Function Introduction
+## Introduction
 
-The parking_perception package is a road structuring algorithm based on hobot_dnn package, which uses BPU for model inference to obtain algorithm inference results.
-This package supports subscribing to topics of type sensors/msg/image directly, and supports inferring from local images. The algorithm information will be published through topics and the results will be rendered and visualized on the web page. It also supports saving the rendered images in the result directory during program execution.
+The parking_perception package is a road structuring algorithm based on hobot_dnn package, which uses BPU for model inference to obtain algorithm results.
+This package supports subscribing to topics of type sensors/msg/image directly, and supports inferring from local images offline. The algorithm information will be published through topics and the results will be rendered and visualized on the web page. It also supports saving the rendered images in the result directory during program execution.
 
 The supported object detection categories are as follows:
 
@@ -39,28 +39,30 @@ Car parking space search case: [4.8. Car Parking Space Search](../../apps/parkin
 
 ## Supported Platforms
 
-| Platform             | Operating System | Example Function                                            |
+| Platform             | System | Function                                            |
 | -------------------- | ---------------- | ------------------------------------------------------------|
-| RDK X3, RDK X3 Module| Ubuntu 20.04     | · Start MIPI/USB camera/local image replay, inference rendering results displayed/saved locally on the Web| 
-| X86                  | Ubuntu 20.04     | · Start local image replay, inference rendering results displayed/saved locally on the Web|
+| RDK X3, RDK X3 Module| Ubuntu 20.04     | · Start MIPI/USB camera/local image offline, inference rendering results displayed/saved locally on the Web| 
+| X86                  | Ubuntu 20.04     | · Start local image offline, inference rendering results displayed/saved locally on the Web|
 
 ## Preparation
 
-### Horizon RDK Platform1. The Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
+### Horizon RDK
+
+1. The Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
 
 2. The Horizon RDK has successfully installed TogetheROS.Bot.
 
-### X86 Platform
+### X86
 
-1. The X86 environment has been configured with the Ubuntu 20.04 system image.
+1. The X86 has been configured with the Ubuntu 20.04 system image.
 
-2. The X86 environment has successfully installed tros.b.
+2. The X86 has successfully installed tros.b.
 
-## User Manual
+## Usage
 
 The package publishes algorithm messages that include semantic segmentation and object detection information, and users can subscribe to these messages for application development.
 
-### Horizon RDK Platform
+### Horizon RDK
 
 **Publishing images from MIPI camera**
 
@@ -94,7 +96,7 @@ export CAM_TYPE=usb
 ros2 launch parking_perception parking_perception.launch.py 
 ```
 
-**Using a single image for reprocessing**
+**Using a single image offline**
 
 ```shell
 # Configuring ROS2 environment
@@ -110,9 +112,9 @@ export CAM_TYPE=fb
 ros2 launch parking_perception parking_perception.launch.py 
 ```
 
-### X86 Platform
+### X86
 
-**Using a single feedback image**
+**Using a single image offline**
 
 ```shell
 # Configuring ROS2 environment
@@ -164,12 +166,11 @@ After the package is initialized, the following information will be displayed in
 [parking_perception-3] [WARN] [1662036456.219133588] [parking_perception]: input fps: 29.73, out fps: 29.79
 [parking_perception-3] [WARN] [1662036457.228303881] [parking_perception]: input fps: 29.73, out fps: 29.73
 [parking_perception-3] [WARN] [1662036458.237841548] [parking_perception]: input fps: 29.73, out fps: 29.73
-
 ```
 
-**Using single re-injection image**
+**Using single image offline**
 
-The result of inference reading a local image in the example will be rendered on the image. On the PC-side browser, you can view the image and algorithm rendering effect by entering http://IP:8000 (IP is the IP address of the Horizon RDK), and open the settings in the upper right corner of the interface.
+The result of inference reading a local image offline in the example will be rendered on the image. On the PC-side browser, you can view the image and algorithm rendering effect by entering http://IP:8000 (IP is the IP address of the Horizon RDK), and open the settings in the upper right corner of the interface.
 
 ![](./image/box_adv/operation_1.png)
 

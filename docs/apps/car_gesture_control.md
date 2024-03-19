@@ -2,38 +2,38 @@
 sidebar_position: 5
 ---
 
-# 4.5 Car Gesture Control
+# 4.5 Gesture Control The Car
 
 ## Introduction
 
-The Car Gesture Control app allows you to control a robot car's movements using hand gestures, including left and right rotation and forward and backward translation. The app consists of MIPI image capture, human detection and tracking, hand keypoint detection, gesture recognition, gesture control strategy, image encoding and decoding, and web display. The workflow is shown in the following diagram:
+The app allows you to control a robot's movements using hand gestures, including left and right rotation and forward and backward translation. The app consists of MIPI image capture, human detection and tracking, hand keypoint detection, gesture recognition, gesture control strategy, image encoding and decoding, and web display. The workflow is shown in the following diagram:
 
 ![](./image/car_gesture_control/gesture_ctrl_workflow.jpg)
 
 The supported control gestures, their corresponding functionalities, and examples of the gestures are as follows:
 
-| Control Gesture      | Functionality | Gesture Action Example                                              |
+| Control Gesture      | Function | Gesture Action Example                                              |
 | -------------------- | ------------- | ------------------------------------------------------------------- |
 | 666 Gesture/Awesome  | Move forward  | ![image-awesome](./image/car_gesture_control/image-awesome.jpeg)   |
 | yeah/Victory         | Move backward | ![image-victory](./image/car_gesture_control/image-victory.jpeg)   |
 | Thumb Right          | Turn right    | ![image-thumbright](./image/car_gesture_control/image-thumbright.jpeg) |
 | Thumb Left           | Turn left     | ![image-thumbleft](./image/car_gesture_control/image-thumbleft.jpeg) |
 
-The app is demonstrated using a virtual car in the PC Gazebo simulation environment, but the control commands can also be directly used to control a physical car.
+The app is demonstrated using a virtual car in the PC Gazebo simulation environment, but the control commands can also be directly used to control a physical robot.
 
 Code repository: <https://github.com/HorizonRDK/gesture_control>
 
 ## Supported Platforms
 
-| Platform                            | Running Method | Example Functionality                                                                                                                                                                                                                                                                                                                                                 |
+| Platform                            | System | Function                                                                                                                                                                                                                                                                                                                                                 |
 | ----------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| RDK X3, RDK X3 Module, RDK Ultra     | Ubuntu 20.04   | Start MIPI/USB camera to capture images, perform gesture recognition and control, and finally show the control effect through Gazebo                                                                                                                                                                                                                              |
+| RDK X3, RDK X3 Module, RDK Ultra     | Ubuntu 20.04   | Start MIPI/USB camera to capture images, perform gesture recognition and control, and finally show the control effect through Gazebo           |
 
-## Prerequisites
+## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
-1. Horizon RDK with preloaded Ubuntu 20.04 system image.
+1. Horizon RDK is flashed the Ubuntu 20.04 system image.
 
 2. TogetheROS.Bot successfully installed on Horizon RDK.
 
@@ -45,15 +45,15 @@ Code repository: <https://github.com/HorizonRDK/gesture_control>
    - [ROS2 Foxy desktop](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html)
    - Gazebo and Turtlebot3 related packages can be installed using the following commands:
 
-    ```shell
+```shell
     sudo apt-get install ros-foxy-gazebo-*
     sudo apt install ros-foxy-turtlebot3
     sudo apt install ros-foxy-turtlebot3-simulations
-    ```
+ ```
 
 ## Instructions
 
-### Horizon RDK Platform
+### Horizon RDK
 
 After running the car gesture control app, use the "666/Awesome" gesture to make the car move forward, use the "yeah/Victory" gesture to make the car move backward, use the "ThumbRight" gesture to make the car turn right, and use the "ThumbLeft" gesture to make the car turn left. The directions for turning left and right are based on the direction of the person's left and right (the direction of the thumb).
 
@@ -124,7 +124,7 @@ The above log snippet shows the processing results of controlling the movement o
 
 Starting from the timestamp frame_ts_ms: 3698315358, the car is controlled to move forward at a speed of 0.5m/s using the 666 gesture (gesture: 14) (do move, direction: 0, step: 0.500000).
 
-On the PC side, the command `ros2 topic list` can be used in the terminal to query the topic information of the Horizon RDK:
+On the PC, the command `ros2 topic list` can be used in the terminal to query the topic information of the Horizon RDK:
 
 ```shell
 $ ros2 topic list
@@ -141,14 +141,14 @@ $ ros2 topic list
 
 Among them, `/image` is the image captured by the MIPI sensor and encoded in JPEG format, `/hobot_hand_gesture_detection` is the algorithm message published by the Horizon RDK containing gesture recognition information, and `/cmd_vel` is the motion control command published by the Horizon RDK.
 
-On the PC side, the command `ros2 topic echo /cmd_vel` can be used in the terminal to view the motion control command published by the Horizon RDK:
+On the PC, the command `ros2 topic echo /cmd_vel` can be used in the terminal to view the motion control command published by the Horizon RDK:
 
 ```shell
 linear:
   x: -0.5
   y: 0.0
   z: 0.0
-```angular:
+angular:
   x: 0.0
   y: 0.0
   z: 0.0

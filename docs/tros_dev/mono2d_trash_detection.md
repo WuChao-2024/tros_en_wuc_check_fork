@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # 5.5 Garbage Detection
 
-## Function Introduction
+## Introduction
 
 The mono2d_trash_detection package is an example of 2D garbage object detection algorithm developed based on the hobot_dnn package. Unlike previous functionality demonstrations, this example will demonstrate how to train models based on open-source frameworks, convert models using the Horizon toolchain, and deploy the algorithm in the Horizon Robot Operating System.
 
@@ -13,8 +13,6 @@ This package supports subscribing to topics of type sensors/msg/Image directly a
 Code repository: <https://github.com/HorizonRDK/mono2d_trash_detection.git>
 
 Application scenarios: Indoor and outdoor garbage detection, identifying garbage in scenes, can be used with robots for garbage finding and picking (in combination with robotic arms) in APP design.
-
-## Algorithm Introduction
 
 This package uses the open-source framework [PaddlePaddle](https://github.com/PaddlePaddle/PaddleDetection.git) and the [PPYOLO](https://github.com/PaddlePaddle/PaddleDetection/tree/release/2.5) model for garbage detection task design and training. The specific model configuration is [ppyolo_r18vd_coco.yml](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/configs/ppyolo/ppyolo_r18vd_coco.yml).
 
@@ -26,12 +24,12 @@ The supported object detection categories for the algorithm are as follows:
 
 ## Supported Platforms
 
-| Platform         | Running Method | Example Functions                                             |
+| Platform         | System | Function                                             |
 | ---------------- | -------------- | ------------------------------------------------------------ |
 | RDK X3, RDK X3 Module | Ubuntu 20.04      | · Start MIPI/USB camera/local image inference, render and display results on the web/save locally |
 | X86              | Ubuntu 20.04      | · Start local image inference, render and display results on the web/save locally |
 
-## Preparation Work
+## Preparation
 
 Since we do not consider the internal structure information of the algorithm model during deployment, we only focus on the pre-processing and post-processing steps of the algorithm. The pre-processing steps include image reading and image resizing, while the post-processing steps include detection header decoders and non-maximum suppression (NMS). These pre-processing and post-processing methods are consistent across most similar models and have strong universality. Therefore, the basic deployment package can be used for quick deployment.
 
@@ -41,7 +39,7 @@ In this example, the [dnn_node_example](https://github.com/HorizonRDK/hobot_dnn/
 
 If the pre-processing and post-processing steps are different from the above models and cannot be adapted quickly, the custom deployment method can refer to the [dnn_node_sample](https://github.com/HorizonRDK/hobot_dnn/tree/develop/dnn_node_example) example.
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -51,7 +49,7 @@ If the pre-processing and post-processing steps are different from the above mod
 
 5. Detection category configuration file (such as [trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list) in this example)
 
-### X86 Platform
+### X86
 
 1. X86 environment has been configured with Ubuntu 20.04 system image.
 
@@ -63,7 +61,7 @@ If the pre-processing and post-processing steps are different from the above mod
 
 5. Detection category configuration file (such as [trash_coco.list](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/trash_coco.list) in this example).
 
-## Explanation of Post-processing Configuration File
+## Post-processing Configuration
 
 The config_file configuration file is in JSON format. In this example, the file is [ppyoloworkconfig.json](https://github.com/HorizonRDK/mono2d_trash_detection/blob/develop/config/ppyoloworkconfig.json). The specific configuration is as follows:
 
@@ -93,7 +91,9 @@ The config_file configuration file is in JSON format. In this example, the file 
   }
 ```
 
-Note: The actual size of each preset anchor is anchors_table x strides.## User Guide
+Note: The actual size of each preset anchor is anchors_table x strides.
+
+## Usage
 
 Complete algorithm development and deployment workflow diagram:
 
@@ -107,7 +107,7 @@ Model conversion: [PPYOLO Trash Detection + Horizon RDK Deployment (Part 2)](htt
 
 The package publishes algorithm messages that include semantic segmentation and object detection information, which users can subscribe to for application development.
 
-### Horizon RDK Platform
+### Horizon RDK
 
 **Publish Images using MIPI camera**
 
@@ -141,7 +141,7 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_msg_pub_topic_name:=ai_msg_mono2d_trash_detection dnn_example_image_width:=1920 dnn_example_image_height:=1080
 ```
 
-**Use a Single Feedback Image**
+**Use A Local Image Offline**
 
 ```shell
 # ROS2 Environment Configuration
@@ -154,9 +154,9 @@ cp -r /opt/tros/lib/mono2d_trash_detection/config/ .
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/ppyoloworkconfig.json dnn_example_image:=config/trashDet0028.jpg
 ```
 
-### X86 Platform
+### X86
 
-**Using a Single Feedback Image**
+**Use A Local Image Offline**
 
 ```shell
 # ROS2 Environment Configuration
@@ -193,7 +193,7 @@ After package initialization, the following information will be output to the te
 [example-3] [BPU_PLAT]BPU Platform Version(1.3.1)!
 [example-3] [HBRT] set log level as 0. version = 3.14.5
 [example-3] [DNN] Runtime version = 1.9.7_(3.14.5 HBRT)
-[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
+```[example-3] [WARN] [1665644838.688580704] [dnn]: Run default SetOutputParser.
 [example-3] [WARN] [1665644838.688758775] [dnn]: Set output parser with default dnn node parser, you will get all output tensors and should parse output_tensors in PostProcess.
 [example-3] [WARN] [1665644838.691224728] [example]: Create ai msg publisher with topic_name: ai_msg_mono2d_trash_detection
 [example-3] [WARN] [1665644838.698936232] [example]: Create img hbmem_subscription with topic_name: /hbmem_img
@@ -205,35 +205,35 @@ After package initialization, the following information will be output to the te
 [example-3] [WARN] [1665644844.995728928] [example]: Sub img fps: 29.79, Smart fps: 29.73, infer time ms: 36, post process time ms: 6
 ```
 
-Real-time running effect:
+The result is as below：
 
 ![](./image/mono2d_trash_detection/realtime.gif)
 
-**Using a single backpropagated image**
+**Use A Local Image Offline**
 
-After package initialization, the following information is output in the terminal:
+After initializing the package, output the following information on the terminal:
 
 ```shell
 [example-1] [INFO] [1665646256.967568866] [dnn]: The model input 0 width is 416 and height is 416
-[example-1] [WARN] [1665646256.967698807] [dnn]: Running default SetOutputParser.
-[example-1] [WARN] [1665646256.967754550] [dnn]: Setting output parser with the default dnn node parser; you will receive all output tensors and should parse the 'output_tensors' in PostProcess.
-[example-1] [INFO] [1665646256.967794962] [dnn impl]: Setting the default output parser
-[example-1] [INFO] [1665646256.967972439] [dnn]: Task initialized.
-[example-1] [INFO] [1665646256.970036756] [dnn]: Setting task_num to [4]
+[example-1] [WARN] [1665646256.967698807] [dnn]: Run default SetOutputParser.
+[example-1] [WARN] [1665646256.967754550] [dnn]: Set output parser with default dnn node parser, you will get all output tensors and should parse output_tensors in PostProcess.
+[example-1] [INFO] [1665646256.967794962] [dnn impl]: Set default output parser
+[example-1] [INFO] [1665646256.967972439] [dnn]: Task init.
+[example-1] [INFO] [1665646256.970036756] [dnn]: Set task_num [4]
 [example-1] [INFO] [1665646256.970176988] [example]: The model input width is 416 and height is 416
-[example-1] [WARN] [1665646256.970260061] [example]: Creating an AI message publisher with topic_name: hobot_dnn_detection
-[example-1] [INFO] [1665646256.977452592] [example]: DNN node fed with local image: config/trashDet0028.jpg
-[example-1] [INFO] [1665646257.027170005] [dnn]: Task id: 3 set to BPU core: 2
+[example-1] [WARN] [1665646256.970260061] [example]: Create ai msg publisher with topic_name: hobot_dnn_detection
+[example-1] [INFO] [1665646256.977452592] [example]: Dnn node feed with local image: config/trashDet0028.jpg
+[example-1] [INFO] [1665646257.027170005] [dnn]: task id: 3 set bpu core: 2
 [example-1] [INFO] [1665646257.057492754] [example]: Output from frame_id: feedback, stamp: 0.0
 [example-1] [INFO] [1665646257.063816821] [PostProcessBase]: out box size: 1
-[example-1] [INFO] [1665646257.064070497] [PostProcessBase]: Detection rect: 216.061 223.173 317.97 282.748, detection type: trash, score: 0.80733
+[example-1] [INFO] [1665646257.064070497] [PostProcessBase]: det rect: 216.061 223.173 317.97 282.748, det type: trash, score:0.80733
 [example-1] [INFO] [1665646257.064206479] [ClassificationPostProcess]: out cls size: 0
-[example-1] [INFO] [1665646257.068688365] [ImageUtils]: Target size: 1
-[example-1] [INFO] [1665646257.068836554] [ImageUtils]: Target type: trash, rois.size: 1
-[example-1] [INFO] [1665646257.068884048] [ImageUtils]: roi.type: (empty), x_offset: 216 y_offset: 223 width: 101 height: 59
-[example-1] [WARN] [1665646257.071375688] [ImageUtils]: Drawing result to file: render_feedback_0_0.jpeg
+[example-1] [INFO] [1665646257.068688365] [ImageUtils]: target size: 1
+[example-1] [INFO] [1665646257.068836554] [ImageUtils]: target type: trash, rois.size: 1
+[example-1] [INFO] [1665646257.068884048] [ImageUtils]: roi.type: , x_offset: 216 y_offset: 223 width: 101 height: 59
+[example-1] [WARN] [1665646257.071375688] [ImageUtils]: Draw result to file: render_feedback_0_0.jpeg
 ```
 
-Local rendering effect:
+The result is as below：
 
 ![](./image/mono2d_trash_detection/render.jpeg)

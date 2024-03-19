@@ -3,9 +3,9 @@ sidebar_position: 2
 ---
 # 1.2 apt installation and upgrade
 
-This section introduces how to use apt to install TogetheROS.Bot on Horizon RDK and X86 platforms.
+This section introduces how to use apt to install TogetheROS.Bot on Horizon RDK and X86.
 
-## Horizon RDK platform
+## Horizon RDK
 
 Prerequisites
 
@@ -27,9 +27,9 @@ Prerequisites
 
 - **For information on how to check the system and tros.b version numbers and detailed instructions, please refer to the [FAQs](../FAQs/hardware_and_system.md).**
 
-### Install tros.b
+### Installation
 
-**Note: The IP address of the Horizon RDK used here is 10.64.61.241. Replace it with your own Horizon RDK IP address during installation.**
+**Note: The IP address of the Horizon RDK used here is 10.64.61.241. Replace it with your IP address during installation.**
 
 Login to the Horizon RDK
 
@@ -84,17 +84,17 @@ Description: TogetheROS Bot
 
 It can be seen that the current version of tros.b has been upgraded to version 2.0.0.
 
-## X86 Platform
+## X86
 
 Prerequisites:
 
-- The environment preparation work in Chapter 2.1 has been completed.
-- The Ubuntu system is Ubuntu 20.04 and can access the Internet normally.
+- The environment preparation work in Chapter 1.1 has been completed.
+- The system is Ubuntu 20.04 and can access the Internet normally.
 
 1. Set locale and enable the universe software repository:
 
-```bash
-sudo apt update && sudo apt install localessudo locale-gen en_US en_US.UTF-8
+   ```bash
+   sudo apt update && sudo apt install localessudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 export LANG=en_US.UTF-8
 

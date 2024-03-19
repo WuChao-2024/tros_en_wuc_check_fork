@@ -3,9 +3,9 @@ sidebar_position: 4
 ---
 # EfficientNet_Det
 
-## Function Introduction
+## Introduction
 
-EfficientNet_Det is an object detection algorithm example that takes images as input and utilizes BPU for algorithm inference. It publishes algorithm messages containing object categories and detection boxes.
+EfficientNet_Det is an detection algorithm that takes images as input and utilizes BPU for algorithm inference. It publishes algorithm messages containing object categories and detection boxes.
 
 EfficientNet_Det is an Onnx model obtained from <https://github.com/HorizonRobotics-Platform/ModelZoo/tree/master/EfficientDet> and trained using the [COCO dataset](http://cocodataset.org/). It supports 80 types of object detection, including humans, animals, fruits, and vehicles.
 
@@ -13,31 +13,29 @@ Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
 Applications: EfficientNet_Det can be used for tasks such as vehicle detection and is mainly applied in the fields of autonomous driving and smart home.
 
-Smoke detection example: <https://github.com/abg3/Smoke-Detection-using-Tensorflow-2.2>
-
 ## Supported Platforms
 
-| Platform               | Execution Method | Example Functionality                                        |
+| Platform               | System | Function                                        |
 | ---------------------- | ---------------- | ------------------------------------------------------------ |
-| RDK X3, RDK X3 Module  | Ubuntu 20.04     | · Start MIPI/USB camera and display inference results through web<br/>· Use local playback to save rendering results locally |
+| RDK X3, RDK X3 Module  | Ubuntu 20.04     | · Start MIPI/USB camera and display inference results through web<br/>· Use local data to save rendering results offline |
 
 ## Preparations
 
-### Horizon RDK Platform
+### Horizon RDK
 
-1. The Horizon RDK platform has been pre-installed with the Ubuntu 20.04 system image provided by Horizon.
+1. The Horizon RDK has been pre-installed with the Ubuntu 20.04 system image provided by Horizon.
 
 2. TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
-3. A MIPI or USB camera has been installed on the Horizon RDK. If there is no camera available, you can experience the algorithm using locally backfilled JPEG/PNG images or MP4, H.264, and H.265 videos.
+3. A MIPI or USB camera has been installed on the Horizon RDK. If there is no camera available, you can experience the algorithm using locally JPEG/PNG images or MP4, H.264, and H.265 videos offline.
 
 4. Make sure the PC can access the Horizon RDK through the network.
 
-## Usage Instructions
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-#### Publish Images Using MIPI Camera
+#### Use MIPI Camera to Publish Images
 
 EfficientNet_Det subscribes to images published by the sensor package, performs inference, and publishes algorithm messages. WebSocket package is used to render and display the published images and corresponding algorithm results on a PC browser.
 
@@ -50,7 +48,7 @@ export CAM_TYPE=mipi# Launch launch file
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/efficient_det_workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Publish images using USB camera
+#### Use USB Camera to Publish Images
 
 ```shell
 # Configure tros.b environment
@@ -63,9 +61,9 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/efficient_det_workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Render local images after inference
+#### Use Local Images Offline
 
-The EfficientNet_Det object detection algorithm example uses local JPEG/PNG format images for rendering the algorithm results after inference, which are stored in the local runtime path.
+The EfficientNet_Det detection algorithm example uses local JPEG/PNG images for rendering the algorithm results after inference, which are stored in the local path.
 
 ```shell
 # Configure tros.b environment
@@ -77,7 +75,7 @@ ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_con
 
 ## Result Analysis
 
-### Publish images using camera
+### Use Camera to Publish Images 
 
 The terminal output during the execution is as follows:
 
@@ -102,7 +100,7 @@ To view the image and the rendering effect of the algorithm, enter http://IP:800
 
 ![render_web](./image/box_basic/efficient_det_render_web.jpeg)
 
-### Use local image for feedback
+### Use local image offline
 
 The terminal output is as follows:
 
@@ -114,6 +112,6 @@ The terminal output is as follows:
 [example-1] [INFO] [1654931461.278396934] [PostProcessBase]: det rect: 79.3884 263.497 373.645 372.554, det type: couch, score:1.0287
 ```
 
-The log output shows that the algorithm has inferred 2 targets from the input image, and outputs the coordinates of the detection boxes (the order of the output coordinates is the top-left x and y coordinates, and the bottom-right x and y coordinates of the human box) and the categories. The rendered image file is saved as render_feedback_0_0.jpeg, and here is the rendering effect:
+The log shows that the algorithm has inferred 2 targets from the input image, and outputs the coordinates of the detection boxes (the order of the output coordinates is the top-left x and y coordinates, and the bottom-right x and y coordinates) and the categories. The rendered image is saved as render_feedback_0_0.jpeg, and here is the rendering effect:
 
 ![render_feedback](./image/box_basic/efficient_det_render_feedback.jpeg)

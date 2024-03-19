@@ -5,13 +5,13 @@ sidebar_position: 5
 
 Prerequisite: TogetheROS.Bot installed successfully
 
-tros.b foxy version interface is fully compatible and able to reuse the rich ROS toolset. Here, we use the installation and usage of ROS foxy version ros-foxy-image-transport as an example to introduce how to use ROS package in tros.b.
+tros.b foxy version interface is fully compatible and able to reuse the ROS2 toolset. Here, we use the installation and usage of ROS2 foxy version ros-foxy-image-transport as an example to introduce how to use ROS2 package in tros.b.
 
 ## Installing ROS2 package
 
-### 1. Add ROS apt source
+### 1. Add ROS2 apt source
 
-When installing tros.b, ROS apt source is automatically added, so there is no need to manually add it.
+When installing tros.b, ROS2 apt source is automatically added, so there is no need to manually add it.
 
 Update apt repository
 
@@ -28,7 +28,7 @@ sudo apt install ros-foxy-image-transport-plugins
 
 ## Using ROS2 package
 
-Same as using ROS
+Same as using ROS2
 
 ```shell
 source /opt/tros/setup.bash
@@ -47,7 +47,7 @@ image_transport/theora
 
 Details:
 ----------
-"image_transport/compressed"
+```"image_transport/compressed"
  - Provided by package: compressed_image_transport
  - Publisher:
       This plugin publishes a CompressedImage using either JPEG or PNG compression.

@@ -2,21 +2,21 @@
 sidebar_position: 6
 ---
 
-# 4.6 Voice-controlled Car Movement
+# 4.6 Voice Control The Car
 
-## Function Introduction
+## Introduction
 
-The function of voice-controlled car movement allows users to control the robot's movement forward, backward, left, and right using voice commands. It needs to be used together with the smart voice module of the Horizon Robotics robot operating system. The process is as shown in the following diagram:
+The function of voice-controlled car movement allows users to control the robot's movement forward, backward, left, and right using chinese voice commands. The process is as shown in the following diagram:
 
 ![](./image/car_audio_control/audio_control.jpg)
 
-The app uses a virtual car in the PC-side Gazebo simulation environment as an example, but the control commands can also be directly used to control a physical car.
+The app uses a virtual car in the PC Gazebo simulation environment as an example, but the control commands can also be directly used to control a physical robot.
 
 Code repository: <https://github.com/HorizonRDK/audio_control.git>
 
 ## Supported Platforms
 
-| Platform | Running Method | Example Function                    |
+| Platform | System | Function                    |
 | -------- | -------------- | ----------------------------------- |
 | RDK X3   | Ubuntu 20.04   | Start smart voice module, parse voice information, and control the car in Gazebo |
 
@@ -24,7 +24,7 @@ Code repository: <https://github.com/HorizonRDK/audio_control.git>
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK is flashed with the Ubuntu 20.04 image provided by Horizon.
 
@@ -45,10 +45,9 @@ Code repository: <https://github.com/HorizonRDK/audio_control.git>
    sudo apt install ros-foxy-turtlebot3-simulations
    ```
 
-## User Guide
+## Usage
 
-Start the simulation environment on the PC side:
-
+Start the simulation environment on the PC:
 ```shell
 source /opt/ros/foxy/setup.bash
 export TURTLEBOT3_MODEL=burger
@@ -59,7 +58,7 @@ After successful launch, the simulation environment shows the following effect o
 
 ![](./image/car_audio_tracking/gazebo.jpeg)
 
-Horizon RDK platform startup program:
+Horizon RDK startup program:
 
 1. Copy the audio configuration file
 
@@ -82,7 +81,7 @@ Horizon RDK platform startup program:
     ros2 launch audio_control audio_control.launch.py
     ```
 
-    After the program is successfully started, you can control the car's movement using commands such as "go forward", "go backward", "turn left", "turn right", and "stop".
+    After the program is successfully started, you can control the car's movement using chinese commands such as “向前走”、“向后退”、“向左转”，“向右转” and “停止运动”.
 
 ## Result Analysis
 
@@ -100,9 +99,9 @@ Audio control command word definitions are:
         "go backward": move back.
 ```
 
-The above log snippet captures the output from the audio control package after its launch. The log content indicates that the wake-up word configured for this voice control module is "Hello Horizon", and the command words for controlling the movement of the robot are: "move forward", "move backward", "rotate left", "rotate right".
+The above log snippet captures the output from the audio control package after its launch. The log content indicates that the wake-up word configured for this voice control module is "Hello Horizon", and the chinese command words for controlling the movement of the robot are: “向前走”、“向后退”、“向左转”，“向右转”.
 
-On the PC side, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK:
+On the PC, you can use the `ros2 topic list` command in the terminal to query the topic information of the Horizon RDK:
 
 ```shell
 $ ros2 topic list

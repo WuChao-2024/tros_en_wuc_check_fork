@@ -12,15 +12,15 @@ Nav2 (Navigation2) is a built-in navigation framework in ROS2, aimed at finding 
 
 ## Supported Platforms
 
-| Platform                | Execution      | Example Functionality             |
+| Platform                | Execution      | Function             |
 | ----------------------- | -------------- | --------------------------------- |
 | RDK X3, RDK X3 Module    | Ubuntu 20.04   | Start the simulation environment on the PC and start the navigation function on the Horizon RDK, and finally display the navigation effect through Rviz2 |
 
-## Prerequisites
+## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
-1. The Horizon RDK has been burned with the Ubuntu 20.04 image provided by Horizon.
+1. The Horizon RDK has been flashed with the Ubuntu 20.04 image provided by Horizon.
 
 2. The Horizon RDK has successfully installed tros.b.
 
@@ -48,11 +48,11 @@ Nav2 (Navigation2) is a built-in navigation framework in ROS2, aimed at finding 
 
 ## User Guide
 
-### Horizon RDK Platform
+### Horizon RDK
 
-This section describes how to set up a simulation environment on the PC side, how to set the navigation destination, and how to run the navigation function with Horizon RDK and view the navigation result.
+This section describes how to set up a simulation environment on the PC, how to set the navigation destination, and how to run the navigation function with Horizon RDK and view the navigation result.
 
-1. Start the gazebo simulation environment on the **PC side**.
+1. Start the gazebo simulation environment on the **PC**.
 
    ```shell
    source /opt/ros/foxy/setup.bash
@@ -72,7 +72,7 @@ This section describes how to set up a simulation environment on the PC side, ho
    ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True map:=/opt/ros/foxy/share/nav2_bringup/maps/turtlebot3_world.yaml
    ```
 
-3. Start the Rviz2 tool on the **PC side**.
+3. Start the Rviz2 tool on the **PC**.
 
    ```shell
    source /opt/ros/foxy/setup.bash

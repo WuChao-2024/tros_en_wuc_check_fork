@@ -1,12 +1,8 @@
----
-sidebar_position: 11
----
-
 # Stereo Depth Estimation Algorithm
 
-## Function Introduction
+## Introduction
 
-The Stereo Depth Estimation Algorithm is a `StereoNet` model trained using the Horizon [OpenExplorer](https://developer.horizon.cc/api/v1/fileData/horizon_j5_open_explorer_cn_doc/hat/source/examples/stereonet.html) on the [SceneFlow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html) dataset.
+The Stereo Depth Estimation Algorithm is a `StereoNet` model trained on the [SceneFlow](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html) dataset.
 
 The algorithm takes in stereo image data, namely left and right views, and outputs the disparity map of the left view.
 
@@ -16,13 +12,13 @@ Code repository: <https://github.com/HorizonRDK/hobot_stereonet.git>
 
 ## Supported Platforms
 
-| Platform  | Execution Method | Example Functions                      |
+| Platform  | System | Functions                      |
 | --------- | --------------- | --------------------------------------- |
-| RDK Ultra | Ubuntu 20.04    | Local playback and render result on web |
+| RDK Ultra | Ubuntu 20.04    | Local data and render result on web |
 
 ## Preparation
 
-1. RDK has been burnt with Horizon-provided Ubuntu 20.04 system image.
+1. RDK has been flashed with Horizon-provided Ubuntu 20.04 system image.
 
 2. TogetheROS.Bot has been successfully installed on RDK.
 
@@ -30,11 +26,9 @@ Code repository: <https://github.com/HorizonRDK/hobot_stereonet.git>
 
 4. Make sure the PC can access RDK through the network.
 
-## Usage Instructions
+## Usage
 
-Subscribe to the image data captured by the ZED 2i stereo camera as the input, publish topic messages containing the left stereo image and the perception result after inference, and render and display the published image and the corresponding algorithm result on a PC browser using the Websocket package.
-
-Start command:
+Subscribe to the image data captured by the ZED 2i stereo camera as the input, publish topic messages containing the left stereo image and the perception result after inference, and render and display the published image and the corresponding algorithm result on a PC browser using the Websocket package:
 
 ```shell
 # Configure tros.b environment
@@ -48,7 +42,7 @@ ros2 launch hobot_stereonet hobot_stereonet_demo.launch.py
 
 ## Result Analysis
 
-```bash
+```text
 The following information is outputted in the running terminal:[INFO] [launch]: All log files can be found below /root/.ros/log/2023-07-05-18-23-51-350999-hobot-2628272
 [INFO] [launch]: Default logging verbosity is set to INFO
 webserver has launch
@@ -85,6 +79,7 @@ webserver has launch
 [hobot_stereonet-4] [WARN] [1688581434.992634291] [stereonet_node]: input fps: 1.60, out fps: 1.60, preprocess time ms: 1191, infer time ms: 48, msg preparation for pub time cost ms: 8
 [hobot_stereonet-4] [WARN] [1688581436.203778417] [stereonet_node]: input fps: 0.82, out fps: 0.82, preprocess time ms: 1157, infer time ms: 47, msg preparation for pub time cost ms: 2
 ```
+
 To view the image and algorithm rendering effects, enter http://IP:8000 in a PC browser (IP is the IP address of the RDK):
 
 ![stereonet_rdk](./image/box_adv/stereonet_rdk.png)

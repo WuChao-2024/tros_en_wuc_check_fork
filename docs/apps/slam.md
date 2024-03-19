@@ -2,21 +2,21 @@
 sidebar_position: 1
 ---
 
-# 4.1 SLAM Mapping
+# 4.1 SLAM
 
-## Function Introduction
+## Introduction
 
 SLAM (Simultaneous Localization and Mapping) is a technique used to simultaneously estimate the location of a robot and create a map of its environment. In this chapter, we will use ROS2 SLAM-Toolbox to perform mapping on a simulated car in Gazebo, and observe the mapping results through Rviz2. The SLAM-Toolbox runs on the Horizon RDK, while Gazebo and Rviz2 run on a PC in the same network as the Horizon RDK.
 
 ## Supported Platforms
 
-| Platform | Execution Method | Example Functionality |
+| Platform | System | Function |
 | -------- | ---------------- | -------------------- |
 | RDK X3, RDK X3 Module, RDK Ultra| Ubuntu 20.04 | Start the simulation environment on the PC and perform SLAM mapping on the Horizon RDK, finally display the mapping results using Rviz2. |
 
-## Prerequisites
+## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. The Horizon RDK has been flashed with the Ubuntu 20.04 image provided by Horizon.
 
@@ -42,10 +42,11 @@ SLAM (Simultaneous Localization and Mapping) is a technique used to simultaneous
     sudo apt install ros-foxy-teleop-twist-keyboard
     ```
 
-## User Guide
+## Usage
 
-### Horizon RDK Platform
-This section introduces how to use Horizon RDK to run SLAM algorithm and observe mapping effect using PC.
+### Horizon RDK
+
+This section introduces how to use Horizon RDK to run SLAM and observe mapping effect using PC.
 
 Start the simulation environment on the PC:
 
@@ -68,7 +69,7 @@ ros2 launch turtlebot3_bringup rviz2.launch.py
 After opening Rviz2, the "map" visualization option needs to be added to display the built map. The steps are as follows:
 ![](./image/slam/rvizsetting.jpg)
 
-Run SLAM-Toolbox on the Horizon RDK board:
+Run SLAM-Toolbox on the Horizon RDK:
 
 ```bash
 # Configure tros.b environment

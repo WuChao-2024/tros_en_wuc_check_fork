@@ -9,13 +9,12 @@ Communication is a fundamental function of the robot development engine. When us
 
 ## Prerequisites
 
-Your tros.b has been successfully installed following the guide [Installation](../quick_start/install_tros.md). Familiarity with ROS2 nodes, topic, qos, as well as creating packages and using custom messages. For detailed tutorials, please refer to the [official ROS2 documentation](https://docs.ros.org/en/foxy/Tutorials.html).
+1. tros.b has been successfully installed following the guide [Installation](../quick_start/install_tros.md).
+2. Familiarity with ROS2 nodes, topics, QoS, as well as creating packages and using custom messages. For detailed tutorials, please refer to the [official ROS2 documentation](https://docs.ros.org/en/foxy/Tutorials.html).
+3. The ROS2 package build system ament_cmake has been installed. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`.
+4. The ROS2 build tool colcon has been installed. Installation command: `pip3 install -U colcon-common-extensions`.
 
-The ROS2 package build system ament_cmake has been installed. Installation command: `apt update; apt-get install python3-catkin-pkg; pip3 install empy`.
-
-The ROS2 build tool colcon has been installed. Installation command: `pip3 install -U colcon-common-extensions`.
-
-## Task Content
+## Usage
 
 ### 1. Create a package
 
@@ -394,7 +393,7 @@ cd ~/dev_ws
 . install/setup.bash
 ```
 
-运行talker node:
+Launch the talker node:
 
 ```bash
 ros2 run hbmem_pubsub talker
@@ -434,7 +433,7 @@ On the terminal, the following prints will appear, indicating that the subscribe
 
 You can use `Ctrl+C` to end the execution of each node.
 
-### Summary of this section
+Summary of this section:
 
 If you have learned how to use ROS2 publishers and subscribers, it is easy to switch to using hbmem publishers and subscribers. You just need to make the following changes:
 
@@ -449,7 +448,7 @@ Note:- Using zero-copy based on hbmem will occupy ion memory. If multiple large 
 
 - When creating a publisher, ion memory that is three times the size of KEEPLAST multiplied by the number of messages will be requested at one time (up to 256MB maximum), which is used for message transmission and will not be dynamically allocated afterwards. If there is an error in message handling on the subscriber side or if it is not processed in a timely manner, the message buffer may be fully occupied, causing the publisher to continuously fail to obtain available messages.
 
-## Usage Limitations
+## Limitations
 
 Compared to the publisher/subscriber data transmission method in ROS2, using zero-copy transmission based on hbmem has the following limitations:
 

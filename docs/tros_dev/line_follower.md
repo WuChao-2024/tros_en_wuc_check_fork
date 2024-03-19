@@ -2,9 +2,9 @@
 sidebar_position: 6
 ---
 
-# 5.6 Line Following Robot with Deep Learning
+# 5.6 Line Following
 
-## Function Introduction
+## Introduction
 ![](./image/line_follower/demo.png)
 
 The line following task refers to the ability of a robot car to autonomously follow a guide line and move forward. When the guide line turns left, the car also turns left. When the guide line turns right, the car turns right accordingly. This task is a basic task in wheeled robots and can be implemented in various ways, such as:
@@ -18,14 +18,14 @@ Code repository: <https://github.com/HorizonRDK/line_follower>
 
 ## Supported Platforms
 
-| Platform     | Operating System     | Example Functionality          |
+| Platform     | System     | Function          |
 | -------- | ------------ | ------------------------------ |
 | RDK X3, RDK X3 Module | Ubuntu 20.04 | Start MIPI camera to capture images, perform guide line detection and car control, and finally demonstrate line following effect through the motion of the real car |
 
 
-## Prerequisites
+## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has been flashed with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -44,11 +44,13 @@ Code repository: <https://github.com/HorizonRDK/line_follower>
    - Project source code
 `https://github.com/HorizonRDK/line_follower/tree/develop`
   
-## User Guide
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
-![](./image/line_follower/framework.png)The OriginBot kit is selected for the chassis of the car, which has two active wheels and one passive wheel. The rotation control of the car is achieved through the differential speed of the two active wheels. The MCU module is mainly used for the motor control of the car and communicates with the main control board Horizon RDK through serial communication. OriginBot website: [www.originbot.org](https://www.originbot.org/)
+![](./image/line_follower/framework.png)
+
+The OriginBot kit is selected for the chassis of the car, which has two active wheels and one passive wheel. The rotation control of the car is achieved through the differential speed of the two active wheels. The MCU module is mainly used for the motor control of the car and communicates with the main control board Horizon RDK through serial communication. OriginBot website: [www.originbot.org](https://www.originbot.org/)
 
 ![](./image/line_follower/car.png)
 
@@ -66,7 +68,7 @@ The entire software engineering process includes 5 main steps:
 - Model conversion: Use the algorithm toolchain to convert the trained floating-point model into a fixed-point model that can run on the Horizon RDK.
 - On-device deployment: Run the converted model on the Horizon RDK to obtain perception results and control the robot's motion.
 
-**Ubuntu**
+**X86**
 
 #### Data Acquisition and Annotation
 
@@ -139,19 +141,21 @@ ros2 run line_follower_model training
 
 ![](./image/line_follower/model_convert.png)
 
-A floating-point model trained using PyTorch would run inefficiently on the Horizon RDK. To improve efficiency and leverage the 5TOPs computing power of BPU, a conversion from a floating-point model to a fixed-point model is necessary.
+If the floating-point model obtained by training with PyTorch is run directly on the Horizon RDK, the efficiency will be low. In order to improve the running efficiency and use the 5T computing power of BPU, it is necessary to convert the floating-point model to a fixed-point model.
 
-1. **Converting PyTorch Model to ONNX**
-   Run the following command on your PC:
-     ```shell
-     ros2 run line_follower_model generate_onnx
-     ```
-   After execution, this generates the `best_line_follower_model_xy.onnx` model in the current directory.
+1. Generate ONNX model from the PyTorch model
 
-2. **Conversion from Floating-Point Model to Fixed-Point Model**
-   This functionality is implemented in the `line_follower/10_model_convert` directory.
-   
-   The OE package directory structure is as follows:
+   Run on the PC:
+   ```shell
+   ros2 run line_follower_model generate_onnx
+   ```
+
+   After running, generate the best_line_follower_model_xy.onnx model in the current directory.
+
+2. Generating fixed-point models from floating-point models
+    
+    The completion code for this function is located in line_follower/10_model_convert.
+    The directory structure of OE packages is as follows:
 
    ```shell
    .
@@ -160,13 +164,11 @@ A floating-point model trained using PyTorch would run inefficiently on the Hori
    ├── ddk
    │   ├── package
    │   ├── samples
-   │   │   └── ai_toolchain
-   │   │       └── horizon_model_convert_sample
-   │   │           └── 03_classification
-   │   │               └── 10_model_convert (to be copied here)
-   │   ├── tools
-   │   ...
+   │   └── tools
    ├── doc
+   │   ├── cn
+   │   ├── ddk_doc
+   │   └── en
    ├── release_note-CN.txt
    ├── release_note-EN.txt
    ├── run_docker.sh
@@ -180,38 +182,38 @@ A floating-point model trained using PyTorch would run inefficiently on the Hori
        ├── 0B_hbupdate_mac_v1.0.5.app.tar.gz
        └── 0B_hbupdate_win64_v1.1.zip
    ```
+   Copy 10_model-convert from the project to the algorithm toolchain OE package ddk/samples/ai_toolchain/horizon_model-convert_sample/03_classification/directory.
 
-   Copy the `10_model_convert` project to the `/ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/` directory within the Algorithm Toolchain OE package.
+   Load the algorithm toolchain docker and run it in the root directory of the OE package.
 
-   Load the algorithm toolchain Docker by running the following command at the root directory of the OE package:
-     ```shell
-     sh run_docker.sh /data/
-     ```
+   ```shell
+   sh run_docker.sh /data/
+   ```
 
-   Generate calibration data. This step produces calibration data primarily for use in the next step of model compilation. It can be created using a portion of the training dataset; there are no specific requirements, as long as the standards are correct. A quantity of around 100 images is suitable.
+   Generate calibration data. The calibration data generated in this step is mainly used for calibration in the next step of model compilation. Part of the training model data can be used without special requirements, as long as the standards are correct, and the quantity should be around 100 sheets.
 
-     ```shell
-     # Run inside the Docker container
-     cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
-     sh 02_preprocess.sh
-     ```
+```shell
+cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
+sh 02_preprocess.sh
+```
 
-   The result of preprocessing looks like this:
-     ![](./image/line_follower/02.gif)
+   Results are as follows:
 
-   **Model Compilation**
-     This step generates the fixed-point model file.
-     
-     ```shell
-     # Run inside the Docker container
-     cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
-     sh 03_build.sh
-     ```
+   ![](./image/line_follower/02.gif)
 
-   The outcome of model compilation appears as follows:
-     [./image/line_follower/03.gif](./image/line_follower/03.gif)
+   Model compilation, this step will generate fixed-point model files.
 
-#### Edge-side Deployment
+   ```shell
+   # Execute in the docker
+   cd ddk/samples/ai_toolchain/horizon_model_convert_sample/03_classification/10_model_convert/mapper
+   sh 03_build.sh
+   ```
+
+   Results are as follows:
+
+   ![](./image/line_follower/03.gif)
+
+#### Deployment
 
 Through the previous model conversion, we have obtained a fixed-point model that can run on the Horizon RDKBPU. How can we deploy it on the Horizon RDK to achieve the complete functionality of image acquisition, model inference, and motion control? Here, we rely on the hobot_dnn implementation in the tros.b. Hobot_dnn is a board-end algorithm inference framework in the tros.b software stack, which uses the BPU processor on the Horizon RDK to implement algorithm inference functions. It provides a simpler and easier-to-use model integration and development interface for robot application development, including model management, input processing and output parsing based on model descriptions, and model output memory allocation and management.
 
@@ -239,7 +241,6 @@ ros2 run line_follower_perception line_follower_perception --ros-args -p model_p
 ```
 
 Run mipi_cam.
-
 
 ```shell
 source /opt/tros/setup.bash

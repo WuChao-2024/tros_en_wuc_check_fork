@@ -1,10 +1,6 @@
----
-sidebar_position: 7
----
+# Visual SLAM
 
-# Visual SLAM Algorithm
-
-## Function Introduction
+## Introduction
 
 SLAM stands for Simultaneous Localization and Mapping. ORB-SLAM3 is one of the most researched algorithms in this field. TogetheROS.Bot integrates, improves, and optimizes ORB-SLAM3 to facilitate the development of visual SLAM-based applications.
 
@@ -26,7 +22,7 @@ SLAM Mapping Example: [4.1 SLAM Mapping](../../apps/slam)
 
 ## Supported Platforms
 
-| Platform                      | Running Method |
+| Platform                      | System |
 | ----------------------------- | -------------- |
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04  |
 
@@ -46,11 +42,11 @@ SLAM Mapping Example: [4.1 SLAM Mapping](../../apps/slam)
 
 6. A PC on the same network segment as Horizon RDK, with Ubuntu 20.04, ROS2 Foxy Desktop edition, and data visualization tool Rviz2 installed.
 
-## User Guide
+## Usage
 
 ORB-SLAM3 project itself integrates various types of test programs, such as mono/stereo and mono/stereo+IMU, and also classifies them according to different benchmark datasets and sensors.
 
-### Using EuRoC Dataset
+### Use EuRoC Dataset
 
 Dataset URL: <http://robotics.ethz.ch/~asl-datasets/ijrr_euroc_mav_dataset/vicon_room2/V2_01_easy/V2_01_easy.zip>. After downloading the dataset, go to the ORB-SLAM3 project directory. Extract the dataset and the bag-of-words library to your local machine, and run the test program. If you want to achieve a higher frame rate, you can overclock the X3 CPU, but this will also increase power consumption.
 
@@ -78,9 +74,9 @@ sudo chmod +x ./Examples/Monocular/mono_euroc
 The program will take some time to load the bag-of-words library. After a while, the program will print the current frame rate.
 ![](./image/box_adv/euroc_result.png)
 
-### Using RealSense D435i Camera
+### Use RealSense D435i Camera
 
-tros.b has developed a set of sample programs based on ORB-SLAM3 and ROS2, which integrate image and IMU data subscriptions and publish map point clouds, poses, and travel trajectories as topics. It is convenient to observe the running result of the program through the visualization software Rviz2, which helps developers in ROS2 development and debugging of ORB-SLAM3.
+The tros.b has developed a set of sample programs based on ORB-SLAM3 and ROS2, which integrate image and IMU data subscriptions and publish map point clouds, poses, and travel trajectories as topics. It is convenient to observe the running result of the program through the visualization software Rviz2, which helps developers in ROS2 development and debugging of ORB-SLAM3.
 
 The latest version of the image has applied UVC and HID driver patches for the RealSense series camera to the kernel. After installing the RealSense SDK and ROS2 package using the apt command, you can directly use the test program. The installation method for ROS2 package coexisting with tros.b can be found in [1.5 Using ROS2 package](../../quick_start/ros_pkg.md).
 
@@ -125,9 +121,9 @@ tar -xvf ./Vocabulary/ORBvoc.txt.tar.gz
 ros2 run orb_slam3_example_ros2 mono ./ORBvoc.txt ./Examples/Monocular/RealSense_D435i.yaml 
 ```
 
-The visual SLAM node on the X3 side starts and receives camera image data, and then starts printing the current frame rate "fps".
+The visual SLAM node on the X3 starts and receives camera image data, and then starts printing the current frame rate "fps".
 
-At the same time, open the Rviz2 visualization software on the PC side (in the same network segment as the TROS.b platform), add relevant visualization information, and subscribe to the following topics:
+At the same time, open the Rviz2 visualization software on the PC (in the same network segment as the tros.b), add relevant visualization information, and subscribe to the following topics:
 
 ![](./image/box_adv/rviz2_1.png)
 

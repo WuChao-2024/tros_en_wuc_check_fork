@@ -4,34 +4,35 @@ sidebar_position: 8
 
 # 2.8 Text to Speech
 
-## Function Introduction
+## Introduction
 
-This section describes how to convert a text into a speech signal and play it through an audio output interface.
+This section describes how to convert a text into a speech and play it through an audio output interface.
 
 Code repository: <https://github.com/HorizonRDK/hobot_tts.git>
 
 ## Supported Platforms
 
-| Platform | Operation System | Example Function               |
+| Platform | System | Function               |
 | -------- | ---------------- | ------------------------------ |
-| RDK X3   | Ubuntu 20.04    | Subscribe to text messages, convert them into speech data, and play them out |
+| RDK X3   | Ubuntu 20.04    | Subscribe to text messages, convert them into speech, and play them out |
 
 **Note: Only supports RDK X3, RDK X3 Module is not supported yet.**
 
 ## Preparation
 
-### Horizon RDK platform
+### Horizon RDK
 
 1. Horizon RDK has been flashed with Ubuntu 20.04 system image provided by Horizon.
 2. TogetheROS.Bot has been successfully installed on Horizon RDK.
-3. An audio driver board compatible with Horizon has been obtained, and the environment has been set up according to [Smart Voice section](../boxs/box_adv#Smart Voice).
+3. An audio driver board compatible with Horizon has been obtained, and the environment has been set up according to [Smart Voice section](../boxs/function#Intelligent Voice).
+
 4. Connect the audio board's headphone interface with headphones or speakers.
 
 ## Usage
 
-### Horizon RDK platform
+### Horizon RDK
 
-1. For the first run, you need to download the models file and extract it. The detailed commands are as follows:
+1. For the first run, you need to download the models file and extract it. The commands are as follows:
 
     ```bash
     wget http://sunrise.horizon.cc/tts-model/tts_model.tar.gz
@@ -52,7 +53,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_tts.git>
 ```bash
 source /opt/tros/setup.bash
 
-# Disable debug print information
+# Disable debug information
 export GLOG_minloglevel=1
 
 ros2 run hobot_tts hobot_tts

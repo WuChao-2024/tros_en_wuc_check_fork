@@ -4,23 +4,23 @@ sidebar_position: 9
 
 # 2.9 Large Language Model
 
-## Function Introduction
+## Introduction
 
-This section introduces how to experience edge-side Large Language Model (LLM) on the Horizon RDK platform.
+This section introduces how to experience Large Language Model (LLM) on Horizon RDK.
 
 Code repository: <https://github.com/HorizonRDK/hobot_llm.git>
 
 ## Supported Platforms
 
-| Platform                       | Running Method | Example Function |
+| Platform                       | System | Function |
 | ------------------------------ | -------------- | ---------------- |
 | RDK X3, RDK X3 Module (4GB RAM) | Ubuntu 20.04   | Edge-side LLM Experience |
 
-**Note: Only supports RDK X3, RDK X3 Module with 4GB RAM version.**
+**Note: Only supports RDK X3 and RDK X3 Module with 4GB RAM version.**
 
 ## Preparation
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK with 4GB RAM version.
 2. Horizon RDK has been flashed with the provided Ubuntu 20.04 system image.
@@ -30,7 +30,7 @@ Code repository: <https://github.com/HorizonRDK/hobot_llm.git>
 
 ## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
 Before running the program, you need to download the model file and extract it, the commands are as follows:
 
@@ -51,10 +51,9 @@ sudo bash -c 'echo 1 > /sys/devices/system/cpu/cpufreq/boost'
 sudo bash -c 'echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor'
 ```
 
-
 Currently, there are two ways to experience it. One is to directly input text in the terminal for chat interaction, and the other is to subscribe to text messages and then publish the results in text format.
 
-#### Terminal Interaction Experience
+#### Terminal Interaction
 
 ```bash
 source /opt/tros/setup.bash
@@ -64,7 +63,7 @@ ros2 run hobot_llm hobot_llm_chat
 
 After the program starts, you can chat directly with the robot in the current terminal.
 
-#### Subscribe and Publish Experience
+#### Subscribe and Publish Messages
 
 1. Start hobot_llm
 
@@ -74,7 +73,7 @@ After the program starts, you can chat directly with the robot in the current te
     ros2 run hobot_llm hobot_llm
     ```
 
-2. Open a new terminal to subscribe to the output result topic
+2. Open a new terminal to subscribe
 
     ```bash
     source /opt/tros/setup.bash
@@ -82,7 +81,7 @@ After the program starts, you can chat directly with the robot in the current te
     ros2 topic echo /text_result
     ```
 
-3. Open a new terminal to publish a message
+3. Open a new terminal to publish
 
     ```bash
     source /opt/tros/setup.bash

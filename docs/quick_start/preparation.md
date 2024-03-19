@@ -7,7 +7,7 @@ TogetheROS.Bot supports installation on the Horizon RDK and X86 platforms with U
 
 Next, we will introduce the environment setup details for Horizon RDK and X86 platforms respectively.
 
-## Horizon RDK Platform
+## Horizon RDK
 
 ### System Installation
 
@@ -19,11 +19,11 @@ If the image has already been installed, you can upgrade it by running the comma
 
 - **If you have installed the 1.x version of the system, you need to upgrade it to the 2.x version.**
 
-- **For the method of checking the system version number and detailed instructions, please refer to the [FAQs](../FAQs/hardware_and_system.md).**
+- **For the method of checking the system version , please refer to the [FAQs](../FAQs/hardware_and_system.md).**
 
-### System Configuration
+### Configuration
 
-After successfully burning the image, you need to configure the IP address of the Horizon RDK for daily use. The login username is "root" and the password is "root".
+After successfully burning the image, you need to configure the IP address of the Horizon RDK. The login username is "root" and the password is "root".
 
 :::caution **Note**
 To facilitate the smooth installation and use of tros.b later, please log in with the **root** account.
@@ -42,11 +42,10 @@ PING www.a.shifen.com (180.101.49.11) 56(84) bytes of data.
 64 bytes from 180.101.49.11 (180.101.49.11): icmp_seq=4 ttl=52 time=4.21 ms
 64 bytes from 180.101.49.11 (180.101.49.11): icmp_seq=5 ttl=52 time=4.19 ms
 64 bytes from 180.101.49.11 (180.101.49.11): icmp_seq=6 ttl=52 time=4.98 ms
-^C
+
 --- www.a.shifen.com ping statistics ---
 6 packets transmitted, 6 received, 0% packet loss, time 5008ms
 rtt min/avg/max/mdev = 4.100/4.348/4.978/0.291 ms
-
 ```
 The normal return of the "ping" command indicates that both internet access and DNS configuration are correct.
 
@@ -81,6 +80,6 @@ Last login: Sat Apr  2 05:57:05 2022 from 10.64.37.219
 root@ubuntu:~#
 ```
 
-## X86 Platform
+## X86
 
 Install Ubuntu 20.04 64-bit system on a physical machine using X86 platform and configure the network environment. You can also use virtual machine or Docker, but the running efficiency may be lower.

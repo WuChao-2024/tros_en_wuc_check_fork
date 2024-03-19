@@ -4,9 +4,9 @@ sidebar_position: 3
 
 # 4.3 Pose Detection
 
-## Function Introduction
+## Introduction
 
-The Pose Detection App subscribes to the image messages published by the camera, detects key points of the human body, analyzes the body posture, and publishes pose events.
+The Pose Detection subscribes to the image messages published by the camera, detects key points of the human body, analyzes the body posture, and publishes pose events.
 
 Pose events are published using a custom algorithm message. Users can subscribe to the msg of this topic for application development.
 
@@ -16,15 +16,15 @@ Code Repository: <https://github.com/HorizonRDK/hobot_falldown_detection>
 
 ## Supported Platforms
 
-| Platform     | Operation     | Example Function                       |
+| Platform     | System     | Function                       |
 | -------- | ------------ | ------------------------------ |
-| RDK X3, RDK X3 Module, RDK UltraUbuntu 20.04 | Start MIPI/USB camera to capture images, perform human body key point detection and pose detection, and finally display images and algorithm effects through web, and publish pose events |
+| RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 | Start MIPI/USB camera to capture images, perform human body key point detection and pose detection, and finally display images and algorithm effects through web, and publish pose events |
 
 ## Preparation
 
 ### Horizon RDK Platform
 
-1. Horizon RDK has burned the Ubuntu 20.04 image provided by Horizon.
+1. Horizon RDK has flashed the Ubuntu 20.04 image provided by Horizon.
 
 2. The TogetheROS.Bot has been successfully installed on the Horizon RDK.
 
@@ -32,13 +32,13 @@ Code Repository: <https://github.com/HorizonRDK/hobot_falldown_detection>
 
 4. The Horizon RDK has installed MIPI or USB cameras.
 
-## Usage Introduction
+## Usage
 
-### Horizon RDK Platform
+### Horizon RDK
 
 The pose detection package subscribes to the data published by the human body key point detection package, publishes algorithm messages after algorithm inference, and uses the websocket package to render and display the published images and corresponding algorithm results on the PC browser.
 
-Friendly reminder: When experiencing the App, rotate the camera by 90 degrees to simulate the effect of a person falling.
+Friendly reminder: When experiencing the app, rotate the camera by 90 degrees to simulate the effect of a person falling.
 
 **Publish images using MIPI camera**
 

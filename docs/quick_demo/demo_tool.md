@@ -1,13 +1,13 @@
 ---
-sidebar_position: 7
+sidebar_position: 5
 ---
 # 2.7 Tools
 
 ## Image Publishing Tool
 
-### Function Introduction
+### Introduction
 
-The Image Publishing Tool supports reading local image or video files in batches and publishing them in ROS message format, thereby improving algorithm debugging and deployment efficiency.
+The Image Publishing Tool supports reading local image or video files in batches and publishing them in ROS message, thereby improving algorithm debugging and deployment efficiency.
 
 For image publishing, it supports reading JPEG/JPG/PNG/NV12 format images and publishing compressed images or converting compressed images to NV12 format for publishing.
 
@@ -17,18 +17,18 @@ Code repository: <https://github.com/HorizonRDK/hobot_image_publisher.git>
 
 ### Supported Platforms
 
-| Platform | Operating System |
+| Platform | System |
 | ---------| ----------------|
 | RDK X3, RDK X3 Module, RDK Ultra | Ubuntu 20.04 |
 | X86      | Ubuntu 20.04 |
 
-***The X86 platform does not support decoding H.264 and H.265 videos into NV12 format, so the H.264 and H.265 video publishing functionality cannot be displayed on the X86 platform.***
+***The X86 does not support decoding H.264 and H.265 videos into NV12, so the H.264 and H.265 video publishing cannot be displayed on the X86.***
 
-***RDK Ultra does not support decoding H.264 videos into NV12 format, so the H.264 video publishing functionality cannot be displayed on the RDK Ultra platform.***
+***RDK Ultra does not support decoding H.264 videos into NV12, so the H.264 video publishing cannot be displayed on the RDK Ultra.***
 
 ### Preparations
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. The Horizon RDK has been burned with the Ubuntu 20.04 system image provided by Horizon.
 
@@ -36,15 +36,15 @@ Code repository: <https://github.com/HorizonRDK/hobot_image_publisher.git>
 
 3. The Horizon RDK can be accessed via network from a PC.
 
-#### X86 Platform
+#### X86
 
 1. The X86 environment has been configured with the Ubuntu 20.04 system image.
 
 2. The X86 environment has installed the X86 version of tros.b.
 
-### Instructions for Image Publishing
+### Usage of a image
 
-Read a local NV12 format image in a loop and publish it. Use the image codec module to compress the image and encode it into JPEG format, and display the image on the PC's web interface.
+Read a local NV12 image in a loop and publish it. Use the image codec module to compress the image and encode it into JPEG format, and display the image on the PC's web interface.
 
 #### Horizon RDK/X86 Platform
 
@@ -59,7 +59,7 @@ cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 ros2 launch hobot_image_publisher hobot_image_publisher_demo.launch.py
 ```
 
-### Analysis of Image Publishing Results
+### Result Analysis
 
 The terminal output during runtime is as follows:
 
@@ -78,11 +78,11 @@ To view the image display effect, open a web browser on the PC and enter <http:/
 
 ![hobot_img_pub](./image/demo_tool/show.png )
 
-### Introduction to Video Publishing
+### Usage of a video
 
-Read the video.list file locally, obtain the paths of the video files in the list file, and publish them in a loop. First, use the image codec module to decode the video stream into NV12 format images, and then use the image codec module to compress and encode the images into JPEG format for display on the web end of the PC.
+Read the video.list file locally, obtain the paths of the video files in the list file, and publish them in a loop. First, use the image codec module to decode the video stream into NV12 format images, and then use the image codec module to compress and encode the images into JPEG format for display on the web of the PC.
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 ```shell
 # Configure tros.b environment
@@ -95,7 +95,7 @@ cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 ros2 launch hobot_image_publisher hobot_image_publisher_videolist_demo.launch.py
 ```
 
-#### X86 Platform
+#### X86
 
 ```shell
 # Configure the tros.b environment
@@ -108,7 +108,7 @@ cp -r /opt/tros/lib/hobot_image_publisher/config/ .
 /opt/tros/lib/hobot_image_publisher/hobot_image_pub --ros-args -p image_source:=./config/video.list -p fps:=30 -p image_format:=mp4
 ```
 
-### Video Publishing Result Analysis
+### Result Analysis
 
 The following information is displayed in the terminal output during execution:
 
@@ -131,35 +131,35 @@ To view the image display effect, enter `<http://IP:8000>` in the browser on the
 
 ## Trigger Recording Tool
 
-### Function Introduction
+### Introduction
 
-Trigger, in the context of this tool, is a mechanism that detects changes in the subscribed messages of the Trigger module, such as changes in the number of detection boxes or changes in car control information. It triggers corresponding Trigger events to record the specified time interval of ROS2 messages, helping developers locate and reproduce perception, control, and other issues in robot scenes.
+Trigger is a mechanism that detects changes in the subscribed messages of the Trigger module, such as changes in the number of detection boxes or changes in car control information. It triggers corresponding events to record the specified time interval of ROS2 messages, helping developers locate and reproduce perception, control, and other issues in robot scenes.
 
-The trigger_node package is a Trigger basic module developed by Horizon based on ROS2, which is used to obtain specified rosbag data after triggering Trigger events. The package supports direct subscription to ai_msg/msg/PerceptionTargets topics. In the topic callback function, Trigger events are triggered and rosbag packages related to the Trigger events are recorded. Finally, the Trigger event information is saved and published in std_msg/msg/String type Trigger event topics.
+The trigger_node package is a Trigger module developed by Horizon based on ROS2, which is used to obtain specified rosbag data after triggering events. The package supports direct subscription to ai_msg/msg/PerceptionTargets topics. In the topic callback function, Trigger events are triggered and rosbag packages related to the Trigger events are recorded. Finally, the Trigger event information is saved and published in std_msg/msg/String type Trigger event topics.
 
-This chapter provides an example of using the Trigger module developed by Horizon based on a custom Trigger basic module. The example demonstrates the functionality of subscribing to garbage detection box information and triggering a Trigger event based on whether the number of garbage detection boxes is greater than or equal to 3.
+This chapter provides an example of using the Trigger module. The example demonstrates the functionality of subscribing to garbage detection box information and triggering a Trigger event based on whether the number of garbage detection boxes is greater than or equal to 3.
 
 Code Repository: <https://github.com/HorizonRDK/hobot_trigger.git>
 
-Application Scenarios: Robot data closed-loop link, robot Trigger event reporting scenario, can be combined with perception, control, and other tasks to record rosbag data when Trigger events occur.
+Application Scenarios: data closed-loop link, robot Trigger event reporting scenario, can be combined with perception, control, and other tasks to record rosbag data when Trigger events occur.
 
 ### Supported Platforms
 
-| Platform | Execution Method | Example Functionality |
+| Platform | System | Function |
 | --- | --- | --- |
-| RDK X3, RDK X3 Module| Ubuntu 20.04 | · Start MIPI/USB camera, trigger recording, and record rosbag data locally |
+| RDK X3, RDK X3 Module| Ubuntu 20.04 | Start MIPI/USB camera, trigger recording, and record rosbag data |
 
-### Usage Instructions
+### Usage
 
-#### Trigger Initialization Configuration Description  
+#### Initialization
 
-The Trigger basic module defines the parameters required for initialization configuration.
+The Trigger module defines the parameters required for initialization configuration.
 
-The `config_file` is in json format, and the specific configuration is as follows:
+The `config_file` is json, and the configuration is as follows:
 
 ```bash
 { 
-  "domain": Trigger event domain. For example, sweeping robot, humanoid robot, etc. Different Trigger types are differentiated by domain for different types of robots.
+  "domain": Trigger event domain. For example, cleaning robot, humanoid robot, etc. Different Trigger types are differentiated by domain for different types of robots.
 
   "desc": Trigger module description.
 
@@ -185,9 +185,9 @@ The `config_file` is in json format, and the specific configuration is as follow
   
   "extra_kv": Other redundant extension information can be recorded here.
 }
-```
+  ```
 
-#### Trigger Event Triggering Configuration Description
+#### Configuration Description
 
 In the `trigger_node` base class, the `Config` structure is defined, in which some configurations are consistent with the Trigger configuration during initialization, while the remaining content needs to be filled according to the actual situation when the Trigger is triggered.
 
@@ -220,15 +220,15 @@ struct Config {
 
 ### Preparation
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 1. Horizon RDK has burned the Ubuntu 20.04 system image provided by Horizon.
 
 2. Horizon RDK has successfully installed TogetheROS.Bot.
 
-### User Guide
+### Usage
 
-#### Horizon RDK Platform
+#### Horizon RDK
 
 **Publish Images with MIPI Camera**
 
@@ -293,11 +293,11 @@ After package initialization, the following information will be displayed in the
 
 ```
 
-The rosbag data generated by Trigger triggering will be recorded in the "trigger" directory of the current running directory. The recorded rosbag data can be played in foxglove. For instructions on how to play rosbag files in foxglove, refer to Section 2.2 Data Display - foxglove Display in the manual.Playing effect in foxglove:
+The rosbag generated by Trigger will be recorded in the "trigger" directory of the current running directory. The recorded rosbag data can be played in foxglove. For instructions on how to play rosbag files in foxglove, refer to Section 2.2 Display - foxglove in the manual.The effect is as follows:
 
 ![](./image/demo_tool/trigger_example_trash_det.gif)
 
-Explanation: This Trigger example records data 5 seconds before and after an event. At the same time, you can see that the Trigger event occurred in the middle of the event, and the reason for the Trigger event was recorded: a piece of trash was thrown into the scene, causing the number of trash in the scene to reach three, triggering the Trigger.
+This Trigger example records data 5 seconds before and after an event. At the same time, you can see that the Trigger event occurred in the middle of the event, and the reason for the Trigger event was recorded: a piece of trash was thrown into the scene, causing the number of trash in the scene to reach three, triggering the Trigger.
 
 
 ### Additional Functionality
@@ -306,7 +306,7 @@ Explanation: This Trigger example records data 5 seconds before and after an eve
 
 The Trigger module supports receiving Trigger tasks from other nodes to control Trigger configuration. The tasks can be sent through publishing std_msgs topic messages, where the message data is in json format as a string. Send the task protocol to the Trigger module.
 
-##### Trigger Task Protocol
+##### Trigger Protocol
 ```json
 {
    "version": "v0.0.1_20230421",       // Trigger module version information.
@@ -335,7 +335,7 @@ source /opt/tros/setup.bash
 ros2 topic pub /hobot_agent std_msgs/String "data: '{\"version\":\"v0.0.1_20230421\",\"trigger_status\":true,\"strategy\":[{\"src_module_id\":203,\"trigger_type\":1110,\"status\":true,\"level\":1,\"desc\":\"test\",\"duration_ts_back\":5000,\"duration_ts_front\":3000}]}'"
 ```
 
-##### Log Information
+##### Log
 ```shell
    [WARN] [1691670626.026737642] [hobot_trigger]: TriggerNode Init Succeed!
    [WARN] [1691670626.026859316] [example]: TriggerExampleNode Init.

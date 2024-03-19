@@ -1,12 +1,8 @@
----
-sidebar_position: 3
----
-
 # Gesture Recognition
 
 ## Introduction
 
-The gesture recognition algorithm example subscription package includes algorithm messages containing hand bounding boxes and hand keypoint information. It uses BPU for inference and publishes intelligent result messages containing gesture information.
+The gesture recognition example subscription package includes algorithm messages containing hand bounding boxes and hand keypoint information. It uses BPU for inference and publishes algorithm result messages containing gesture information.
 
 The supported gesture recognition categories and their corresponding values in the algorithm message (Attribute member, with type "gesture") are as follows:
 
@@ -14,7 +10,7 @@ The supported gesture recognition categories and their corresponding values in t
 | ---------- | ------------- | ----- |
 | ThumbUp    | Thumbs up     | 2     |
 | Victory    | "V" gesture   | 3     |
-| Mute       | "Shh" gesture | 4     |
+| Mute       | mute gesture | 4     |
 | Palm       | Palm          | 5     |
 | Okay       | OK gesture    | 11    |
 | ThumbLeft  | Thumb left    | 12    |
@@ -37,25 +33,25 @@ Example of game character control based on gesture recognition and human pose an
 
 ## Supported Platforms
 
-| Platform                             | Operating System | Example Function                                 |
+| Platform                             | System | Function                                 |
 | ------------------------------------ | ---------------- | ------------------------------------------------ |
 | RDK X3, RDK X3 Module, RDK Ultra     | Ubuntu 20.04     | · Start MIPI/USB camera and display inference results via web |
 
 ## Preparations
 
-### Horizon RDK Platform
+### Horizon RDK
 
-1. Horizon RDK is preloaded with Ubuntu 20.04 system image provided by Horizon.
+1. Horizon RDK is flashed with Ubuntu 20.04 system image provided by Horizon.
 
 2. TogetheROS.Bot has been successfully installed on Horizon RDK.3. The Horizon RDK is installed with a MIPI or USB camera.
 
 4. Confirm that the PC can access the Horizon RDK through the network.
 
-## User Guide
+## Usage
 
-The gesture recognition package (hand_gesture_detection) subscribes to the hand key point detection package and publishes the hand key point detection results. After inference, it publishes the algorithm message. The WebSocket package is used to render and display the published images and corresponding algorithm results on the PC browser.
+The gesture recognition package (hand_gesture_detection) subscribes to the hand key point detection package and publishes the hand key point detection results. After inference, it publishes the algorithm message. The WebSocket package is used to display the images and corresponding algorithm results on the PC browser.
 
-**Publishing Images Using MIPI Camera**
+**Use MIPI Camera to Publish Images**
 
 ```shell
 # Configure the tros.b environment
@@ -73,7 +69,7 @@ export CAM_TYPE=mipi
 ros2 launch hand_gesture_detection hand_gesture_detection.launch.py
 ```
 
-**Publishing Images Using USB Camera**
+**Use USB Camera to Publish Images**
 
 ```shell
 # Configure the tros.b environment
@@ -126,7 +122,7 @@ The following information will be displayed in the terminal output:
 [hand_gesture_detection-5] [WARN] [1660268384.256141566] [hand_gesture_det]: Pub smart fps 30.39
 ```
 
-The output log shows that the program runs successfully, with an input and output frame rate of 30fps during inference, and the statistics of frame rate are refreshed once per second.
+The log shows that the program runs successfully, with an input and output frame rate of 30fps during inference, and the statistics of frame rate are refreshed once per second.
 
 The output log shows that the subscribed algorithm message includes hand information (including the bounding box and key points detection results of the hand), and the gesture recognition algorithm outputs a gesture classification result of "Palm" (the classification result is 5).
 

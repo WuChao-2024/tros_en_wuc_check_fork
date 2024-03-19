@@ -5,7 +5,7 @@ sidebar_position: 2
 
 ## Introduction
 
-YOLO object detection algorithm example uses images as input, performs algorithm inference using BPU, and publishes algorithm messages containing object categories and detection boxes. Currently, it supports four versions: yolov2, yolov3, yolov5, and yolov5x.
+YOLO detection algorithm example uses images as input, performs algorithm inference using BPU, and publishes algorithm messages containing object categories and detection boxes. Currently, it supports four versions: yolov2, yolov3, yolov5, and yolov5x.
 
 The model is trained using the [COCO dataset](http://cocodataset.org/), and the supported object detection types include humans, animals, fruits, and vehicles, totaling 80 types.
 
@@ -13,40 +13,39 @@ Code repository: <https://github.com/HorizonRDK/hobot_dnn>
 
 Use cases: As a representative algorithm in single-stage object detection, the YOLO series has the advantages of fast speed and good generalization, and can be used for garbage recognition, vehicle detection, and other functions, mainly applied in autonomous driving, smart home, and other fields.
 
-Vehicle detection example: <https://github.com/JunshengFu/vehicle-detection>  
-Fall detection example: <https://github.com/xiaobin1231/Fall-Detection-By-YOLOV3-and-LiteFlowNet>
-
 ## Supported Platforms
 
-| Platform              | Operating System | Supported Algorithms | Example Functions                                            |
+| Platform              | System | Supported Algorithms | Function                                            |
 | --------------------- | ---------------- | -------------------- | ------------------------------------------------------------ |
-| RDK X3, RDK X3 Module | Ubuntu 20.04     | yolov2/yolov3/yolov5 | · Start MIPI/USB cameras and display inference rendering results through web<br/>· Use local over-the-air return, and save rendering results locally |
-| RDK Ultra             | Ubuntu 20.04     | yolov5x              | · Start MIPI/USB cameras and display inference rendering results through web<br/>· Use local over-the-air return, and save rendering results locally |
-| X86                   | Ubuntu 20.04     | yolov2/yolov3        | · Use local over-the-air return, and save rendering results locally |
+| RDK X3, RDK X3 Module | Ubuntu 20.04     | yolov2/yolov3/yolov5 | · Start MIPI/USB cameras and display results through web<br/>· Use local data offline, and save results |
+| RDK Ultra             | Ubuntu 20.04     | yolov5x              | · Start MIPI/USB cameras and display inference rendering results through web<br/>· Use local data offline, and save results |
+| X86                   | Ubuntu 20.04     | yolov2/yolov3        | · Use local data offline, and save results |
 
 ## Preparations
 
-### Horizon RDK Platform
+### Horizon RDK
 
 1. Horizon RDK has been burned with the Ubuntu 20.04 system image provided by Horizon.
 
 2. Horizon RDK has successfully installed TogetheROS.Bot.
 
-3. Horizon RDK has installed MIPI or USB cameras. In the absence of a camera, the algorithm effect can be experienced by over-the-air returning local JPEG/PNG format images or MP4, H.264, and H.265 videos.
+3. Horizon RDK has installed MIPI or USB cameras. If there is no camera available, the algorithm can be experienced offline by local JPEG/PNG images or MP4, H.264, and H.265 videos.
 
 4. Confirm that the PC can access the Horizon RDK through the network.
 
-### X86 Platform
+### X86
 
 1. X86 environment has been configured with the Ubuntu 20.04 system image.
 
 2. X86 environment has successfully installed tros.b.
 
-## Usage Instructions
+## Usage
 
-### Horizon RDK X3 and RDK X3 Module Platforms
+### Horizon RDK X3 and RDK X3 Module
 
-#### Publish Images Using MIPI Cameras# YOLOv2 Object Detection Algorithm Example Subscribes to Images Published by MIPI Camera and Publish Algorithm Msg After Algorithm Inference. It Renders and Displays Published Images and Corresponding Algorithm Results on PC-side Browsers through the Websocket Package.
+#### Use MIPI Cameras to Publish Images 
+
+YOLOv2 object detection algorithm example subscribes to images published by a MIPI camera and publish algorithm msg after inference. It displays published images and corresponding results on PC browsers through the websocket package.
 
 ```shell
 # Configure the tros.b environment
@@ -59,9 +58,9 @@ export CAM_TYPE=mipi
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/yolov2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Publish Images using USB Camera
+#### Use USB Camera to Publish Images
 
-YOLOv2 Object Detection Algorithm Example Subscribes to Images Published by USB Camera, Publishes Algorithm Msg After Algorithm Inference, and Renders and Displays Published Images and Corresponding Algorithm Results on PC-side Browsers through the Websocket Package.
+YOLOv2 object detection algorithm example subscribes to images published by a USB camera, publishes algorithm msg after inference, and displays published images and corresponding results on PC browsers through the websocket package.
 
 ```shell
 # Configure the tros.b environment
@@ -74,9 +73,9 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/yolov2workconfig.json dnn_example_image_width:=480 dnn_example_image_height:=272
 ```
 
-#### Using Local Images for Feedback
+#### Use Local Data Offline
 
-YOLOv2 Object Detection Algorithm Example Uses Local JPEG/PNG Format Images for Feedback. After Inference, the Rendered Images of the Algorithm Results are Stored in the Local Running Path.
+YOLOv2 object detection algorithm uses local JPEG/PNG images offline. After inference, the rendered images of the results are stored in the local path.
 
 ```shell
 # Configure the tros.b environment
@@ -86,13 +85,13 @@ source /opt/tros/setup.bash
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/yolov2workconfig.json dnn_example_image:=config/target.jpg
 ```
 
-In addition to the YOLOv2 algorithm, YOLOv3 and YOLOv5 algorithms are also supported. The algorithm can be switched using the config_file parameter in the startup command. For example, to use the YOLOv3 algorithm, the startup configuration should be `dnn_example_config_file:="config/yolov3workconfig.json"`, and for the YOLOv5 algorithm, the startup configuration should be `dnn_example_config_file:="config/yolov5workconfig.json"`.
+In addition to the YOLOv2, YOLOv3 and YOLOv5 are also supported. The algorithm can be switched using the config_file parameter in the startup command. For example, to use the YOLOv3, the startup configuration should be `dnn_example_config_file:="config/yolov3workconfig.json"`, and for the YOLOv5 algorithm, the startup configuration should be `dnn_example_config_file:="config/yolov5workconfig.json"`.
 
-### Horizon RDK Ultra Platform
+### Horizon RDK Ultra
 
-#### Publish Images using MIPI Camera
+#### Use MIPI Camera to Publish Images
 
-YOLOv5x Object Detection Algorithm Example Subscribes to Images Published by MIPI Camera, Publishes Algorithm Msg After Algorithm Inference, and Renders and Displays Published Images and Corresponding Algorithm Results on PC-side Browsers through the Websocket Package.
+YOLOv5x detection algorithm example subscribes to images published by MIPI camera, publishes msg after Inference, and displays images and corresponding results on PC browsers through the websocket package.
 
 ```shell
 # Configure the tros.b environmentsource /opt/tros/setup.bash
@@ -104,9 +103,9 @@ export CAM_TYPE=mipi
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/yolov5xworkconfig.json dnn_example_image_width:=672 dnn_example_image_height:=672
 ```
 
-#### Publishing images from USB camera
+#### Use USB Camera to Publish Images
 
-The YOLOv5x object detection algorithm example subscribes to images published by a USB camera, performs algorithm inference, and publishes algorithm messages. The websocket package is used to render and display the published images and corresponding algorithm results on a PC browser.
+The YOLOv5x detection algorithm example subscribes to images published by a USB camera, performs inference, and publishes algorithm messages. The websocket package is used to display the images and corresponding results on a PC browser.
 
 ```shell
 # Configuring the tros.b environment
@@ -119,9 +118,9 @@ export CAM_TYPE=usb
 ros2 launch dnn_node_example dnn_node_example.launch.py dnn_example_config_file:=config/yolov5xworkconfig.json dnn_example_image_width:=672 dnn_example_image_height:=672
 ```
 
-#### Injecting local images
+#### Use Local Data Offline
 
-The YOLOv5x object detection algorithm example uses local JPEG/PNG format images for injection. After inference, the algorithm results are rendered and stored in the local runtime path.
+The YOLOv5x object detection algorithm example uses local JPEG/PNG images for inference. After inference, the algorithm are rendered and stored in the local runtime path.
 
 ```shell
 # Configuring the tros.b environment
@@ -131,11 +130,11 @@ source /opt/tros/setup.bash
 ros2 launch dnn_node_example dnn_node_example_feedback.launch.py dnn_example_config_file:=config/yolov5xworkconfig.json dnn_example_image:=config/target.jpg
 ```
 
-### X86 Platform
+### X86
 
-#### Injecting local images
+#### Use Local Data Offline
 
-The YOLOv2 object detection algorithm example uses local JPEG/PNG format images for injection. After inference, the algorithm results are rendered and stored in the local runtime path.
+The YOLOv2 detection algorithm example uses local JPEG/PNG images for inference. After inference, the algorithm results are rendered and stored in the local runtime path.
 
 ```shell
 # Configuring the tros.b environment
@@ -149,7 +148,7 @@ In addition to the YOLOv2 algorithm, the YOLOv3 algorithm is also supported, but
 
 ## Result Analysis
 
-### Publish Images Using a Camera
+###  Use a Camera to Publish Images
 
 The terminal output during execution shows the following information:
 
@@ -164,13 +163,13 @@ The terminal output during execution shows the following information:
 [example-3] [WARN] [1655095351.011915729] [example]: Smart fps 11.30
 ```
 
-The log output shows that the topic for publishing the algorithm's inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`.
+The log shows that the topic for publishing the inference results is `hobot_dnn_detection`, and the topic for subscribing to images is `/hbmem_img`.
 
 You can view the image and algorithm rendering effects by entering http://IP:8000 in the browser on the PC (where IP is the IP address of the Horizon RDK):
 
 ![render_web](./image/box_basic/yolov2_render_web.jpeg)
 
-### Feedback with Local Images
+### Use Local Data Offline
 
 The terminal output during execution shows the following information:
 
@@ -186,6 +185,6 @@ The terminal output during execution shows the following information:
 [example-1] [INFO] [1654925067.952743463] [PostProcessBase]: det rect: 54.0955 256.68 88.6269 266.159, det type: book, score:0.307426
 ```
 
-The log output shows that the algorithm infers 8 targets from the input image and outputs the coordinates of the object detection boxes (the order of the coordinates is the top-left x and y coordinates and the bottom-right x and y coordinates of the bounding box) and the object categories. The rendered image file is saved as render_feedback_0_0.jpeg, and the rendering effect is shown below:
+The log shows that the algorithm infers 8 targets from the input image and outputs the coordinates of the object detection boxes (the order of the coordinates is the top-left x and y coordinates and the bottom-right x and y coordinates of the bounding box) and the object categories. The rendered image file is saved as render_feedback_0_0.jpeg, and the rendering effect is shown below:
 
 ![render_feedback](./image/box_basic/yolov2_render_feedback.jpeg)

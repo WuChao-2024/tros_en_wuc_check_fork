@@ -3,9 +3,9 @@ sidebar_position: 10
 ---
 # BEV Perception Algorithm
 
-## Function Introduction
+## Introduction
 
-The BEV Perception Algorithm is a multi-task model trained on the [nuscenes](https://www.nuscenes.org/nuscenes) dataset using the Horizon [OpenExplorer](https://developer.horizon.cc/api/v1/fileData/horizon_j5_open_explorer_cn_doc/hat/source/examples/bev.html) algorithm.
+The BEV(Birds Eye View) Perception Algorithm is a multi-task model trained on the [nuscenes](https://www.nuscenes.org/nuscenes) dataset.
 
 The algorithm takes 6 sets of image data as input, which are: frontal view, left front, right front, rear view, left rear, and right rear images. The model outputs 10 categories of objects and their corresponding 3D detection boxes, including obstacles, various types of vehicles, traffic signs, etc., as well as semantic segmentation of lane lines, sidewalks, and road edges.
 
@@ -15,9 +15,9 @@ Code repository: <https://github.com/HorizonRDK/hobot_bev.git>
 
 ## Supported Platforms
 
-| Platform  | Execution Method | Example Functionality            |
+| Platform  | System | Function            |
 | --------- | --------------- | ------------------------------- |
-| RDK Ultra | Ubuntu 20.04    | Local replay using web rendering |
+| RDK Ultra | Ubuntu 20.04    | Local image data using web rendering |
 
 ## Preparation
 
@@ -27,13 +27,13 @@ Code repository: <https://github.com/HorizonRDK/hobot_bev.git>
 
 3. Ensure that the PC can access RDK over the network.
 
-## User Guide
+## Usage
 
-### Local data replay
+### Local data offline
 
-Performing local replay using local data, after inference, the algorithm perception results are published as image messages and rendered on the PC browser using the websocket package.
+Use local data offline, after inference, the algorithm perception results are published as image messages and rendered on the PC browser using the websocket package.
 
-***Preparing the replay dataset***
+***Preparing the dataset***
 
 ```shell
 # Download the dataset to the board
@@ -46,8 +46,7 @@ tar -zxvf hobot_bev_data.tar.gz -C hobot_bev_data
 # After extraction, the dataset will be located at hobot_bev_data/data
 ```
 
-***Replaying the dataset***
-
+***Use the dataset for inference***
 ```shell
 # Configure tros.b environment
 source /opt/tros/setup.bash
@@ -58,7 +57,6 @@ ros2 launch websocket websocket_service.launch.py
 # Start running script and specify dataset path
 ros2 launch hobot_bev hobot_bev.launch.py image_pre_path:=hobot_bev_data/data
 ```
-
 ## Result analysis
 
 The terminal output during the execution is as follows:
